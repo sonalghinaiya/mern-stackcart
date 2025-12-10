@@ -57,6 +57,7 @@ app.get("/api/users", async (req, res) => {
   const allDbUsers = await User.find({});
   return res.json(allDbUsers);
 });
+
 app.post("/api/user", async (req, res) => {
   const body = req.body;
   if (
@@ -85,6 +86,27 @@ app.post("/api/user", async (req, res) => {
     data: result,
   });
 });
+
+app
+  .route("/api/users/:id")
+  .get(async (req, res) => {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+    return res.json(user);
+  })
+  .patch(async (req, res) => {
+    const user = await User.findByIdAndUpdate(req.params.id, req.body);
+    if (!user) return res.status(404).json({ error: "User not found" });
+    return res.json({
+      message: "User updated successfully",
+      data: user,
+    });
+  })
+  .delete(async (req, res) => {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+    return res.json({ message: "User deleted successfully" });
+  });
 
 app.listen(PORT, () => {
   console.log(`Server running on port http://localhost:${PORT}`);
