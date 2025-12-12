@@ -11,6 +11,7 @@
   "author": "Sonal Ghinaiya",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "express": "^5.2.1",
     "mongoose": "^8.20.2"
   }
