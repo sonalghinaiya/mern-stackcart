@@ -8,14 +8,14 @@ const app = express();
 const PORT = process.env.PORT;
 const url = process.env.MONGODB_URI;
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
 app.get("/", (req, res) => {
   res.json({ ok: true, message: "API Running" });
 });
 
 connectDB(url).then(() => console.log("MongoDB Connected!"));
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
