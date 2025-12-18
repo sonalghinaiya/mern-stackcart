@@ -5,10 +5,15 @@ import {
   getUserById,
   updateUser,
 } from "../controllers/userController.js";
+import { isAuthenticated } from "../middlewares/authMiddleware.js";
 const router = Router();
 
 router.route("/").get(getAllUsers);
 
-router.route("/:id").get(getUserById).patch(updateUser).delete(deleteUser);
+router
+  .route("/:id")
+  .get(getUserById)
+  .patch(isAuthenticated, updateUser)
+  .delete(isAuthenticated, deleteUser);
 
 export default router;

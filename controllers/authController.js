@@ -1,5 +1,6 @@
 import { User } from "../models/user.js";
 import bcrypt from "bcryptjs";
+import { generateToken } from "../utils/jwtService.js";
 
 export const register = async (req, res, next) => {
   try {
@@ -44,7 +45,14 @@ export const login = async (req, res, next) => {
       throw new Error("Invalid email and Password");
     }
 
-    return res.json({ success: true, message: "Login successful", data: user });
+    const token = generateToken({ id: user.id, email: user.email });
+
+    return res.json({
+      success: true,
+      message: "Login successful",
+      token,
+      data: user,
+    });
   } catch (error) {
     next(error);
   }
