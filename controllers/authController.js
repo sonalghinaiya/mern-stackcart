@@ -1,17 +1,23 @@
 import { User } from "../models/user.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../utils/jwtService.js";
+import { loginSchema, registerSchema } from "../validators/authValidation.js";
 
 export const register = async (req, res, next) => {
   try {
-    const { firstName, lastName, email, password, gender, jobTitle } = req.body;
-    if (!firstName || !email || !password) {
-      res.status(400);
-      throw new Error("Required fields are missing");
+    const result = registerSchema.safeParse(req.body);
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result.error.issues[0].message,
+      });
     }
 
+    const { firstName, lastName, email, password, gender, jobTitle } =
+      result.data;
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    const result = await User.create({
+    const user = await User.create({
       firstName,
       lastName,
       email,
@@ -23,7 +29,7 @@ export const register = async (req, res, next) => {
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
-      data: result,
+      data: user,
     });
   } catch (error) {
     next(error);
@@ -32,7 +38,15 @@ export const register = async (req, res, next) => {
 
 export const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const result = loginSchema.safeParse(req.body);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result.error.issues[0].message,
+      });
+    }
+    const { email, password } = result.data;
     const user = await User.findOne({ email });
     if (!user) {
       res.status(401);

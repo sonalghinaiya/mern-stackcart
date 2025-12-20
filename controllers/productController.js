@@ -1,4 +1,5 @@
 import { Product } from "../models/product.js";
+import { productCreateSchema, productUpdateSchema } from "../validators/productValidation.js";
 
 export const getProducts = async (req, res, next) => {
   try {
@@ -11,7 +12,15 @@ export const getProducts = async (req, res, next) => {
 
 export const createProduct = async (req, res, next) => {
   try {
-    const { name, description, price, rating } = req.body;
+    const result = productCreateSchema.safeParse(req.body);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result.error.issues[0].message,
+      });
+    }
+    const { name, description, price, rating } = result.data;
     const product = await Product.create({
       name,
       description,
@@ -43,9 +52,17 @@ export const getProductById = async (req, res, next) => {
 
 export const updateProduct = async (req, res, next) => {
   try {
+    const result = productUpdateSchema.safeParse(req.body);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result.error.issues[0].message,
+      });
+    }
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
-      req.body
+      result.data
     );
     if (!updatedProduct) {
       res.status(404);
