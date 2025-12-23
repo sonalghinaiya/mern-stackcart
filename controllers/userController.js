@@ -24,7 +24,13 @@ export const getUserById = async (req, res, next) => {
 
 export const updateUser = async (req, res, next) => {
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body);
+    if (req.params.id !== req.user.id && req.user.role !== "admin") {
+      res.status(403);
+      throw new Error("You can update only your own profile");
+    }
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
     if (!user) {
       res.status(404);
       throw new Error("User not found");
@@ -41,6 +47,10 @@ export const updateUser = async (req, res, next) => {
 
 export const deleteUser = async (req, res, next) => {
   try {
+    if (req.params.id !== req.user.id && req.user.role !== "admin") {
+      res.status(403);
+      throw new Error("You can delete only your own account");
+    }
     const user = await User.findByIdAndDelete(req.params.id);
     if (!user) {
       res.status(404);
