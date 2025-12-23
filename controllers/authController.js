@@ -1,6 +1,6 @@
 import { User } from "../models/user.js";
 import bcrypt from "bcryptjs";
-import { generateToken } from "../utils/jwtService.js";
+import { generateToken, verifyToken } from "../utils/jwtService.js";
 import { loginSchema, registerSchema } from "../validators/authValidation.js";
 
 export const register = async (req, res, next) => {
@@ -59,19 +59,73 @@ export const login = async (req, res, next) => {
       throw new Error("Invalid email and Password");
     }
 
-    const token = generateToken({
-      id: user.id,
-      role: user.role,
-      email: user.email,
+    const accessToken = generateToken(
+      {
+        id: user.id,
+        role: user.role,
+        email: user.email,
+      },
+      process.env.JWT_ACCESS_EXPIRES_IN
+    );
+
+    const refreshToken = generateToken(
+      {
+        id: user.id,
+      },
+      process.env.JWT_REFRESH_EXPIRES_IN
+    );
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: false, //true in production
+      sameSite: "strict",
     });
 
     return res.json({
       success: true,
       message: "Login successful",
-      token,
+      token: accessToken,
       data: user,
     });
   } catch (error) {
     next(error);
   }
+};
+
+export const refreshAccessToken = async (req, res, next) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+    console.log("refresh token", refreshToken);
+
+    if (!refreshToken) {
+      res.status(401);
+      throw new Error("Refresh Token Missing");
+    }
+
+    const decoded = verifyToken(refreshToken);
+    console.log("decoded..", decoded);
+
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      res.status(401);
+      throw new Error("User not found");
+    }
+
+    const newAccessToken = generateToken(
+      { id: decoded.id, role: decoded.role, email: decoded.email },
+      process.env.JWT_ACCESS_EXPIRES_IN
+    );
+
+    res.json({ success: true, accessToken: newAccessToken });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const logout = (req, res) => {
+  res.clearCookie("refreshToken");
+  res.json({
+    success: true,
+    message: "Logged out successfully",
+  });
 };

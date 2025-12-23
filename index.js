@@ -1,6 +1,7 @@
 import express from "express";
 import { connectDB } from "./config/db.js";
 import { errorHandler } from "./middlewares/errorMiddleware.js";
+import cookieParser from "cookie-parser";
 
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -12,6 +13,7 @@ const url = process.env.MONGODB_URI;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser)
 
 app.get("/", (req, res) => {
   res.json({ success: true, message: "API Running" });
