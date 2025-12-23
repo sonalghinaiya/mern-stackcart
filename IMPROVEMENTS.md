@@ -1,65 +1,64 @@
 # Improvements & Production Roadmap
 
-This section documents missing features or advanced improvements, why they matter, and a strategic roadmap for evolving this REST API into a production-grade, secure system.
+This roadmap documents potential enhancements and missing features to increase security, scalability, and robustness. Each item includes a brief rationale and priority.
 
 ---
 
-## 1. Ownership-Based Authorization
-- **What:** Ensure only a resource owner (user) can update/delete their data/products.
-- **Why:** Prevents privilege escalation and protects user data integrity.
+## 1. Input Sanitization
+- **What:** Sanitize input fields (string, object) to prevent dangerous content.
+- **Why:** Blocks NoSQL injection, XSS, and other potential input-based attacks.
+- **Priority:** High
 
-## 2. Role-Based Access Control (RBAC)
-- **What:** Implement roles (e.g. admin, user), enforcing access rights at endpoint level.
-- **Why:** Enables least-privilege, business logic separation, and complies with security standards (SOC2, ISO).
+## 2. Rate Limiting
+- **What:** Throttle high-volume requests to protect endpoints from abuse.
+- **Why:** Prevents brute-force attacks and DoS.
+- **Priority:** High
 
-## 3. Refresh Tokens
-- **What:** Allow clients to renew access tokens via short-lived/rotating refresh tokens.
-- **Why:** Greatly enhances security by limiting damage from token theft and improving user experience.
+## 3. Security Hardening (Helmet, CORS)
+- **What:** Use security-related HTTP middleware (helmet), configure CORS policies.
+- **Why:** Reduces attack surface and enforces secure browser/server policies.
+- **Priority:** High
 
-## 4. Input Sanitization
-- **What:** Sanitize inputs, especially strings, to remove dangerous content.
-- **Why:** Blocks NoSQL injection, XSS, and other input-based attacks.
+## 4. Logging & Monitoring
+- **What:** Implement structured logging (e.g. morgan), error logs, and health checks.
+- **Why:** Enables incident detection, debugging, and system observability.
+- **Priority:** High
 
-## 5. Rate Limiting
-- **What:** Throttle requests to authentication and API endpoints.
-- **Why:** Defends against brute-force, DoS attacks and API abuse.
+## 5. API Documentation (Swagger/OpenAPI)
+- **What:** Provide standardized OpenAPI (Swagger) docs for all endpoints.
+- **Why:** Supports integrations and better developer experience.
+- **Priority:** Medium
 
-## 6. Security Hardening (Helmet, CORS)
-- **What:** Secure HTTP headers using `helmet` and restrict cross-origin calls via CORS.
-- **Why:** Essential for any production Express app to protect against common vulnerabilities (e.g. clickjacking, XSS).
+## 6. Testing (Unit & Integration)
+- **What:** Write robust unit and integration tests using Jest/Supertest.
+- **Why:** Enables safe refactors; increases confidence and maintainability.
+- **Priority:** High
 
-## 7. Logging & Monitoring
-- **What:** Structured request logging (e.g. `morgan`), error logs, and health monitoring.
-- **Why:** Crucial for observability and incident response in production.
+## 7. Pagination & Filtering
+- **What:** Add pagination, sorting, and filtering for all list endpoints.
+- **Why:** Improves scalability/performance for large datasets.
+- **Priority:** Medium
 
-## 8. API Documentation (Swagger)
-- **What:** Expose standardized OpenAPI (Swagger) documentation.
-- **Why:** Improves DX and supports integration/testing by other devs/teams.
+## 8. Soft Deletes
+- **What:** Implement soft-deletion (flag as deleted, do not remove from DB).
+- **Why:** Supports recoverability & audit logs; regulatory compliance.
+- **Priority:** Medium
 
-## 9. Testing (Unit & Integration)
-- **What:** Write robust unit and integration tests (e.g. Jest, Supertest).
-- **Why:** Bugs caught early, enables safe refactoring, required for maintainability.
+## 9. File Uploads
+- **What:** Add support for image/file uploads (user avatars, product images).
+- **Why:** Enables richer web/mobile features.
+- **Priority:** Low
 
-## 10. Pagination & Filtering
-- **What:** Enable paginated and filtered queries on all list endpoints.
-- **Why:** Prevents performance bottlenecks and improves UX for large datasets.
+## 10. Docker & Deployment
+- **What:** Add Dockerfile, Compose config for containerized deployments.
+- **Why:** Makes setup, CI/CD, and scaling easier and more production-ready.
+- **Priority:** Medium
 
-## 11. Soft Deletes
-- **What:** Mark records as deleted, don’t remove from DB immediately.
-- **Why:** Enables recoverability, auditability, and regulatory compliance.
-
-## 12. File Uploads
-- **What:** Add support for file/image uploads (e.g. user avatars, product images).
-- **Why:** Enables richer features for modern web and mobile apps.
-
-## 13. Docker & Deployment
-- **What:** Create Dockerfile, use Compose, enable container-based deployment.
-- **Why:** Ensures consistency across dev/prod, makes deployment scalable and reliable.
-
-## 14. CI/CD Pipeline
-- **What:** Set up continuous integration and continuous deployment with platforms like GitHub Actions.
-- **Why:** Automates testing/linting and enables safe, fast deployments.
+## 11. CI/CD Pipeline
+- **What:** Integrate continuous testing/linting and deployment (e.g., GitHub Actions).
+- **Why:** Enables rapid, safe development workflows.
+- **Priority:** Medium
 
 ---
 
-**This roadmap aligns with industry best practices. For interviews, highlight implemented validation, error handling, and security first!**
+**Note:** Ownership, RBAC, JWT, Zod validation, and error handling are already implemented—focus remaining improvements on security, testing, and production readiness.

@@ -1,135 +1,134 @@
 # Node Mongo CRUD API
 
 ## Overview
-A production-ready Node.js backend REST API for users and products using Express.js and MongoDB, following modern architecture and professional engineering standards.
+A professional Node.js backend REST API using Express.js and MongoDB, designed with modern development practices for authentication, authorization, validation, and error handling.
 
 ---
 
 ## Features
-- **User authentication** (JWT Bearer token)
-- **User & Product CRUD APIs**
+- **User Authentication** with JWT (access & refresh tokens)
+- **User & Product CRUD APIs** (Create, Read, Update, Delete)
 - **Express.js + MongoDB (Mongoose)**
-- **Request validation via Zod middleware**
-- **Centralized error handling**
-- **Standard, predictable API responses**
+- **Request Validation** using Zod
+- **Centralized Error Handling**
+- **RBAC (Role-Based Access Control)** for admin/user
+- **Ownership-Based Authorization** (users manage their own data)
+- **MVC Project Structure for Maintainability**
+
+---
 
 ## Tech Stack
-- Node.js / Express.js
-- MongoDB (Mongoose)
-- Zod (validation)
+- Node.js
+- Express.js
+- MongoDB with Mongoose
 - JSON Web Token (JWT)
+- Zod (validation)
 - Modern ES module syntax
 
 ---
 
 ## Folder Structure
 ```
-/ (root)
-├── controllers/         # Route logic
-├── middlewares/         # isAuthenticated, errorHandler
-├── models/              # Mongoose Schemas
-├── routes/              # Express routers
-├── utils/               # JWT helpers
+/
+├── controllers/         # Route handlers and business logic
+├── middlewares/         # Auth, RBAC, error handling logic
+├── models/              # Mongoose schemas/models
+├── routes/              # REST API route definitions
+├── utils/               # JWT/token and helper functions
 ├── validators/          # Zod schemas & validation middleware
-├── config/              # Database conn
-├── index.js             # Entry point
+├── config/              # Database and environment setup
+├── index.js             # App entry point
 └── package.json
 ```
 
 ---
 
-## Authentication Flow (JWT)
-- On register/login: User receives a signed JWT token.
-- Clients send the token in `Authorization: Bearer <token>` header.
-- `isAuthenticated` middleware verifies the token, attaches user info to request, or denies access.
-- Protected routes use this middleware to ensure only authenticated users access them.
+## Authentication & Authorization Flow
+
+- **Access Token:**  
+  - Issued on successful login/register.
+  - Sent by clients via `Authorization: Bearer <token>` header.
+  - Short expiry for security.
+
+- **Refresh Token:**  
+  - Issued alongside access token.
+  - Stored in `httpOnly` cookies for security (prevents JavaScript access).
+  - Used to obtain new access tokens without re-authentication.
+
+- **RBAC & Ownership:**  
+  - Each user has a role: `user` or `admin`.
+  - Admins can access all resources.
+  - Users can only update/delete their own records (ownership checks).
+  - Middleware enforces role and ownership constraints.
 
 ---
 
-## Validation Strategy (Zod)
-- All incoming user and product data is validated against strong Zod schemas.
-- Validation is implemented as reusable Express middleware.
-- Validation errors are forwarded to centralized error handling and never leak internal details.
-- This protects API integrity, prevents malicious input, and maintains predictable data structures.
+## Request Validation
+
+- All incoming request bodies (user/product) are validated against strict Zod schemas.
+- Validation is performed through middleware.
+- Invalid payloads are automatically rejected with clear error messages (never expose stack traces).
 
 ---
 
 ## API Response Format
-All standard responses are in this form:
-```json
-{
-  "success": true/false,
-  "message": "String message",
-  "data": { ... }
-}
-```
-Errors always include `success: false` and an error message.
 
-Example (success):
+All responses are:
 ```json
 {
-  "success": true,
-  "data": { ... }
+  "success": true,    // or false
+  "message": "Info about the outcome",
+  "data": { ... }     // any returned data, if applicable
 }
 ```
-Example (error):
+On error:
 ```json
 {
   "success": false,
-  "message": "Validation failed"
+  "message": "Reason for failure"
 }
 ```
 
 ---
 
-## Setup & Run Instructions
+## Environment Variables (`.env`)
+
+```env
+PORT=8000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
+JWT_ACCESS_EXPIRES_IN=15m
+JWT_REFRESH_EXPIRES_IN=7d
+```
+
+---
+
+## How to Run Locally
+
 1. Clone the repo:
-    ```bash
-    git clone <repo_url>
-    cd node-mongo-crud-api
-    npm install
-    ```
-2. Create your `.env` file:
-    ```env
-    MONGODB_URI=your_mongodb_connection
-    JWT_SECRET=your_jwt_secret
-    JWT_EXPIRES_IN=1d
-    ```
-3. Start the server:
-    ```bash
-    npm run dev
-    ```
+   ```bash
+   git clone <repo_url>
+   cd node-mongo-crud-api
+   npm install
+   ```
+2. Create `.env` using `.env.example` and fill in your values.
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
 ---
 
-## How Protected Routes Work
-- Non-authenticated users are denied access to operations like updating/deleting users and creating/updating/deleting products.
-- All protected routes use the `isAuthenticated` middleware to enforce token verification.
-- Attempting to access a protected route without a valid Bearer token results in a 401 Unauthorized error.
+## Security Considerations
 
----
-
-## Example API Usage
-### Register
-```bash
-POST /api/auth/register
-{
-  "firstName": "Alice",
-  "email": "alice@mail.com",
-  "password": "password123"
-}
-```
-### Login
-```bash
-POST /api/auth/login
-{
-  "email": "alice@mail.com",
-  "password": "password123"
-}
-```
-Returns: `{ success, token, data: { user } }`
+- JWTs are signed and verified using a strong secret.
+- Refresh tokens are `httpOnly` cookies (mitigates XSS).
+- Access and modification of data strictly limited by role and ownership.
+- Input validation prevents malicious payloads.
+- Centralized error handling ensures no sensitive data is exposed.
 
 ---
 
 ## Author
+
 Sonal Ghinaiya
