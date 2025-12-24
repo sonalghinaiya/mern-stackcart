@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 import fs from "fs";
 import path from "path";
+import helmet from "helmet";
+import cors from "cors";
 
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -17,6 +19,14 @@ const url = process.env.MONGODB_URI;
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+app.use(helmet());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 
 const swaggerDocument = JSON.parse(
   fs.readFileSync(path.resolve("swagger/swagger.json"), "utf-8")
