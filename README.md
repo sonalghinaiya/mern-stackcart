@@ -1,134 +1,180 @@
 # Node Mongo CRUD API
 
 ## Overview
-A professional Node.js backend REST API using Express.js and MongoDB, designed with modern development practices for authentication, authorization, validation, and error handling.
+
+Production-grade Node.js + Express REST API using MongoDB, secure JWT authentication, role-based access control, ownership authorization, request validation, and Swagger documentation.
 
 ---
 
-## Features
-- **User Authentication** with JWT (access & refresh tokens)
-- **User & Product CRUD APIs** (Create, Read, Update, Delete)
-- **Express.js + MongoDB (Mongoose)**
-- **Request Validation** using Zod
-- **Centralized Error Handling**
-- **RBAC (Role-Based Access Control)** for admin/user
-- **Ownership-Based Authorization** (users manage their own data)
-- **MVC Project Structure for Maintainability**
+## 🚀 Features
+
+- **JWT Authentication**
+  - Access token (short-lived)
+  - Refresh token (httpOnly cookie)
+- **User & Product CRUD APIs**
+- **Role-Based Access Control (RBAC)** (`user`, `admin`)
+- **Ownership-based authorization**
+- **Zod-based request validation**
+- **Centralized error handling**
+- **Swagger UI documentation**
+- **Modular MVC folder structure**
 
 ---
 
-## Tech Stack
+## 🛠 Tech Stack
+
 - Node.js
 - Express.js
-- MongoDB with Mongoose
-- JSON Web Token (JWT)
+- MongoDB (Mongoose)
+- JWT (jsonwebtoken)
 - Zod (validation)
-- Modern ES module syntax
+- bcrypt (password hashing)
+- Swagger (OpenAPI 3.0)
+- cookie-parser
+- ES Modules
 
 ---
 
-## Folder Structure
+## 📂 Folder Structure
+
 ```
 /
-├── controllers/         # Route handlers and business logic
-├── middlewares/         # Auth, RBAC, error handling logic
-├── models/              # Mongoose schemas/models
-├── routes/              # REST API route definitions
-├── utils/               # JWT/token and helper functions
-├── validators/          # Zod schemas & validation middleware
-├── config/              # Database and environment setup
-├── index.js             # App entry point
+├── controllers/
+├── middlewares/
+├── models/
+├── routes/
+├── utils/
+├── validators/
+├── config/
+├── index.js
 └── package.json
 ```
 
 ---
 
-## Authentication & Authorization Flow
+## 🔐 Authentication & Authorization Flow
 
-- **Access Token:**  
-  - Issued on successful login/register.
-  - Sent by clients via `Authorization: Bearer <token>` header.
-  - Short expiry for security.
+- **Access Token**
 
-- **Refresh Token:**  
-  - Issued alongside access token.
-  - Stored in `httpOnly` cookies for security (prevents JavaScript access).
-  - Used to obtain new access tokens without re-authentication.
+  - Short-lived JWT
+  - Sent via `Authorization: Bearer <token>`
+  - Used to access protected APIs
 
-- **RBAC & Ownership:**  
-  - Each user has a role: `user` or `admin`.
-  - Admins can access all resources.
-  - Users can only update/delete their own records (ownership checks).
-  - Middleware enforces role and ownership constraints.
+- **Refresh Token**
 
----
+  - Long-lived JWT
+  - Stored securely in `httpOnly` cookie
+  - Used to generate new access tokens without re-login
 
-## Request Validation
+- **RBAC**
 
-- All incoming request bodies (user/product) are validated against strict Zod schemas.
-- Validation is performed through middleware.
-- Invalid payloads are automatically rejected with clear error messages (never expose stack traces).
+  - Role-based permissions (`user`, `admin`)
+  - Admin can manage all users and products
+
+- **Ownership**
+  - Users can update/delete only their own resources
+  - Enforced at controller level
 
 ---
 
-## API Response Format
+## 🔍 Request Validation
 
-All responses are:
-```json
-{
-  "success": true,    // or false
-  "message": "Info about the outcome",
-  "data": { ... }     // any returned data, if applicable
-}
+- All incoming request bodies are validated using **Zod**
+- Invalid input returns clear, descriptive error messages
+- Separate validation schemas for:
+  - Authentication
+  - Products
+
+---
+
+## 📘 API Documentation
+
+- **Swagger UI:**  
+  Visit [http://localhost:8000/api-docs](http://localhost:8000/api-docs)
+- **OpenAPI 3.0**: Docs include tagged endpoints, input, responses, auth requirements.
+
+---
+
+## 📌 API Endpoints Overview
+
+### Auth
+
+| Method | Endpoint           | Description             |
+| ------ | ------------------ | ----------------------- |
+| POST   | /api/auth/register | Register new user       |
+| POST   | /api/auth/login    | Login & generate tokens |
+| POST   | /api/auth/refresh  | Refresh access token    |
+| POST   | /api/auth/logout   | Logout user             |
+
+### Users
+
+| Method | Endpoint       | Access        |
+| ------ | -------------- | ------------- |
+| GET    | /api/users     | Admin         |
+| GET    | /api/users/:id | Authenticated |
+| PATCH  | /api/users/:id | Owner / Admin |
+| DELETE | /api/users/:id | Owner / Admin |
+
+### Products
+
+| Method | Endpoint          | Access        |
+| ------ | ----------------- | ------------- |
+| GET    | /api/products     | Public        |
+| GET    | /api/products/:id | Public        |
+| POST   | /api/products     | Authenticated |
+| PATCH  | /api/products/:id | Owner / Admin |
+| DELETE | /api/products/:id | Owner / Admin |
+
+---
+
+## 🔒 Security Notes
+
+- Passwords are hashed using bcrypt
+- Refresh tokens stored in httpOnly cookies
+- Access tokens are short-lived
+- RBAC and ownership checks prevent unauthorized access
+
+---
+
+## 🌍 Environment Variables
+
 ```
-On error:
-```json
-{
-  "success": false,
-  "message": "Reason for failure"
-}
-```
-
----
-
-## Environment Variables (`.env`)
-
-```env
 PORT=8000
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_secret_key
+MONGODB_URI=
+JWT_SECRET=
 JWT_ACCESS_EXPIRES_IN=15m
 JWT_REFRESH_EXPIRES_IN=7d
 ```
 
 ---
 
-## How to Run Locally
+## ▶️ Run Locally
 
-1. Clone the repo:
-   ```bash
-   git clone <repo_url>
+
+1. Clone this repo & install dependencies:
+   ```
+   git clone <repo-url>
    cd node-mongo-crud-api
    npm install
    ```
-2. Create `.env` using `.env.example` and fill in your values.
-3. Start the development server:
-   ```bash
+2. Create `.env` and fill in variables.
+3. Start server:
+   ```
    npm run dev
    ```
 
 ---
 
-## Security Considerations
+## 📌 Project Status
 
-- JWTs are signed and verified using a strong secret.
-- Refresh tokens are `httpOnly` cookies (mitigates XSS).
-- Access and modification of data strictly limited by role and ownership.
-- Input validation prevents malicious payloads.
-- Centralized error handling ensures no sensitive data is exposed.
+✔ Core backend complete  
+✔ Authentication & authorization implemented  
+✔ Swagger documentation available
+
+Planned enhancements are listed in `IMPROVEMENTS.md`.
 
 ---
 
-## Author
+## 👤 Author
 
-Sonal Ghinaiya
+**Sonal Ghinaiya**

@@ -1,64 +1,36 @@
-# Improvements & Production Roadmap
+# Improvements & TODOs
 
-This roadmap documents potential enhancements and missing features to increase security, scalability, and robustness. Each item includes a brief rationale and priority.
-
----
-
-## 1. Input Sanitization
-- **What:** Sanitize input fields (string, object) to prevent dangerous content.
-- **Why:** Blocks NoSQL injection, XSS, and other potential input-based attacks.
-- **Priority:** High
-
-## 2. Rate Limiting
-- **What:** Throttle high-volume requests to protect endpoints from abuse.
-- **Why:** Prevents brute-force attacks and DoS.
-- **Priority:** High
-
-## 3. Security Hardening (Helmet, CORS)
-- **What:** Use security-related HTTP middleware (helmet), configure CORS policies.
-- **Why:** Reduces attack surface and enforces secure browser/server policies.
-- **Priority:** High
-
-## 4. Logging & Monitoring
-- **What:** Implement structured logging (e.g. morgan), error logs, and health checks.
-- **Why:** Enables incident detection, debugging, and system observability.
-- **Priority:** High
-
-## 5. API Documentation (Swagger/OpenAPI)
-- **What:** Provide standardized OpenAPI (Swagger) docs for all endpoints.
-- **Why:** Supports integrations and better developer experience.
-- **Priority:** Medium
-
-## 6. Testing (Unit & Integration)
-- **What:** Write robust unit and integration tests using Jest/Supertest.
-- **Why:** Enables safe refactors; increases confidence and maintainability.
-- **Priority:** High
-
-## 7. Pagination & Filtering
-- **What:** Add pagination, sorting, and filtering for all list endpoints.
-- **Why:** Improves scalability/performance for large datasets.
-- **Priority:** Medium
-
-## 8. Soft Deletes
-- **What:** Implement soft-deletion (flag as deleted, do not remove from DB).
-- **Why:** Supports recoverability & audit logs; regulatory compliance.
-- **Priority:** Medium
-
-## 9. File Uploads
-- **What:** Add support for image/file uploads (user avatars, product images).
-- **Why:** Enables richer web/mobile features.
-- **Priority:** Low
-
-## 10. Docker & Deployment
-- **What:** Add Dockerfile, Compose config for containerized deployments.
-- **Why:** Makes setup, CI/CD, and scaling easier and more production-ready.
-- **Priority:** Medium
-
-## 11. CI/CD Pipeline
-- **What:** Integrate continuous testing/linting and deployment (e.g., GitHub Actions).
-- **Why:** Enables rapid, safe development workflows.
-- **Priority:** Medium
+Production-critical items are listed first, followed by quality and scalability enhancements.
 
 ---
 
-**Note:** Ownership, RBAC, JWT, Zod validation, and error handling are already implemented—focus remaining improvements on security, testing, and production readiness.
+## 🟥 Must-have (Production Critical)
+
+- **Security Headers:** Implement `helmet` and configure `CORS`.
+- **Request Rate Limiting:** Use `express-rate-limit` for brute-force protection, especially on authentication endpoints (`/login`, `/register`, `/refresh`).
+- **Automated Testing:** Set up Jest + Supertest. Add tests for authentication, authorization, and CRUD flows.
+- **Production Cookie Security:** Enable `cookie.secure = true` in production environments.
+
+---
+
+## 🟪 Good-to-have
+
+- **Logging:** Add `morgan` for HTTP logs and `winston` for structured application logs.
+- **Environment Variable Validation:** Fail fast on missing or invalid env variables.
+- **Swagger Schema Reuse:** Centralize response and error schemas using `$ref`.
+- **Health Check Endpoint:** `/health` or `/status` for uptime monitoring and load balancers.
+
+---
+
+## 🟩 Optional / Advanced
+
+- **CI/CD Pipeline:** GitHub Actions for linting, testing, and deployment.
+- **Docker & Compose:** Dockerfile, `.dockerignore`, and docker-compose setup.
+- **Caching Layer:** Redis for frequently accessed data.
+- **API Versioning:** Introduce `/api/v1` when backward compatibility is required.
+- **Pagination & Filtering:** For scalable list endpoints.
+
+---
+
+**Already implemented:**  
+JWT authentication (access + refresh tokens), cookie-based refresh handling, RBAC, ownership checks, Zod validation, Swagger documentation, centralized error handling, modular architecture.
