@@ -7,10 +7,14 @@ import {
   updateProduct,
 } from "../controllers/productController.js";
 import { isAuthenticated } from "../middlewares/authMiddleware.js";
+import { uploadProduct } from "../middlewares/upload.js";
 
 const router = Router();
 
-router.route("/").get(getProducts).post(isAuthenticated, createProduct);
+router
+  .route("/")
+  .get(getProducts)
+  .post(isAuthenticated, uploadProduct.single("image"), createProduct);
 
 router
   .route("/:id")

@@ -24,11 +24,16 @@ export const createProduct = async (req, res, next) => {
       });
     }
     const { name, description, price, rating } = result.data;
+
+    const protocol = req.protocol
+    const host = req.host
+    const image = `${protocol}://${host}/uploads/products/${req.file.filename}`
     const product = await Product.create({
       name,
       description,
       price,
       rating,
+      image,
       createdBy: req.user.id,
     });
     return res.status(201).json({

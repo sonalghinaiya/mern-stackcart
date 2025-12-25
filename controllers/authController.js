@@ -17,6 +17,11 @@ export const register = async (req, res, next) => {
       result.data;
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    const protocol = req.protocol
+    const hostName = req.host
+    const profileImage = `${protocol}://${hostName}/uploads/users/${req.file.filename}`
+
     const user = await User.create({
       firstName,
       lastName,
@@ -24,6 +29,7 @@ export const register = async (req, res, next) => {
       password: hashedPassword,
       gender,
       jobTitle,
+      profileImage,
     });
 
     return res.status(201).json({

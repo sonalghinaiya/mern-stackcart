@@ -28,6 +28,8 @@ app.use(
   })
 );
 
+app.use(express.static("public"))
+
 const swaggerDocument = JSON.parse(
   fs.readFileSync(path.resolve("swagger/swagger.json"), "utf-8")
 );
