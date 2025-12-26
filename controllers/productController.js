@@ -23,11 +23,18 @@ export const createProduct = async (req, res, next) => {
         message: result.error.issues[0].message,
       });
     }
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Product image is required.",
+      });
+    }
     const { name, description, price, rating } = result.data;
 
-    const protocol = req.protocol
-    const host = req.host
-    const image = `${protocol}://${host}/uploads/products/${req.file.filename}`
+    const protocol = req.protocol;
+    const host = req.host;
+    const image = `${protocol}://${host}/uploads/products/${req.file.filename}`;
     const product = await Product.create({
       name,
       description,
@@ -116,7 +123,7 @@ export const deleteProduct = async (req, res, next) => {
       throw new Error("You are not allowed to delete this product");
     }
 
-    await product.deleteOne()
+    await product.deleteOne();
     return res.json({ success: true, message: "Product deleted successfully" });
   } catch (error) {
     next(error);

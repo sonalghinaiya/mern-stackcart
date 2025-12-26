@@ -13,6 +13,12 @@ export const register = async (req, res, next) => {
       });
     }
 
+    if(!req.file){
+      return res.status(400).json({
+        success: false,
+        message: "Profile Image is required."
+      })
+    }
     const { firstName, lastName, email, password, gender, jobTitle } =
       result.data;
 
