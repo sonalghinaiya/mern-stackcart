@@ -1,4 +1,6 @@
 import { User } from "../models/user.js";
+import path from "path";
+import fs from "fs/promises";
 
 export const getAllUsers = async (req, res, next) => {
   try {
@@ -56,7 +58,18 @@ export const deleteUser = async (req, res, next) => {
       res.status(404);
       throw new Error("User not found");
     }
-    return res.json({ message: "User deleted successfully" });
+
+    if (user.profileImage) {
+      const filePath = path.join(process.cwd(), "public", user.profileImage);
+      try {
+        await fs.unlink(filePath);
+        console.log("Profile image deleted:", filePath);
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+
+    return res.json({ success: true, message: "User deleted successfully" });
   } catch (error) {
     next(error);
   }

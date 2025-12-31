@@ -3,6 +3,8 @@ import {
   productCreateSchema,
   productUpdateSchema,
 } from "../validators/productValidation.js";
+import path from "path"
+import fs from "fs/promises"
 
 export const getProducts = async (req, res, next) => {
   try {
@@ -32,9 +34,7 @@ export const createProduct = async (req, res, next) => {
     }
     const { name, description, price, rating } = result.data;
 
-    const protocol = req.protocol;
-    const host = req.host;
-    const image = `${protocol}://${host}/uploads/products/${req.file.filename}`;
+    const image = `uploads/products/${req.file.filename}`;
     const product = await Product.create({
       name,
       description,
@@ -43,10 +43,14 @@ export const createProduct = async (req, res, next) => {
       image,
       createdBy: req.user.id,
     });
+
+    const protocol = req.protocol;
+    const hostName = req.host;
+    const imageUrl = `${protocol}://${hostName}/${product.image}`;
     return res.status(201).json({
       success: true,
       message: "Product created Successfully",
-      data: product,
+      data: { ...product.toObject(), image: imageUrl },
     });
   } catch (error) {
     next(error);
@@ -121,6 +125,16 @@ export const deleteProduct = async (req, res, next) => {
     ) {
       res.status(403);
       throw new Error("You are not allowed to delete this product");
+    }
+
+    if(product.image){
+      const filePath = path.join(process.cwd(), "public", product.image)
+      try {
+        await fs.unlink(filePath)
+        console.log("Product Image deleted:", filePath)
+      } catch (error) {
+        console.log(error.message)
+      }
     }
 
     await product.deleteOne();

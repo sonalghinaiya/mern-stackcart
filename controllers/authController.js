@@ -13,20 +13,18 @@ export const register = async (req, res, next) => {
       });
     }
 
-    if(!req.file){
+    if (!req.file) {
       return res.status(400).json({
         success: false,
-        message: "Profile Image is required."
-      })
+        message: "Profile Image is required.",
+      });
     }
     const { firstName, lastName, email, password, gender, jobTitle } =
       result.data;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const protocol = req.protocol
-    const hostName = req.host
-    const profileImage = `${protocol}://${hostName}/uploads/users/${req.file.filename}`
+    const profileImage = `uploads/users/${req.file.filename}`;
 
     const user = await User.create({
       firstName,
@@ -38,10 +36,16 @@ export const register = async (req, res, next) => {
       profileImage,
     });
 
+    const protocol = req.protocol;
+    const hostName = req.host;
+    const imageUrl = `${protocol}://${hostName}/${user.profileImage}`;
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
-      data: user,
+      data: {
+        ...user.toObject(),
+        profileImage: imageUrl,
+      },
     });
   } catch (error) {
     next(error);
