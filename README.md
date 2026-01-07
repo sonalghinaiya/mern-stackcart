@@ -8,16 +8,46 @@ Production-grade Node.js + Express REST API using MongoDB, secure JWT authentica
 
 ## 🚀 Features
 
-- **JWT Authentication**
-  - Access token (short-lived)
-  - Refresh token (httpOnly cookie)
-- **User & Product CRUD APIs**
-- **Role-Based Access Control (RBAC)** (`user`, `admin`)
-- **Ownership-based authorization**
-- **Zod-based request validation**
-- **Centralized error handling**
-- **Swagger UI documentation**
-- **Modular MVC folder structure**
+### Authentication & Security
+- JWT-based authentication
+  - Access Token (short-lived)
+  - Refresh Token (long-lived)
+- Refresh token stored securely in **httpOnly cookies**
+- Token verification using middleware
+- Role-Based Access Control (RBAC)
+  - `user` and `admin` roles
+- Ownership-based authorization
+  - Users can update/delete only their own data
+  - Admin can manage all resources
+
+### User Management
+- User registration with profile image upload
+- Login, logout, and token refresh
+- Update user profile (including profile image replacement)
+- Delete user account with automatic image cleanup
+
+### Product Management
+- Product CRUD operations
+- Product image upload
+- Ownership checks for update/delete
+- Admin override support
+
+### Validation & Error Handling
+- Request body validation using **Zod**
+- Centralized error handling middleware
+- Clear and consistent API error responses
+
+### File Uploads
+- Image upload using **Multer**
+- Separate folders for users and products
+- File type & size validation
+- Old image cleanup on update/delete
+- Static file serving via `/uploads/*`
+
+### API Documentation
+- Swagger (OpenAPI 3.0)
+- JSON-based Swagger configuration
+- Accessible at `/api-docs`
 
 ---
 
@@ -29,6 +59,8 @@ Production-grade Node.js + Express REST API using MongoDB, secure JWT authentica
 - JWT (jsonwebtoken)
 - Zod (validation)
 - bcrypt (password hashing)
+- Helmet & CORS
+- Multer (file uploads)
 - Swagger (OpenAPI 3.0)
 - cookie-parser
 - ES Modules
@@ -40,12 +72,18 @@ Production-grade Node.js + Express REST API using MongoDB, secure JWT authentica
 ```
 /
 ├── controllers/
-├── middlewares/
-├── models/
 ├── routes/
-├── utils/
+├── models/
+├── middlewares/
 ├── validators/
+├── utils/
 ├── config/
+├── public/
+│ └── uploads/
+│ ├── users/
+│ └── products/
+├── swagger/
+│ └── swagger.json
 ├── index.js
 └── package.json
 ```
@@ -63,8 +101,9 @@ Production-grade Node.js + Express REST API using MongoDB, secure JWT authentica
 - **Refresh Token**
 
   - Long-lived JWT
-  - Stored securely in `httpOnly` cookie
-  - Used to generate new access tokens without re-login
+  - Stored in **httpOnly cookie**
+  - Used to generate a new access token
+  - Automatically invalidated on logout
 
 - **RBAC**
 
@@ -144,6 +183,7 @@ MONGODB_URI=
 JWT_SECRET=
 JWT_ACCESS_EXPIRES_IN=15m
 JWT_REFRESH_EXPIRES_IN=7d
+NODE_ENV=development
 ```
 
 ---

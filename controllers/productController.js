@@ -3,8 +3,8 @@ import {
   productCreateSchema,
   productUpdateSchema,
 } from "../validators/productValidation.js";
-import path from "path"
-import fs from "fs/promises"
+import path from "path";
+import fs from "fs/promises";
 
 export const getProducts = async (req, res, next) => {
   try {
@@ -81,6 +81,8 @@ export const updateProduct = async (req, res, next) => {
       });
     }
 
+    const { name, description, price, rating } = result.data;
+
     const product = await Product.findById(req.params.id);
     if (!product) {
       res.status(404);
@@ -88,16 +90,36 @@ export const updateProduct = async (req, res, next) => {
     }
 
     if (
-      product.createdBy.toString() !== req.params.id &&
+      product.createdBy.toString() !== req.user.id &&
       req.user.role !== "admin"
     ) {
       res.status(403);
       throw new Error("You can not allowed to update this product");
     }
 
+    let imagePath = product.image;
+
+    if (req.file) {
+      if (product.image) {
+        const oldPath = path.join(process.cwd(), "public", product.image);
+        try {
+          await fs.unlink(oldPath);
+        } catch (error) {
+          console.log("Old Product image not found");
+        }
+      }
+      imagePath = `uploads/products/${req.file.filename}`;
+    }
+
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
-      result.data,
+      {
+        name,
+        price,
+        description,
+        rating,
+        image: imagePath,
+      },
       { new: true }
     );
 
@@ -127,13 +149,13 @@ export const deleteProduct = async (req, res, next) => {
       throw new Error("You are not allowed to delete this product");
     }
 
-    if(product.image){
-      const filePath = path.join(process.cwd(), "public", product.image)
+    if (product.image) {
+      const filePath = path.join(process.cwd(), "public", product.image);
       try {
-        await fs.unlink(filePath)
-        console.log("Product Image deleted:", filePath)
+        await fs.unlink(filePath);
+        console.log("Product Image deleted:", filePath);
       } catch (error) {
-        console.log(error.message)
+        console.log(error.message);
       }
     }
 

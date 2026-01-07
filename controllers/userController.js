@@ -30,17 +30,39 @@ export const updateUser = async (req, res, next) => {
       res.status(403);
       throw new Error("You can update only your own profile");
     }
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    const user = await User.findById(req.params.id);
     if (!user) {
       res.status(404);
       throw new Error("User not found");
     }
+
+    let profileImage = user.profileImage;
+
+    if (req.file) {
+      if (user.profileImage) {
+        const oldPath = path.join(process.cwd(), "public", user.profileImage);
+        try {
+          await fs.unlink(oldPath);
+        } catch (error) {
+          console.log("Old image not found");
+        }
+      }
+      profileImage = `uploads/users/${req.file.filename}`;
+    }
+
+    const updateUser = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        ...req.body,
+        profileImage,
+      },
+      { new: true }
+    );
+
     return res.json({
       success: true,
       message: "User updated successfully",
-      data: user,
+      data: updateUser,
     });
   } catch (error) {
     next(error);

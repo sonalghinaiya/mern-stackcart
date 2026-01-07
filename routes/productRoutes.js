@@ -19,7 +19,7 @@ router
 router
   .route("/:id")
   .get(getProductById)
-  .patch(isAuthenticated, updateProduct)
+  .patch(isAuthenticated, uploadProduct.single("image"), updateProduct)
   .delete(isAuthenticated, deleteProduct);
 
 export default router;
