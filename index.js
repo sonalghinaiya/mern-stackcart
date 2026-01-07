@@ -11,6 +11,7 @@ import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js"
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -44,6 +45,7 @@ connectDB(url).then(() => console.log("MongoDB Connected!"));
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/chat", chatRoutes)
 
 app.use(errorHandler);
 
