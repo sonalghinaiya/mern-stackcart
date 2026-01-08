@@ -8,8 +8,23 @@ import fs from "fs/promises";
 
 export const getProducts = async (req, res, next) => {
   try {
-    const products = await Product.find({});
-    return res.json({ success: true, data: products });
+    const page = req.query.page || 1;
+    const limit = req.query.limit || 10;
+
+    const offset = (page - 1) * limit;
+    const totalItems = await Product.countDocuments();
+    const totalPages = Math.ceil(totalItems / limit);
+    const products = await Product.find({}).skip(offset).limit(limit);
+    return res.json({
+      success: true,
+      data: products,
+      pagination: {
+        page,
+        limit,
+        totalPages,
+        totalItems,
+      },
+    });
   } catch (error) {
     next(error);
   }
