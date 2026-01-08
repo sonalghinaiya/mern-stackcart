@@ -4,8 +4,24 @@ import fs from "fs/promises";
 
 export const getAllUsers = async (req, res, next) => {
   try {
-    const user = await User.find({});
-    return res.json({ success: true, data: user });
+    const page = req.query.page || 1;
+    const limit = req.query.limit || 10;
+    const offset = (page - 1) * limit;
+
+    const totalUsers = await User.countDocuments();
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    const user = await User.find({}).skip(offset).limit(limit);
+    return res.json({
+      success: true,
+      data: user,
+      pagintaion: {
+        page,
+        limit,
+        totalPages,
+        totalUsers,
+      },
+    });
   } catch (error) {
     next(error);
   }
