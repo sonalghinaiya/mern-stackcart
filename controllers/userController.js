@@ -11,7 +11,29 @@ export const getAllUsers = async (req, res, next) => {
     const totalUsers = await User.countDocuments();
     const totalPages = Math.ceil(totalUsers / limit);
 
-    const user = await User.find({}).skip(offset).limit(limit);
+    const query = {};
+
+    if (req.query.firstName) {
+      query.firstName = { $regex: req.query.firstName, $options: "i" };
+    }
+
+    if (req.query.lastName) {
+      query.lastName = { $regex: req.query.lastName, $options: "i" };
+    }
+
+    if (req.query.email) {
+      query.email = { $regex: req.query.email, $options: "i" };
+    }
+
+    if(req.query.role){
+      query.role = req.query.role
+    }
+
+    if(req.query.gender){
+      query.gender = { $regex: req.query.gender, $options: "i" };
+    }
+
+    const user = await User.find(query).skip(offset).limit(limit).select("-password")
     return res.json({
       success: true,
       data: user,

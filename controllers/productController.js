@@ -14,7 +14,28 @@ export const getProducts = async (req, res, next) => {
     const offset = (page - 1) * limit;
     const totalItems = await Product.countDocuments();
     const totalPages = Math.ceil(totalItems / limit);
-    const products = await Product.find({}).skip(offset).limit(limit);
+
+    const query = {};
+
+    if (req.query.name) {
+      query.name = { $regex: req.query.name, $options: "i" };
+    }
+
+    if (req.query.rating) {
+      query.rating = req.query.rating;
+    }
+
+    if (req.query.priceMin || req.query.priceMax) {
+      query.price = {};
+      if(req.query.priceMin){
+        query.price.$gte = req.query.priceMin
+      }
+      if(req.query.priceMax){
+        query.price.$lte = req.query.priceMax
+      }
+    }
+
+    const products = await Product.find(query).skip(offset).limit(limit);
     return res.json({
       success: true,
       data: products,
