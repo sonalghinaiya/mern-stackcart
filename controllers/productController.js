@@ -27,15 +27,24 @@ export const getProducts = async (req, res, next) => {
 
     if (req.query.priceMin || req.query.priceMax) {
       query.price = {};
-      if(req.query.priceMin){
-        query.price.$gte = req.query.priceMin
+      if (req.query.priceMin) {
+        query.price.$gte = req.query.priceMin;
       }
-      if(req.query.priceMax){
-        query.price.$lte = req.query.priceMax
+      if (req.query.priceMax) {
+        query.price.$lte = req.query.priceMax;
       }
     }
 
-    const products = await Product.find(query).skip(offset).limit(limit);
+    const sortBy = req.query.sortBy;
+    const order = req.query.order === "asc" ? 1 : -1;
+
+    const sort = { [sortBy]: order };
+
+    const products = await Product.find(query)
+      .sort(sort)
+      .skip(offset)
+      .limit(limit);
+
     return res.json({
       success: true,
       data: products,

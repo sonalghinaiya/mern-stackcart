@@ -25,15 +25,25 @@ export const getAllUsers = async (req, res, next) => {
       query.email = { $regex: req.query.email, $options: "i" };
     }
 
-    if(req.query.role){
-      query.role = req.query.role
+    if (req.query.role) {
+      query.role = req.query.role;
     }
 
-    if(req.query.gender){
+    if (req.query.gender) {
       query.gender = { $regex: req.query.gender, $options: "i" };
     }
 
-    const user = await User.find(query).skip(offset).limit(limit).select("-password")
+    const sortBy = req.query.sortBy;
+    const order = req.query.order === "asc" ? 1 : -1;
+
+    const sort = { [sortBy]: order };
+
+    const user = await User.find(query)
+      .select("-password")
+      .sort(sort)
+      .skip(offset)
+      .limit(limit);
+
     return res.json({
       success: true,
       data: user,
