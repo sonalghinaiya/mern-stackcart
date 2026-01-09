@@ -1,153 +1,151 @@
 # Project Roadmap
 
-This roadmap outlines the **planned enhancements and future scope** of the Node Mongo CRUD API project.  
-It reflects the current implementation status and prioritizes features based on **security, scalability, and real-world usage**.
+This roadmap outlines the **future direction** of the Node.js + Express + MongoDB backend.
+It reflects the **actual implementation status** and avoids listing already completed features
+as future work.
 
 ---
 
 ## ✅ Completed (Current State)
 
-The following features are already implemented and stable:
+The following features are **fully implemented and stable**:
 
-- JWT Authentication (Access Token + Refresh Token)
-- Refresh token stored in httpOnly cookies
-- User & Product CRUD APIs
+### Core Backend
+- Node.js + Express REST API
+- MongoDB with Mongoose
+- Clean MVC folder structure
+- Environment-based configuration
+
+### Authentication & Authorization
+- JWT Authentication
+  - Access Token (short-lived)
+  - Refresh Token (httpOnly cookie)
+- Refresh token endpoint
 - Role-Based Access Control (RBAC)
 - Ownership-based authorization
-- Zod-based request validation
+
+### Validation & Error Handling
+- Zod schema validation
 - Centralized error handling middleware
-- Swagger API documentation (OpenAPI 3.0)
-- Modular MVC architecture
-- Secure password hashing (bcrypt)
+
+### Media & File Handling
+- User profile image upload (Multer)
+- Product image upload
+- Image replacement on update
+- Local file storage
+
+### Data Handling
+- Pagination
+- Filtering
+- Sorting
+- Soft delete (`isDeleted` flag)
+
+### Security
+- Password hashing using bcrypt
+- Helmet for HTTP security headers
+- CORS configuration
+- Rate limiting for authentication routes
+
+### API Tooling
+- Swagger (OpenAPI 3.0) documentation
+
+### AI & Chatbot
+- Chat API endpoint (`/api/chat`)
+- AI service integration (Gemini / OpenAI-ready)
+- Auth-protected chatbot access
 
 ---
 
-## 🟥 Phase 1 – Security & Stability (High Priority)
+## 🟨 Phase 1 – Frontend Integration (Next Priority)
 
-Focus: Hardening the API for production use.
+### Goals
+- Convert backend APIs into a complete full-stack application
 
-- Add HTTP security headers using `helmet`
-- Configure CORS with allowed origins and credentials
-- Implement request rate limiting using `express-rate-limit`
-  - Apply stricter limits on:
-    - `/api/auth/login`
-    - `/api/auth/register`
-    - `/api/auth/refresh`
-- Enable secure cookies in production (`secure: true`)
-- Improve refresh token handling:
-  - Store refresh tokens in database
-  - Support token revocation on logout
-  - Implement refresh token rotation
+### Features to Implement
+- React or Next.js frontend
+- Authentication flow (login, register, logout)
+- Automatic access token refresh
+- Protected routes
+- Role-based UI rendering
 
----
-
-## 🟪 Phase 2 – File Uploads & Media Handling
-
-### 👤 User Profile Image Upload
-- Upload and store user profile pictures
-- Validate file type and size
-- Save image path in user document
-- Replace or delete old images
-- Support:
-  - Local storage (development)
-  - Cloud storage (Cloudinary / AWS S3) for production
-
-### 🛍 Product Image Upload
-- Upload product images
-- Associate images with product records
-- Support multiple images (optional)
-- Secure upload endpoints
-- Image optimization and compression
+### Reasoning
+The backend is already production-capable.
+Frontend integration is the **natural next step**.
 
 ---
 
-## 🟦 Phase 3 – Chatbot & AI Integration
+## 🟩 Phase 2 – Admin Dashboard
 
-### 🤖 Chatbot Integration
-- Add chatbot API endpoint (`/api/chat`)
-- Integrate with AI services (OpenAI / Gemini / others)
-- Support:
-  - Product-related queries
-  - General support questions
-- Secure AI API keys via environment variables
+### Goals
+- Provide UI-based administrative control
 
-### 🔔 Optional Enhancements
-- Store chat history
-- Role-based chatbot responses (admin vs user)
+### Features to Implement
+- Admin dashboard UI
+- User management interface
+- Product management interface
+- View soft-deleted users/products (optional)
 
----
-
-## 🟩 Phase 4 – Quality, Monitoring & Observability
-
-- HTTP request logging using `morgan`
-- Structured logging using `winston` or `pino`
-- Add health check endpoint:
-  - `/health` or `/status`
-  - Include database connectivity check
-- Environment variable validation at startup
-- Fail fast on missing or invalid configuration
+### Reasoning
+Admin APIs already exist.
+This phase focuses on **frontend consumption**, not backend changes.
 
 ---
 
-## 🟨 Phase 5 – API & Data Enhancements
+## 🟦 Phase 3 – Observability & Monitoring
 
-- Pagination, filtering, and sorting for:
-  - Users list
-  - Products list
-- API versioning (`/api/v1`)
-- Soft delete support instead of hard deletes
-- Consistent global API response format
+### Goals
+- Improve debugging, monitoring, and system visibility
 
----
+### Features to Implement
+- HTTP request logging (`morgan`)
+- Structured logging (`winston` / `pino`)
+- Health check endpoint (`/health`)
+- Database connectivity status
 
-## 🧪 Phase 6 – Testing & CI/CD
-
-- Unit testing using Jest
-- API integration testing using Supertest
-- Test coverage for:
-  - Authentication flows
-  - RBAC & ownership rules
-  - Validation failures
-- Linting with ESLint + Prettier
-- CI/CD pipeline using GitHub Actions:
-  - Run tests and lint on pull requests
+### Reasoning
+Essential for production deployments and cloud hosting.
 
 ---
 
-## 🚀 Phase 7 – Frontend Integration
+## 🧪 Phase 4 – Testing & CI/CD
 
-- React or Next.js frontend integration
-- Implement authentication flow on frontend
-- Handle access token refresh automatically
-- Protected routes and role-based UI
-- Optional:
-  - Server-Side Rendering (SSR) with Next.js
+### Goals
+- Ensure long-term reliability and maintainability
 
----
+### Features to Implement
+- Unit tests (Jest)
+- API integration tests (Supertest)
+- Test coverage reporting
+- CI pipeline using GitHub Actions
 
-## 🧠 Phase 8 – Advanced & Optional Features
-
-- Real-time communication using Socket.IO
-  - Notifications
-  - Live chat
-- Webhooks for event-based notifications
-- Payment gateway integration (Stripe / Razorpay)
-- Background jobs using Bull / Agenda
-- Caching layer using Redis
+### Reasoning
+Testing and automation are expected in professional backend systems.
 
 ---
 
-## 🎯 Suggested Next Steps
+## 🚀 Phase 5 – Advanced & Optional Enhancements
 
-Recommended immediate focus:
-1. Add `helmet` + rate limiting
-2. Implement file uploads (user & product images)
-3. Integrate frontend (React / Next.js)
-4. Add chatbot functionality
+### Possible Features
+- Redis caching
+- Background jobs (Bull / Agenda)
+- WebSocket notifications (Socket.IO)
+- Webhooks
+- Payment gateway integration
+
+### Reasoning
+These features enable scaling to enterprise-level workloads.
+
+---
+
+## 🎯 Recommended Immediate Next Step
+
+👉 **Start Frontend Integration**  
+Your backend is already strong, secure, and interview-ready.
 
 ---
 
 ## 📌 Notes
 
-This roadmap is intended to evolve as the project grows.  
-Completed features should be removed from future phases and documented in `README.md`.
+This roadmap evolves with the project.
+Completed features should remain documented in `README.md`,
+not re-listed as future work.

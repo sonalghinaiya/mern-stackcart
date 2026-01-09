@@ -1,220 +1,308 @@
 # Node Mongo CRUD API
 
-## Overview
+A **production-ready backend API** built with **Node.js, Express, and MongoDB**, following a clean **MVC architecture**.  
+This project demonstrates real-world backend engineering practices including **secure authentication**, **role-based authorization**, **file uploads**, **pagination**, **filtering**, **sorting**, **soft deletion**, and **AI chatbot integration**.
 
-Production-grade Node.js + Express REST API using MongoDB, secure JWT authentication, role-based access control, ownership authorization, request validation, and Swagger documentation.
+The codebase is structured, scalable, and suitable for **technical interviews** and **production use**.
 
 ---
 
-## 🚀 Features
+## 🚀 Project Overview
 
-### Authentication & Security
+This backend provides RESTful APIs for:
+
+- **User Management**
+- **Product Management**
+- **AI Chatbot**
+
+It emphasizes:
+
+- Security best practices
+- Maintainable architecture
+- Clear separation of concerns
+- Predictable and validated API behavior
+
+---
+
+## ✨ Features
+
+### Core Backend
+
+- RESTful APIs using Express
+- MongoDB with Mongoose ODM
+- Clean MVC folder structure
+- Environment-based configuration
+- Modular and scalable codebase
+
+---
+
+### Authentication & Authorization
+
 - JWT-based authentication
   - Access Token (short-lived)
   - Refresh Token (long-lived)
 - Refresh token stored securely in **httpOnly cookies**
-- Token verification using middleware
+- Token verification via middleware
 - Role-Based Access Control (RBAC)
-  - `user` and `admin` roles
+  - `user`
+  - `admin`
 - Ownership-based authorization
-  - Users can update/delete only their own data
-  - Admin can manage all resources
+  - Users can update/delete only their own resources
+  - Admin can manage all users and products
 
-### User Management
-- User registration with profile image upload
-- Login, logout, and token refresh
-- Update user profile (including profile image replacement)
-- Delete user account with automatic image cleanup
-
-### Product Management
-- Product CRUD operations
-- Product image upload
-- Ownership checks for update/delete
-- Admin override support
+---
 
 ### Validation & Error Handling
-- Request body validation using **Zod**
-- Centralized error handling middleware
-- Clear and consistent API error responses
 
-### File Uploads
-- Image upload using **Multer**
-- Separate folders for users and products
-- File type & size validation
+- Request validation using **Zod**
+- Centralized error handling middleware
+- Consistent API response format
+- No sensitive information leaked in errors
+
+---
+
+### File Uploads & Media Handling
+
+- Multer-based file uploads
+- User profile image upload
+- Product image upload
+- Image replacement on update
 - Old image cleanup on update/delete
-- Static file serving via `/uploads/*`
+- Local file storage under `/public/uploads`
+
+---
+
+### Data Handling
+
+- Pagination using query parameters
+- Filtering (users & products)
+- Sorting (users & products)
+- Soft delete using `isDeleted` flag
+- Soft-deleted records excluded from queries by default
+
+---
+
+### Security
+
+- Password hashing with bcrypt
+- HTTP security headers using Helmet
+- Rate limiting for authentication routes
+- CORS configuration with credentials support
+- Secure cookies in production environment
+
+---
+
+### AI Chatbot Integration
+
+- Chat endpoint (`/api/chat`)
+- Auth-protected chatbot access
+- AI service abstraction layer
+- Gemini/OpenAI-ready implementation
+- Secure API key handling via environment variables
+
+---
 
 ### API Documentation
-- Swagger (OpenAPI 3.0)
-- JSON-based Swagger configuration
-- Accessible at `/api-docs`
+
+- Swagger UI (OpenAPI 3.0)
+- Interactive API documentation
+- Clear request/response schemas
 
 ---
 
 ## 🛠 Tech Stack
 
-- Node.js
-- Express.js
-- MongoDB (Mongoose)
-- JWT (jsonwebtoken)
-- Zod (validation)
-- bcrypt (password hashing)
-- Helmet & CORS
-- Multer (file uploads)
-- Swagger (OpenAPI 3.0)
-- cookie-parser
-- ES Modules
+- **Backend:** Node.js, Express
+- **Database:** MongoDB, Mongoose
+- **Authentication:** JSON Web Tokens (JWT)
+- **Validation:** Zod
+- **File Uploads:** Multer
+- **Security:** Helmet, bcrypt, express-rate-limit
+- **AI Integration:** Gemini / OpenAI (service-based)
+- **Documentation:** Swagger UI
 
 ---
 
-## 📂 Folder Structure
+## 📁 Folder Structure
 
 ```
-/
-├── controllers/
-├── routes/
-├── models/
-├── middlewares/
-├── validators/
-├── utils/
-├── config/
-├── public/
-│ └── uploads/
-│ ├── users/
-│ └── products/
-├── swagger/
-│ └── swagger.json
-├── index.js
+/ (root)
+├── controllers/ # Business logic
+├── middlewares/ # Auth, error handling, rate limiting
+├── models/ # Mongoose schemas
+├── routes/ # Express routers
+├── services/ # AI / external services
+├── utils/ # JWT helpers
+├── validators/ # Zod schemas
+├── config/ # Database configuration
+├── public/uploads/ # Uploaded images
+├── swagger/ # OpenAPI spec
+├── index.js # Application entry point
 └── package.json
 ```
 
 ---
 
-## 🔐 Authentication & Authorization Flow
+## 🔐 Authentication Flow (JWT)
 
-- **Access Token**
+1. User logs in
+2. Server generates:
+   - **Access Token** (returned in response)
+   - **Refresh Token** (stored in httpOnly cookie)
+3. Client sends access token in request headers:
+   - Authorization: Bearer <token>
+4. `isAuthenticated` middleware:
 
-  - Short-lived JWT
-  - Sent via `Authorization: Bearer <token>`
-  - Used to access protected APIs
+- Verifies JWT
+- Attaches decoded user data to `req.user`
 
-- **Refresh Token**
+5. Protected routes enforce:
 
-  - Long-lived JWT
-  - Stored in **httpOnly cookie**
-  - Used to generate a new access token
-  - Automatically invalidated on logout
-
-- **RBAC**
-
-  - Role-based permissions (`user`, `admin`)
-  - Admin can manage all users and products
-
-- **Ownership**
-  - Users can update/delete only their own resources
-  - Enforced at controller level
+- Authentication
+- Role-based access
+- Ownership checks
 
 ---
 
-## 🔍 Request Validation
+## Validation Strategy (Zod)
 
-- All incoming request bodies are validated using **Zod**
-- Invalid input returns clear, descriptive error messages
-- Separate validation schemas for:
-  - Authentication
-  - Products
-
----
-
-## 📘 API Documentation
-
-- **Swagger UI:**  
-  Visit [http://localhost:8000/api-docs](http://localhost:8000/api-docs)
-- **OpenAPI 3.0**: Docs include tagged endpoints, input, responses, auth requirements.
+- All incoming request bodies are validated using Zod schemas
+- Validation occurs before controller execution
+- Ensures predictable data structure
+- Prevents malformed or malicious input
+- Validation errors are handled centrally
 
 ---
 
-## 📌 API Endpoints Overview
+## API Response Format
 
-### Auth
+All standard responses are in this form:
 
-| Method | Endpoint           | Description             |
-| ------ | ------------------ | ----------------------- |
-| POST   | /api/auth/register | Register new user       |
-| POST   | /api/auth/login    | Login & generate tokens |
-| POST   | /api/auth/refresh  | Refresh access token    |
-| POST   | /api/auth/logout   | Logout user             |
-
-### Users
-
-| Method | Endpoint       | Access        |
-| ------ | -------------- | ------------- |
-| GET    | /api/users     | Admin         |
-| GET    | /api/users/:id | Authenticated |
-| PATCH  | /api/users/:id | Owner / Admin |
-| DELETE | /api/users/:id | Owner / Admin |
-
-### Products
-
-| Method | Endpoint          | Access        |
-| ------ | ----------------- | ------------- |
-| GET    | /api/products     | Public        |
-| GET    | /api/products/:id | Public        |
-| POST   | /api/products     | Authenticated |
-| PATCH  | /api/products/:id | Owner / Admin |
-| DELETE | /api/products/:id | Owner / Admin |
-
----
-
-## 🔒 Security Notes
-
-- Passwords are hashed using bcrypt
-- Refresh tokens stored in httpOnly cookies
-- Access tokens are short-lived
-- RBAC and ownership checks prevent unauthorized access
-
----
-
-## 🌍 Environment Variables
-
+```json
+{
+  "success": true/false,
+  "message": "String message",
+  "data": { ... }
+}
 ```
+
+Errors always include `success: false` and an error message.
+
+Example (success):
+
+```json
+{
+  "success": true,
+  "data": { ... }
+}
+```
+
+Example (error):
+
+```json
+{
+  "success": false,
+  "message": "Validation failed"
+}
+```
+
+---
+
+## ⚙️ Environment Variables (.env.example)
+
+```bash
+
 PORT=8000
-MONGODB_URI=
-JWT_SECRET=
+MONGODB_URI=mongodb://localhost:27017/node-crud
+JWT_SECRET=your_jwt_secret
 JWT_ACCESS_EXPIRES_IN=15m
 JWT_REFRESH_EXPIRES_IN=7d
 NODE_ENV=development
+GEMINI_API_KEY=your_gemini_api_key
 ```
 
 ---
 
-## ▶️ Run Locally
+## ▶️Setup & Run Instructions
 
-
-1. Clone this repo & install dependencies:
-   ```
-   git clone <repo-url>
+1. Clone the repo:
+   ```bash
+   git clone <repo_url>
    cd node-mongo-crud-api
    npm install
    ```
-2. Create `.env` and fill in variables.
-3. Start server:
-   ```
+2. Create a .env file using the example above
+3. Start the development server:
+   ```bash
    npm run dev
    ```
+4. API base URL:
+   `http://localhost:8000`
+5. Swagger documentation:
+   ```
+   http://localhost:8000/api-docs
+   ```
 
 ---
 
-## 📌 Project Status
+## 🔒 Protected Routes
 
-✔ Core backend complete  
-✔ Authentication & authorization implemented  
-✔ Swagger documentation available
-
-Planned enhancements are listed in `IMPROVEMENTS.md`.
+- All create, update, and delete operations require authentication
+- Authorization checks ensure:
+  - Users can manage only their own data
+  - Admin users can manage all resources
+- Invalid or missing tokens return 401 Unauthorized
 
 ---
 
-## 👤 Author
+## Example API Usage
 
-**Sonal Ghinaiya**
+### Register
+
+```bash
+POST /api/auth/register
+{
+  "firstName": "Alice",
+  "email": "alice@mail.com",
+  "password": "password123"
+}
+```
+
+### Login
+
+```bash
+POST /api/auth/login
+{
+  "email": "alice@mail.com",
+  "password": "password123"
+}
+```
+
+Returns: `{ success, token, data: { user } }`
+
+### 🤖 Chat API Example
+
+```bash
+POST /api/chat
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "message": "What is Node.js?"
+}
+```
+
+---
+
+## 📌 Notes
+
+- This project is intentionally backend-focused
+- Designed to integrate easily with React or Next.js frontends
+- Codebase follows real-world backend standards
+- Suitable for interview demonstration and further extension
+
+---
+
+## 👩‍💻 Author
+
+Sonal Ghinaiya
