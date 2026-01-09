@@ -12,10 +12,10 @@ export const getProducts = async (req, res, next) => {
     const limit = req.query.limit || 10;
 
     const offset = (page - 1) * limit;
-    const totalItems = await Product.countDocuments();
+    const totalItems = await Product.countDocuments({ isDeleted: false });
     const totalPages = Math.ceil(totalItems / limit);
 
-    const query = {};
+    const query = { isDeleted: false };
 
     if (req.query.name) {
       query.name = { $regex: req.query.name, $options: "i" };
@@ -35,7 +35,7 @@ export const getProducts = async (req, res, next) => {
       }
     }
 
-    const sortBy = req.query.sortBy;
+    const sortBy = req.query.sortBy || "createdAt";
     const order = req.query.order === "asc" ? 1 : -1;
 
     const sort = { [sortBy]: order };
@@ -104,7 +104,10 @@ export const createProduct = async (req, res, next) => {
 
 export const getProductById = async (req, res, next) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findOne({
+      _id: req.params.id,
+      isDeleted: false,
+    });
     if (!product) {
       res.status(404);
       throw new Error("Product not found");
@@ -128,7 +131,10 @@ export const updateProduct = async (req, res, next) => {
 
     const { name, description, price, rating } = result.data;
 
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findOne({
+      _id: req.params.id,
+      isDeleted: false,
+    });
     if (!product) {
       res.status(404);
       throw new Error("Product not found");
@@ -194,17 +200,19 @@ export const deleteProduct = async (req, res, next) => {
       throw new Error("You are not allowed to delete this product");
     }
 
-    if (product.image) {
-      const filePath = path.join(process.cwd(), "public", product.image);
-      try {
-        await fs.unlink(filePath);
-        console.log("Product Image deleted:", filePath);
-      } catch (error) {
-        console.log(error.message);
-      }
-    }
+    product.isDeleted = true;
+    await product.save();
+    // if (product.image) {
+    //   const filePath = path.join(process.cwd(), "public", product.image);
+    //   try {
+    //     await fs.unlink(filePath);
+    //     console.log("Product Image deleted:", filePath);
+    //   } catch (error) {
+    //     console.log(error.message);
+    //   }
+    // }
 
-    await product.deleteOne();
+    // await product.deleteOne();
     return res.json({ success: true, message: "Product deleted successfully" });
   } catch (error) {
     next(error);

@@ -69,6 +69,11 @@ export const login = async (req, res, next) => {
       throw new Error("Invalid email and Password");
     }
 
+    if (user.isDeleted) {
+      res.status(403);
+      throw new Error("Account has been deleted");
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       res.status(401);

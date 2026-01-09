@@ -8,10 +8,10 @@ export const getAllUsers = async (req, res, next) => {
     const limit = req.query.limit || 10;
     const offset = (page - 1) * limit;
 
-    const totalUsers = await User.countDocuments();
+    const totalUsers = await User.countDocuments({ isDeleted: false });
     const totalPages = Math.ceil(totalUsers / limit);
 
-    const query = {};
+    const query = { isDeleted: false };
 
     if (req.query.firstName) {
       query.firstName = { $regex: req.query.firstName, $options: "i" };
@@ -33,10 +33,10 @@ export const getAllUsers = async (req, res, next) => {
       query.gender = { $regex: req.query.gender, $options: "i" };
     }
 
-    const sortBy = req.query.sortBy;
+    const sortBy = req.query.sortBy || "createdAt";
     const order = req.query.order === "asc" ? 1 : -1;
 
-    const sort = { [sortBy]: order };
+    const sort = { [sortBy]: order }
 
     const user = await User.find(query)
       .select("-password")
@@ -61,7 +61,10 @@ export const getAllUsers = async (req, res, next) => {
 
 export const getUserById = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findOne({
+      _id: req.params.id,
+      isDeleted: false,
+    });
     if (!user) {
       res.status(404);
       throw new Error("User not found");
@@ -78,7 +81,7 @@ export const updateUser = async (req, res, next) => {
       res.status(403);
       throw new Error("You can update only your own profile");
     }
-    const user = await User.findById(req.params.id);
+    const user = await User.findOne({ _id: req.params.id, isDeleted: false });
     if (!user) {
       res.status(404);
       throw new Error("User not found");
@@ -123,21 +126,23 @@ export const deleteUser = async (req, res, next) => {
       res.status(403);
       throw new Error("You can delete only your own account");
     }
-    const user = await User.findByIdAndDelete(req.params.id);
+    const user = await User.findById(req.params.id);
     if (!user) {
       res.status(404);
       throw new Error("User not found");
     }
 
-    if (user.profileImage) {
-      const filePath = path.join(process.cwd(), "public", user.profileImage);
-      try {
-        await fs.unlink(filePath);
-        console.log("Profile image deleted:", filePath);
-      } catch (error) {
-        console.log(error.message);
-      }
-    }
+    user.isDeleted = true;
+    await user.save();
+    // if (user.profileImage) {
+    //   const filePath = path.join(process.cwd(), "public", user.profileImage);
+    //   try {
+    //     await fs.unlink(filePath);
+    //     console.log("Profile image deleted:", filePath);
+    //   } catch (error) {
+    //     console.log(error.message);
+    //   }
+    // }
 
     return res.json({ success: true, message: "User deleted successfully" });
   } catch (error) {
