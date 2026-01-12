@@ -11,8 +11,8 @@ import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
-import chatRoutes from "./routes/chatRoutes.js"
-import adminRoutes from "./routes/adminRoutes.js"
+import chatRoutes from "./routes/chatRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -25,12 +25,12 @@ app.use(cookieParser());
 app.use(helmet());
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: true,
     credentials: true,
   })
 );
 
-app.use(express.static("public"))
+app.use(express.static("public"));
 
 const swaggerDocument = JSON.parse(
   fs.readFileSync(path.resolve("swagger/swagger.json"), "utf-8")
@@ -46,8 +46,8 @@ connectDB(url).then(() => console.log("MongoDB Connected!"));
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/products", productRoutes);
-app.use("/api/v1/chat", chatRoutes)
-app.use("/api/v1/admin", adminRoutes)
+app.use("/api/v1/chat", chatRoutes);
+app.use("/api/v1/admin", adminRoutes);
 
 app.use(errorHandler);
 
