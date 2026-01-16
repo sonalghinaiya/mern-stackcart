@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axois from "axios";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
@@ -11,13 +11,10 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axois.post("http://localhost:8000/api/v1/auth/login", {
+      const res = await axios.post("http://localhost:8000/api/v1/auth/login", {
         email,
         password,
       });
-
-      console.log("res...", res);
-      console.log("res.data...", res.data);
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.data));

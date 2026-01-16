@@ -63,7 +63,7 @@ export const login = async (req, res, next) => {
       });
     }
     const { email, password } = result.data;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("+password");
     if (!user) {
       res.status(401);
       throw new Error("Invalid email and Password");
