@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import Product from "./pages/Product";
 import AddProduct from "./pages/AddProduct";
+import ProtectedRoutes from "./components/ProtectedRoutes";
 
 function App() {
   return (
@@ -13,9 +14,30 @@ function App() {
         <Route path="/" element="" />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/products" element={<Product />} />
-        <Route path="/products/add" element={<AddProduct />} />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoutes>
+              <Profile />
+            </ProtectedRoutes>
+          }
+        />
+        <Route
+          path="/products"
+          element={
+            <ProtectedRoutes>
+              <Product />
+            </ProtectedRoutes>
+          }
+        />
+        <Route
+          path="/products/add"
+          element={
+            <ProtectedRoutes>
+              <AddProduct />
+            </ProtectedRoutes>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
