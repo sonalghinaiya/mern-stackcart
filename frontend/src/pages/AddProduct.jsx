@@ -1,6 +1,6 @@
-import axios from "axios";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../api/axios";
 
 function AddProduct() {
   const navigate = useNavigate();
@@ -12,16 +12,7 @@ function AddProduct() {
     const formData = new FormData(e.target);
 
     try {
-      const res = await axios.post(
-        "http://localhost:8000/api/v1/products",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        },
-      );
+      const res = await api.post("/products", formData);
 
       navigate("/products");
     } catch (error) {
@@ -33,8 +24,8 @@ function AddProduct() {
       <h2>Add Product</h2>
       <form onSubmit={handleSubmit}>
         <input type="text" name="name" placeholder="Name" />
-        <input type="number" name="price" placeholder="Price" /> 
-        <input type="text" name="description" placeholder="Description" /> 
+        <input type="number" name="price" placeholder="Price" />
+        <input type="text" name="description" placeholder="Description" />
         <input type="number" name="rating" placeholder="Rating" />
         <input type="file" name="image" />
         <button type="submit">Add</button>

@@ -1,7 +1,6 @@
-import axios from "axios";
 import React from "react";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../api/axios";
 
 function Register() {
   const navigate = useNavigate();
@@ -10,15 +9,7 @@ function Register() {
     e.preventDefault();
     try {
       const formData = new FormData(e.target);
-      const res = await axios.post(
-        "http://localhost:8000/api/v1/auth/register",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const res = await api.post("/auth/register", formData);
 
       navigate("/login");
     } catch (error) {

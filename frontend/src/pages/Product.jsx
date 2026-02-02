@@ -1,5 +1,6 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import api from "../api/axios";
+import React from "react";
 
 function Product() {
   const [products, setProducts] = useState([]);
@@ -7,8 +8,7 @@ function Product() {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/v1/products");
-      // console.log("res", res.data.data);
+      const res = await api.get("http://localhost:8000/api/v1/products");
       setProducts(res.data.data);
     } catch (error) {
       console.log(error);
@@ -21,14 +21,7 @@ function Product() {
 
   const handleDelete = async (id) => {
     try {
-      const res = await axios.delete(
-        `http://localhost:8000/api/v1/products/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      const res = await api.delete(`/products/${id}`);
       fetchProducts();
     } catch (error) {
       console.log(error);
