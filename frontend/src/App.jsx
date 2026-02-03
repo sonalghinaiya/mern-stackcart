@@ -2,11 +2,11 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
-import Product from "./pages/Product";
-import AddProduct from "./pages/AddProduct";
+import ProductList from "./pages/ProductList";
 import ProtectedRoutes from "./components/ProtectedRoutes";
 import Navbar from "./components/Navbar";
 import React from "react";
+import AddEditProduct from "./pages/AddEditProduct";
 
 function App() {
   return (
@@ -28,7 +28,7 @@ function App() {
           path="/products"
           element={
             <ProtectedRoutes>
-              <Product />
+              <ProductList />
             </ProtectedRoutes>
           }
         />
@@ -36,7 +36,15 @@ function App() {
           path="/products/add"
           element={
             <ProtectedRoutes>
-              <AddProduct />
+              <AddEditProduct />
+            </ProtectedRoutes>
+          }
+        />
+        <Route
+          path="/products/edit/:id"
+          element={
+            <ProtectedRoutes>
+              <AddEditProduct />
             </ProtectedRoutes>
           }
         />

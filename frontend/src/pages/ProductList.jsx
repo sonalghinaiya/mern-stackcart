@@ -4,7 +4,7 @@ import React from "react";
 import { FaEdit, FaPlus, FaTrash, FaTrashAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
-function Product() {
+function ProductList() {
   const [products, setProducts] = useState([]);
   const token = localStorage.getItem("token");
 
@@ -59,9 +59,12 @@ function Product() {
               />
             </div>
             <div className="flex gap-3">
-              <button className="text-blue-600 hover:text-blue-800">
+              <Link
+                to={`/products/edit/${product._id}`}
+                className="text-blue-600 hover:text-blue-800"
+              >
                 <FaEdit />
-              </button>
+              </Link>
               <button
                 onClick={() => {
                   handleDelete(product._id);
@@ -78,4 +81,4 @@ function Product() {
   );
 }
 
-export default Product;
+export default ProductList;
