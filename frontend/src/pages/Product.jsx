@@ -10,7 +10,7 @@ function Product() {
 
   const fetchProducts = async () => {
     try {
-      const res = await api.get("http://localhost:8000/api/v1/products");
+      const res = await api.get("/products");
       setProducts(res.data.data);
     } catch (error) {
       console.log(error);
@@ -30,15 +30,14 @@ function Product() {
     }
   };
   return (
-    <div className="p-6">
+    <div className="p-6 max-w-5xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Products</h2>
         <Link
           to="/products/add"
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
-          <FaPlus />
-          Add Product
+          + Add Product
         </Link>
       </div>
 
@@ -46,12 +45,18 @@ function Product() {
         {products.map((product) => (
           <div
             key={product._id}
-            className="border p-4 items-start rounded flex justify-between"
+            className="border p-4 rounded flex justify-between"
           >
             <div>
-              <h4 className="font-semibold">{product.name}</h4>
-              <p>₹{product.price}</p>
-              <p>⭐{product.rating}</p>
+              <h4 className="font-semibold text-lg">{product.name}</h4>
+              <p className="text-gray-500 text-sm">{product.description}</p>
+              <p className="text-gray-600">₹{product.price}</p>
+              <p className="text-gray-500 text-sm">⭐{product.rating}</p>
+              <img
+                src={`http://localhost:8000/${product.image}`}
+                alt={product.name}
+                className="w-24 h-24 rounded object-cover mt-5"
+              />
             </div>
             <div className="flex gap-3">
               <button className="text-blue-600 hover:text-blue-800">
