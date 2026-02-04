@@ -87,14 +87,27 @@ function AddEditProduct() {
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Description"
         />
-        <input
+        {/* <input
           className="input"
           type="number"
           value={rating}
           name="rating"
           onChange={(e) => setRating(e.target.value)}
           placeholder="Rating"
-        />
+        /> */}
+        <select
+          className="input"
+          name="rating"
+          value={rating}
+          onChange={(e) => setRating(e.target.value)}
+        >
+          <option value="">Select Rating</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
         <label className="text-sm text-gray-600 mt-2 block">
           Product image
         </label>
