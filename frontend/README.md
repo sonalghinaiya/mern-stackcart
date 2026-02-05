@@ -1,16 +1,84 @@
-# React + Vite
+# Frontend – node-mongo-crud-api/frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+A modern client-side SPA built with React and Tailwind CSS for the Node Mongo CRUD API platform.  
+Provides authentication flow, user profile, product management, and mobile-first UX.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## ✨ Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- User registration & login forms (JWT auth)
+- Profile management with image/avatar update
+- Protected routes (redirect on invalid auth)
+- Token storage & auto-refresh with Axios interceptors
+- Product CRUD: list, add, edit, delete
+- Product images (Cloudinary hosted)
+- Pagination for product lists
+- Responsive UI (Tailwind CSS)
+- Alerts, modals, and basic 404 error handling
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🔑 Auth Flow
+
+- Logins/registrations receive JWT tokens
+- Access token in React state/localStorage
+- Refresh token managed via cookie (httpOnly)
+- Axios interceptors auto-attach access token
+- On 401, token refresh is attempted; logout on failure
+
+---
+
+## 🗂️ Folder Structure
+
+```
+frontend/
+├── src/
+│   ├── components/
+│   ├── pages/
+│   ├── api/
+│   ├── routes/
+│   ├── utils/
+│   └── App.js
+├── public/
+└── package.json
+```
+
+---
+
+## ⚙️ Environment Variables
+
+Copy `.env.example` to `.env` and configure:
+
+```
+REACT_APP_API_URL=http://localhost:8000
+REACT_APP_CLOUDINARY_PRESET=your_unsigned_upload_preset  # if using unsigned uploads
+```
+
+---
+
+## 🚀 Running Locally
+
+```bash
+cd frontend
+npm install
+npm start
+# App runs on http://localhost:3000
+```
+
+---
+
+## 🔐 Security & Best Practices
+
+- All sensitive data handled on server
+- JWT/refresh in secure storage/cookie
+- No hardcoded secrets in client code
+- Axios interceptor prevents token leaks
+
+---
+
+## 👤 Author
+
+**Sonal Ghinaiya**
