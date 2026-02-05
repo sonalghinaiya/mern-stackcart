@@ -79,7 +79,8 @@ export const createProduct = async (req, res, next) => {
     }
     const { name, description, price, rating } = result.data;
 
-    const image = `uploads/products/${req.file.filename}`;
+    // const image = `uploads/products/${req.file.filename}`;
+    const image = req.file.path;
     const product = await Product.create({
       name,
       description,
@@ -95,7 +96,8 @@ export const createProduct = async (req, res, next) => {
     return res.status(201).json({
       success: true,
       message: "Product created Successfully",
-      data: { ...product.toObject(), image: imageUrl },
+      data: product,
+      // data: { ...product.toObject(), image: imageUrl },
     });
   } catch (error) {
     next(error);
@@ -171,7 +173,7 @@ export const updateProduct = async (req, res, next) => {
         rating,
         image: imagePath,
       },
-      { new: true }
+      { new: true },
     );
 
     return res.json({

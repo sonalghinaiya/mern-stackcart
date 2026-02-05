@@ -24,7 +24,8 @@ export const register = async (req, res, next) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const profileImage = `uploads/users/${req.file.filename}`;
+    // const profileImage = `uploads/users/${req.file.filename}`;
+    const profileImage = req.file.path;
 
     const user = await User.create({
       firstName,
@@ -36,16 +37,17 @@ export const register = async (req, res, next) => {
       profileImage,
     });
 
-    const protocol = req.protocol;
-    const hostName = req.host;
-    const imageUrl = `${protocol}://${hostName}/${user.profileImage}`;
+    // const protocol = req.protocol;
+    // const hostName = req.host;
+    // const imageUrl = `${protocol}://${hostName}/${user.profileImage}`;
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
-      data: {
-        ...user.toObject(),
-        profileImage: imageUrl,
-      },
+      data: user,
+      // data: {
+      //   ...user.toObject(),
+      //   profileImage: imageUrl,
+      // },
     });
   } catch (error) {
     next(error);
@@ -86,14 +88,14 @@ export const login = async (req, res, next) => {
         role: user.role,
         email: user.email,
       },
-      process.env.JWT_ACCESS_EXPIRES_IN
+      process.env.JWT_ACCESS_EXPIRES_IN,
     );
 
     const refreshToken = generateToken(
       {
         id: user.id,
       },
-      process.env.JWT_REFRESH_EXPIRES_IN
+      process.env.JWT_REFRESH_EXPIRES_IN,
     );
 
     res.cookie("refreshToken", refreshToken, {
@@ -134,7 +136,7 @@ export const refreshAccessToken = async (req, res, next) => {
 
     const newAccessToken = generateToken(
       { id: decoded.id, role: decoded.role, email: decoded.email },
-      process.env.JWT_ACCESS_EXPIRES_IN
+      process.env.JWT_ACCESS_EXPIRES_IN,
     );
 
     res.json({ success: true, accessToken: newAccessToken });
