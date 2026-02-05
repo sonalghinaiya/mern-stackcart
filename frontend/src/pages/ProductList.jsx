@@ -53,7 +53,7 @@ function ProductList() {
               <p className="text-gray-600">₹{product.price}</p>
               <p className="text-gray-500 text-sm">⭐{product.rating}</p>
               <img
-                src={`http://localhost:8000/${product.image}`}
+                src={product.image}
                 alt={product.name}
                 className="w-24 h-24 rounded object-cover mt-5"
               />

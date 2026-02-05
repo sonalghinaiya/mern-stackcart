@@ -21,7 +21,7 @@ function Profile() {
         {user.profileImage && (
           <div className="flex justify-center mb-4">
             <img
-              src={`http://localhost:8000/${user.profileImage}`}
+              src={user.profileImage}
               alt="Profile"
               className="w-24 h-24 rounded-full object-cover border"
             />
