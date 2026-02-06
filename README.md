@@ -1,76 +1,108 @@
-# MERN Stack CRUD Platform
+# StackCart – MERN Stack CRUD Platform
 
-## Overview
+## 📌 Overview
 
-This project is a modern full-stack CRUD platform built with the MERN stack (MongoDB, Express.js, React, Node.js).  
-It provides secure user authentication, cloud-based image uploads, product management, and responsive UI with production-ready best practices.
+StackCart is a full-stack MERN application designed to demonstrate real-world backend and frontend development practices.  
+It includes secure authentication, cloud-based image handling, product management, and a clean, responsive user interface.
 
----
-
-## 🎨 Features
-
-- User registration & login (JWT-based authentication)
-- Protected routes (backend & frontend)
-- User profile with avatar upload (Cloudinary integration)
-- Product CRUD: add, edit, delete, list
-- Secure image uploads
-- MongoDB Atlas as managed DB
-- Backend deployed on Render
-- Frontend consumes API via Axios
-- Axios interceptors with token refresh logic
-- Product listing supports pagination
-- Modern UI with Tailwind CSS
+This project is built with scalability, security, and production readiness in mind.
 
 ---
 
-## 🛠 Tech Stack
+## ✨ Key Features
 
-- **Backend:** Node.js, Express.js, MongoDB Atlas, Mongoose, JWT, Cloudinary
-- **Frontend:** React, React Router, Axios, Tailwind CSS
-- **Hosting:** Render (backend), Vercel(frontend)
+- 🔐 User registration & login using JWT authentication
+- 🛡 Protected routes on both backend and frontend
+- 👤 User profile management with avatar upload (Cloudinary)
+- 📦 Product management (Create, Read, Update, Delete)
+- 🖼 Cloud-based image uploads (no local storage dependency)
+- 📄 Pagination support for product listing
+- 🔄 Axios interceptors with automatic token refresh
+- 📚 API documentation using Swagger
+- 📱 Fully responsive UI with Tailwind CSS
 
 ---
 
-## 📁 Folder Structure
+## 🧰 Tech Stack
 
-```
-node-mongo-crud-api/
+### Backend
+
+- Node.js
+- Express.js
+- MongoDB Atlas
+- Mongoose
+- JWT Authentication
+- Cloudinary
+- Multer
+- Swagger
+
+### Frontend
+
+- React (Vite)
+- React Router
+- Axios
+- Tailwind CSS
+
+### Deployment
+
+- **Backend:** Render
+- **Frontend:** Vercel
+- **Database:** MongoDB Atlas
+
+---
+
+## 🔗 Live Links
+
+- 🔌 **Backend API:** https://stackcart.onrender.com
+- 🌐 **Frontend App:** https://stackcart-five.vercel.app
+- 📘 **API Docs:** https://stackcart.onrender.com/api-docs
+
+---
+
+## 📂 Project Structure
+
+```text
+stackcart/
 │
-├── backend/             # Express/MongoDB REST API
-├── frontend/            # React client
-└── README.md            
+├── backend/              # Express + MongoDB REST API
+├── frontend/             # React client (Vite)
+└── README.md             # Project documentation
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Local Setup
 
-1. **Clone this repo:**
-   ```bash
-   git clone <repo-url>
-   cd node-mongo-crud-api
-   ```
+1️⃣ **Clone Repository**
 
-2. **Setup backend:**
-   ```bash
-   cd backend
-   npm install
-   # Create .env (see backend/README.md)
-   npm run dev
-   ```
+```bash
+git clone https://github.com/sonalghinaiya/mern-stackcart.git
+cd mern-stackcart
+```
 
-3. **Setup frontend:**
-   ```bash
-   cd frontend
-   npm install
-   # Create .env (see frontend/README.md)
-   npm start
-   ```
+2️⃣ **Backend Setup**
 
-4. **Access the app** via `http://localhost:3000` (default) and API docs at `/api-docs` (backend).
+```bash
+cd backend
+npm install
 
----
+Create a .env file (see backend/README.md) and then:
 
-## 👤 Author
+npm run dev
+```
+
+3️⃣ **Frontend Setup**
+
+```bash
+cd frontend
+npm install
+
+
+Create a .env file (see frontend/README.md) and then:
+
+npm run dev
+```
+
+## 🧑‍💻 Author
 
 **Sonal Ghinaiya**
