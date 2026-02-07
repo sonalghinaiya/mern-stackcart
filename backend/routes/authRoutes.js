@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  forgotPassword,
   login,
   logout,
   refreshAccessToken,
@@ -17,6 +18,7 @@ router.post(
   register
 );
 router.post("/login", authLimiter, login);
+router.post("/forgot-password", forgotPassword)
 
 router.post("/refresh", authLimiter, refreshAccessToken);
 router.post("/logout", logout);

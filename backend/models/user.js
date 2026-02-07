@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
-      select: false
+      select: false,
     },
     gender: {
       type: String,
@@ -27,6 +27,12 @@ const userSchema = new mongoose.Schema(
     },
     profileImage: {
       type: String,
+    },
+    otp: {
+      type: String,
+    },
+    otpExpire: {
+      type: Date,
     },
     role: {
       type: String,
@@ -38,7 +44,7 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const User = mongoose.model("user", userSchema);
