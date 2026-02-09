@@ -188,9 +188,49 @@ export const verifyOtp = async (req, res, next) => {
       });
     }
 
+    user.otpVerified = true;
+    await user.save();
+
     return res.status(200).json({
       success: true,
       message: "OTP verified successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetPassword = async (req, res, next) => {
+  try {
+    const { password } = req.body;
+    if (!password) {
+      return res.status(400).json({
+        success: false,
+        message: "Password is required",
+      });
+    }
+
+    const user = await User.findOne({ otpVerified: true });
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP verification required",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+
+    user.otp = undefined;
+    user.otpExpire = undefined;
+    user.otpVerified = false;
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Password reset successfully. Please login",
     });
   } catch (error) {
     next(error);
