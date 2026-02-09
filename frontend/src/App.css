@@ -1,6 +1,12 @@
-.input{
-    width: 100%;
-    border: 1px solid #ccc;
-    padding: 8px;
-    border-radius: 6px;
+.input {
+  width: 100%;
+  border: 1px solid #ccc;
+  background-color: #f9fafb;
+  padding: 4px 6px;
+  margin: 6px;
+  border-radius: 6px;
+}
+
+.input::placeholder {
+  font-size: 14px;
 }
