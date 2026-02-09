@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
-import { transporter } from "./mail/ethereal.js";
+// import { transporter } from "./mail/ethereal.js";
+import { transporter } from "./mail/gmail.js";
 
 export const sendVerificationCode = async (email, otp) => {
   const info = await transporter.sendMail({

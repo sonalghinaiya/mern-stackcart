@@ -5,6 +5,7 @@ import {
   logout,
   refreshAccessToken,
   register,
+  verifyOtp,
 } from "../controllers/authController.js";
 import { authLimiter } from "../middlewares/rateLimiter.js";
 import { uploadUser } from "../middlewares/upload.js";
@@ -19,6 +20,7 @@ router.post(
 );
 router.post("/login", authLimiter, login);
 router.post("/forgot-password", forgotPassword)
+router.post("/verify-otp", verifyOtp)
 
 router.post("/refresh", authLimiter, refreshAccessToken);
 router.post("/logout", logout);

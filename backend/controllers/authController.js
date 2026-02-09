@@ -138,11 +138,9 @@ export const forgotPassword = async (req, res, next) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const hashedOtp = await bcrypt.hash(otp, 10);
 
-    console.log("OTP", otp);
-    console.log("Hash OTP", hashedOtp);
     user.otp = hashedOtp;
     user.otpExpire = Date.now() + 10 * 60 * 1000;
-    console.log("OTP Expire In", user.otpExpire);
+
     await user.save();
 
     await sendVerificationCode(user.email, otp);
@@ -150,6 +148,49 @@ export const forgotPassword = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: "OTP sent to your email",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const verifyOtp = async (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and OTP are required.",
+      });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user || !user.otp || !user.otpExpire) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired OTP",
+      });
+    }
+
+    if (user.otpExpire < Date.now()) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP has expired",
+      });
+    }
+
+    const isOtpValid = await bcrypt.compare(otp, user.otp);
+    if (!isOtpValid) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid OTP",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "OTP verified successfully",
     });
   } catch (error) {
     next(error);
