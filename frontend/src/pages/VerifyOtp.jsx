@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
 function VerifyOtp() {
-  const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
 
   const navigate = useNavigate();
@@ -14,7 +13,6 @@ function VerifyOtp() {
     e.preventDefault();
     try {
       const res = await api.post("/auth/verify-otp", {
-        email,
         otp,
       });
       navigate("/reset-password");
@@ -33,20 +31,22 @@ function VerifyOtp() {
           Please check your email for a six-digit security code and enter it
           below
         </p>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          className="input"
-          onChange={(e) => setEmail(e.target.value)}
-        />
         <OtpInput
           value={otp}
           onChange={setOtp}
           numInputs={6}
-          renderSeparator={<span>-</span>}
+          inputStyle={{
+            width: "40px",
+            height: "48px",
+            borderRadius: "8px",
+            border: "1px solid #ccc",
+            fontSize: "18px",
+          }}
+          containerStyle={{ justifyContent: "space-between" }}
+          renderSeparator={<span> </span>}
           renderInput={(props) => <input {...props} />}
         />
+
         <button
           type="submit"
           className="bg-gray-900 text-white rounded w-full px-2 py-1.5"

@@ -1,10 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { FcGoogle } from "react-icons/fc";
+import { FiUpload } from "react-icons/fi";
+import { IoEye, IoEyeOff } from "react-icons/io5";
 
 function Register() {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [preview, setPreview] = useState(null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) setPreview(URL.createObjectURL(file));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,65 +33,76 @@ function Register() {
         className="bg-white p-6 rounded-2xl shadow w-full max-w-md"
       >
         <h2 className="text-2xl font-bold text-center">Create account</h2>
-        <p className="text-gray-500 text-md text-center mb-2">
+        <p className="text-gray-500 text-md text-center mb-4">
           Signup to your StackCart
         </p>
-        <div>
-          <label className="text-sm font-semibold">First Name</label>
-          <input className="input mt-1" name="firstName" placeholder="Sonal" />
+        <div className="grid grid-cols-2 gap-3">
+          <input className="input" name="firstName" placeholder="First name" />
+          <input className="input" name="lastName" placeholder="Last name" />
         </div>
-        <div>
-          <label className="text-sm font-semibold">Last Name</label>
-          <input className="input" name="lastName" placeholder="Ghinaiya" />
-        </div>
-        <div>
-          <label className="text-sm font-semibold">Email</label>
+
+        <input
+          className="input"
+          type="email"
+          name="email"
+          placeholder="Email"
+        />
+
+        <div className="relative">
           <input
             className="input"
-            type="email"
-            name="email"
-            placeholder="sg@gmail.com"
-          />
-        </div>
-        <div>
-          <label className="text-sm font-semibold">Password</label>
-          <input
-            className="input"
-            type="password"
+            type={showPassword ? "text" : "password"}
             name="password"
             placeholder="Password"
           />
-        </div>
-        <div>
-          <label className="text-sm font-semibold">Job Title</label>
-          <input
-            className="input"
-            name="jobTitle"
-            placeholder="MERN Developer"
-          />
+          <button
+            onClick={() => setShowPassword(!showPassword)}
+            type="button"
+            className="absolute right-2 -translate-y-1/2 top-1/2 text-gray-600"
+          >
+            {showPassword ? <IoEyeOff /> : <IoEye />}
+          </button>
         </div>
 
-        <div className="flex gap-4 text-sm m-2 ">
-          <label className="flex items-center gap-1">
-            <input type="radio" name="gender" value="Male" />
-            Male
-          </label>
-          <label className="flex items-center gap-1">
-            <input type="radio" name="gender" value="Female" />
-            Female
-          </label>
+        <input className="input" name="jobTitle" placeholder="Job title" />
+
+        <div className="flex flex-col text-sm">
+          <select name="gender" className="input">
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
         </div>
-        <div>
-          <label className="text-sm text-gray-600 mt-1">Profile image</label>
-          <input type="file" name="profileImage" className="mt-1" />
-        </div>
+
+        <label className="flex flex-col items-center justify-center h-26 border-2 border-dashed rounded-xl cursor-pointer bg-gray-50 mt-5 m-1.9">
+          <input
+            type="file"
+            name="profileImage"
+            className="hidden"
+            onChange={handleImageChange}
+          />
+          {preview ? (
+            <img
+              src={preview}
+              alt="preview"
+              className="w-20 h-20 rounded-full mx-auto object-cover"
+            />
+          ) : (
+            <>
+              <FiUpload className="mx-auto mb-2" />
+              <p className="text-sm text-gray-500">Upload profile photo</p>
+            </>
+          )}
+        </label>
+
         <button
           className="w-full bg-gray-800 text-white px-2 py-1.5 mt-4 rounded"
           type="submit"
         >
           Signup
         </button>
-        <div className="relative my-4">
+        <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t" />
           </div>

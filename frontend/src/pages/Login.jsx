@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { FcGoogle } from "react-icons/fc";
+import { IoEye, IoEyeOff } from "react-icons/io5";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -26,7 +28,7 @@ function Login() {
     }
   };
   return (
-    <div className="flex items-center justify-center bg-gray-100 min-h-screen">
+    <div className="flex items-center justify-center bg-gray-100 min-h-screen px-4">
       <form
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-2xl shadow w-full max-w-sm"
@@ -35,26 +37,35 @@ function Login() {
         <p className="text-md text-gray-500 text-center mb-5">
           Login to your StackCart account
         </p>
-        <label htmlFor="email" className="text-sm font-semibold">
-          Email
-        </label>
-        <input
-          type="email"
-          placeholder="sg@gmail.com"
-          value={email}
-          className="input"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <label htmlFor="password" className="text-sm font-semibold">
-          Password
-        </label>
-        <input
-          type="password"
-          placeholder="password"
-          value={password}
-          className="input"
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div>
+          <label className="text-sm font-semibold">Email</label>
+          <input
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            className="input"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="text-sm font-semibold">Password</label>
+          <div className="relative mt-1">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="••••••••"
+              value={password}
+              className="input"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+            >
+              {showPassword ? <IoEyeOff size={18} /> : <IoEye size={18} />}
+            </button>
+          </div>
+        </div>
         <p className="text-sm text-right mb-4 text-gray-800 cursor-pointer hover:underline">
           <Link to="/forgot-password">Forgot your password?</Link>
         </p>

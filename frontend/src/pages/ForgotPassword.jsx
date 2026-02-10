@@ -26,6 +26,9 @@ function ForgotPassword() {
         className="bg-white p-6 rounded-2xl shadow w-full max-w-md space-y-4"
       >
         <h2 className="text-2xl font-bold">Forgot Password</h2>
+        <p className="text-gray-500 text-md -mt-3">
+          We’ll send a verification code to your email
+        </p>
         <label htmlFor="email" className="text-sm font-semibold">
           Enter Your Email
         </label>
