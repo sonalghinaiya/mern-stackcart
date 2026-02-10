@@ -156,27 +156,25 @@ export const forgotPassword = async (req, res, next) => {
 
 export const verifyOtp = async (req, res, next) => {
   try {
-    const { email, otp } = req.body;
+    const { otp } = req.body;
 
-    if (!email || !otp) {
+    if (!otp) {
       return res.status(400).json({
         success: false,
-        message: "Email and OTP are required.",
+        message: "OTP is required.",
       });
     }
 
-    const user = await User.findOne({ email });
-    if (!user || !user.otp || !user.otpExpire) {
+    // const user = await User.findOne({ email });
+    const user = await User.findOne({
+      otp: { $exists: true },
+      otpExpire: { $gt: Date.now() },
+    });
+
+    if (!user) {
       return res.status(400).json({
         success: false,
         message: "Invalid or expired OTP",
-      });
-    }
-
-    if (user.otpExpire < Date.now()) {
-      return res.status(400).json({
-        success: false,
-        message: "OTP has expired",
       });
     }
 
@@ -210,7 +208,10 @@ export const resetPassword = async (req, res, next) => {
       });
     }
 
-    const user = await User.findOne({ otpVerified: true });
+    const user = await User.findOne({
+      otpVerified: true,
+      otpExpire: { $gt: Date.now() },
+    });
 
     if (!user) {
       return res.status(400).json({
