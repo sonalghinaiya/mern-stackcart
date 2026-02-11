@@ -12,33 +12,50 @@ import nodemailer from "nodemailer";
 // });
 
 export const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  host: "smtp-relay.gmail.com",
   port: 587,
   secure: false,
   auth: {
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_APP_PASSWORD,
   },
-  requireTLS: true,
   tls: {
-    family: 4,
     rejectUnauthorized: false,
   },
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
 });
 
-// import nodemailer from "nodemailer";
 
 // export const transporter = nodemailer.createTransport({
 //   host: "smtp.gmail.com",
-//   port: 587,
+//   port: 587, 
 //   secure: false,
 //   auth: {
 //     user: process.env.GMAIL_USER,
 //     pass: process.env.GMAIL_APP_PASSWORD,
 //   },
+//   requireTLS: true,
 //   tls: {
 //     family: 4,
+//     rejectUnauthorized: false,
+//   },
+//   connectionTimeout: 10000,
+//   greetingTimeout: 10000,
+// });
+
+// import nodemailer from "nodemailer";
+
+// export const transporter = nodemailer.createTransport({
+//   host: "smtp.gmail.com",
+//   port: 465,          
+//   secure: true,     
+
+//   auth: {
+//     user: process.env.GMAIL_USER,
+//     pass: process.env.GMAIL_APP_PASSWORD,
+//   },
+
+//   tls: {
+//     family: 4,      
 //   },
 // });
+
