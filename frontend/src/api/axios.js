@@ -31,7 +31,7 @@ api.interceptors.response.use(
 
         localStorage.setItem("token", newToken);
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
-        
+
         return api(originalRequest);
       } catch (error) {
         localStorage.clear();

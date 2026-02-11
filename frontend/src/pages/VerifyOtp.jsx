@@ -22,7 +22,9 @@ function VerifyOtp() {
         email,
         otp,
       });
-      navigate("/reset-password");
+      navigate("/reset-password", {
+        state: { email },
+      });
     } catch (error) {
       console.log(error);
     }
