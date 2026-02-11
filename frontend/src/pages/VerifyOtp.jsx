@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import OtpInput from "react-otp-input";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
 function VerifyOtp() {
@@ -9,10 +9,17 @@ function VerifyOtp() {
 
   const navigate = useNavigate();
 
+  const location = useLocation();
+  const email = location.state?.email;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!email) {
+      navigate("/forgot-password");
+    }
     try {
       const res = await api.post("/auth/verify-otp", {
+        email,
         otp,
       });
       navigate("/reset-password");
@@ -36,10 +43,10 @@ function VerifyOtp() {
           onChange={setOtp}
           numInputs={6}
           inputStyle={{
-            width: "40px",
-            height: "48px",
-            borderRadius: "8px",
-            border: "1px solid #ccc",
+            width: "45px",
+            height: "50px",
+            borderRadius: "10px",
+            border: "1px solid #ddd",
             fontSize: "18px",
           }}
           containerStyle={{ justifyContent: "space-between" }}

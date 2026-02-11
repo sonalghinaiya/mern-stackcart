@@ -14,7 +14,9 @@ function ForgotPassword() {
       const res = await api.post("/auth/forgot-password", {
         email,
       });
-      navigate("/verify-otp");
+      navigate("/verify-otp", {
+        state: { email },
+      });
     } catch (error) {
       console.log(error);
     }
