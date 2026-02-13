@@ -3,9 +3,23 @@ import { useState } from "react";
 import OtpInput from "react-otp-input";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../api/axios";
+import { useEffect } from "react";
 
 function VerifyOtp() {
   const [otp, setOtp] = useState("");
+  const [timer, setTimer] = useState(60);
+  const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
+
+  useEffect(() => {
+    if (timer === 0) return;
+
+    const interval = setInterval(() => {
+      setTimer((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timer]);
 
   const navigate = useNavigate();
 
@@ -14,6 +28,7 @@ function VerifyOtp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     if (!email) {
       navigate("/forgot-password");
     }
@@ -27,6 +42,21 @@ function VerifyOtp() {
       });
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    setResending(true);
+
+    try {
+      await api.post("/auth/resend-otp", { email });
+      setTimer(60);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setResending(false);
     }
   };
   return (
@@ -58,10 +88,26 @@ function VerifyOtp() {
 
         <button
           type="submit"
+          disabled={loading}
           className="bg-gray-900 text-white rounded w-full px-2 py-1.5"
         >
-          Submit
+          {loading ? "Verifying..." : "Verify OTP"}
         </button>
+
+        <div className="text-center mt-4 text-sm">
+          {timer > 0 ? (
+            <p>Resend OTP in {timer}s</p>
+          ) : (
+            <button
+              type="button"
+              onClick={handleResendOtp}
+              disabled={resending}
+              className="text-gray-900 hover:underline"
+            >
+              {resending ? "Resending..." : "Resend OTP"}
+            </button>
+          )}
+        </div>
       </form>
     </div>
   );
