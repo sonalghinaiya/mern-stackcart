@@ -187,6 +187,7 @@ export const verifyOtp = async (req, res, next) => {
     }
 
     user.otpVerified = true;
+    user.otp = undefined;
     await user.save();
 
     return res.status(200).json({
@@ -205,6 +206,13 @@ export const resetPassword = async (req, res, next) => {
       return res.status(400).json({
         success: false,
         message: "Password is required",
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 6 characters long",
       });
     }
 
@@ -233,6 +241,44 @@ export const resetPassword = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: "Password reset successfully. Please login",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resendOtp = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const hashedOtp = await bcrypt.hash(otp, 10);
+
+    user.otp = hashedOtp;
+    user.otpExpire = Date.now() + 10 * 60 * 1000;
+    user.otpVerified = false;
+
+    await user.save();
+    await sendVerificationCode(user.email, otp);
+
+    return res.status(200).json({
+      success: true,
+      message: "New OTP sent successfully",
     });
   } catch (error) {
     next(error);
