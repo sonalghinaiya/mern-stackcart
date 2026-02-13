@@ -58,5 +58,5 @@ export const sendVerificationCode = async (email, otp) => {
       </div>
     `,
   });
-  console.log("Preview URL", nodemailer.getTestMessageUrl(info));
+  // console.log("Preview URL", nodemailer.getTestMessageUrl(info));
 };
