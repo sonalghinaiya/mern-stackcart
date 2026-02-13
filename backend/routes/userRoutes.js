@@ -7,9 +7,10 @@ import {
 } from "../controllers/userController.js";
 import { isAuthenticated } from "../middlewares/authMiddleware.js";
 import { uploadUser } from "../middlewares/upload.js";
+import { isAdmin } from "../middlewares/adminMiddleware.js";
 const router = Router();
 
-router.route("/").get(getAllUsers);
+router.route("/").get(isAuthenticated, isAdmin, getAllUsers);
 
 router
   .route("/:id")
