@@ -4,11 +4,14 @@ import api from "../api/axios";
 import { FcGoogle } from "react-icons/fc";
 import { FiUpload } from "react-icons/fi";
 import { IoEye, IoEyeOff } from "react-icons/io5";
+import { useGoogleAuth } from "../utils/googleAuth";
 
 function Register() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [preview, setPreview] = useState(null);
+
+  const googleLogin = useGoogleAuth()
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -114,6 +117,7 @@ function Register() {
         </div>
         <button
           type="button"
+          onClick={() => googleLogin()}
           className="w-full flex items-center justify-center gap-3 border rounded-lg py-2 hover:bg-gray-50 transition"
         >
           <FcGoogle size={20} />

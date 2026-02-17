@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { FcGoogle } from "react-icons/fc";
 import { IoEye, IoEyeOff } from "react-icons/io5";
-import { useGoogleLogin } from "@react-oauth/google";
+import { useGoogleAuth } from "../utils/googleAuth";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -11,6 +11,8 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
+
+  const googleLogin = useGoogleAuth()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,24 +30,6 @@ function Login() {
       console.log(error);
     }
   };
-
-  const googleLogin = useGoogleLogin({
-    flow: "implicit",
-    onSuccess: async (tokenResponse) => {
-      try {
-        const res = await api.post("/auth/social-login", {
-          access_token: tokenResponse.access_token,
-        });
-
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("user", JSON.stringify(res.data.data));
-        navigate("/profile");
-      } catch (error) {
-        console.log(error)
-      }
-    },
-    onError: () => console.log("Login Failed")
-  });
 
   return (
     <div className="flex items-center justify-center bg-gray-100 min-h-screen px-4">
