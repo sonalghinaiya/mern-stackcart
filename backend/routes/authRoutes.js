@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   forgotPassword,
+  googleLogin,
   login,
   logout,
   refreshAccessToken,
@@ -21,6 +22,7 @@ router.post(
   register,
 );
 router.post("/login", authLimiter, login);
+router.post("/social-login", googleLogin)
 router.post("/forgot-password", otpLimiter, forgotPassword);
 router.post("/verify-otp", otpLimiter, verifyOtp);
 router.post("/reset-password", otpLimiter, resetPassword);

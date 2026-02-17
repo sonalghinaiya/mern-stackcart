@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";
 import { generateToken, verifyToken } from "../utils/jwtService.js";
 import { loginSchema, registerSchema } from "../validators/authValidation.js";
 import { sendVerificationCode } from "../utils/sendMail.js";
+import { OAuth2Client } from "google-auth-library";
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export const register = async (req, res, next) => {
   try {
@@ -108,6 +110,47 @@ export const login = async (req, res, next) => {
     return res.json({
       success: true,
       message: "Login successful",
+      token: accessToken,
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const googleLogin = async (req, res, next) => {
+  try {
+    const { token } = req.body;
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, given_name, family_name, picture } = payload;
+
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({
+        firstName: given_name,
+        lastName: family_name,
+        email,
+        password: "google_oauth",
+        profileImage: picture,
+      });
+    }
+
+    const accessToken = generateToken(
+      {
+        id: user.id,
+        role: user.role,
+        email: user.email,
+      },
+      process.env.JWT_ACCESS_EXPIRES_IN,
+    );
+
+    return res.json({
+      success: true,
       token: accessToken,
       data: user,
     });

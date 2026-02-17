@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { FcGoogle } from "react-icons/fc";
 import { IoEye, IoEyeOff } from "react-icons/io5";
+import { GoogleLogin } from "@react-oauth/google";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -27,6 +28,7 @@ function Login() {
       console.log(error);
     }
   };
+
   return (
     <div className="flex items-center justify-center bg-gray-100 min-h-screen px-4">
       <form
@@ -85,13 +87,27 @@ function Login() {
             </span>
           </div>
         </div>
-        <button
-          type="button"
-          className="w-full flex items-center justify-center gap-3 border rounded-lg py-2 hover:bg-gray-50 transition"
-        >
-          <FcGoogle size={20} />
-          <span className="text-sm font-medium">Continue with Google</span>
-        </button>
+        <GoogleLogin
+          onSuccess={async (credentialResponse) => {
+            try {
+              const res = await api.post("/auth/social-login", {
+                token: credentialResponse.credential,
+              });
+
+              localStorage.setItem("token", res.data.token);
+              localStorage.setItem("user", JSON.stringify(res.data.data));
+              navigate("/profile");
+            } catch (error) {
+              console.log(error);
+            }
+          }}
+          onError={() => console.log("Login Failed")}
+          theme="outline"
+          text="continue_with"
+          shape="pill"
+          width="100%"
+          logo_alignment="center"
+        />
         <p className="text-sm text-center mt-4">
           Don't have an account?{" "}
           <Link to="/register" className="text-gray-800 hover:underline">
