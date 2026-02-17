@@ -120,13 +120,29 @@ export const login = async (req, res, next) => {
 
 export const googleLogin = async (req, res, next) => {
   try {
-    const { token } = req.body;
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
+    const { access_token } = req.body;
 
-    const payload = ticket.getPayload();
+    if(!access_token){
+      return res.status(400).json({
+        success: false,
+        message: "Google access token is required."
+      })
+    }
+
+    const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo`, {
+      headers: {
+        Authorization: `Bearer ${access_token}`
+      }
+    })
+
+    const payload = await response.json();
+
+    if(!payload.email){
+      return res.status(400).json({
+        success: false,
+        message: "Failed to fetch Google user info"
+      })
+    }
     const { email, given_name, family_name, picture } = payload;
 
     let user = await User.findOne({ email });
