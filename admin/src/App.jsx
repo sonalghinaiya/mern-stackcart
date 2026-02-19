@@ -3,6 +3,8 @@ import Login from "./pages/Login";
 import React from "react";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AdminLayout from "./components/layout/AdminLayout";
+import Dashboard from "./pages/Dashboard";
+import Users from "./pages/User";
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/users" element={<Users />} />
     </Routes>
   );
 }
