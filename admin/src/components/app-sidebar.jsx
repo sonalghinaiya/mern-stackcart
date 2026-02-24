@@ -4,7 +4,7 @@ import {
   GalleryVerticalEnd,
   LayoutDashboard,
   Package,
-  Users
+  Users,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -35,16 +35,19 @@ const data = {
       title: "Dashboard",
       url: "/admin/dashboard",
       icon: LayoutDashboard,
+      color: "text-blue-600",
     },
     {
       title: "Users",
       url: "/admin/users",
       icon: Users,
+      color: "text-emerald-600",
     },
     {
       title: "Products",
       url: "/admin/products",
       icon: Package,
+      color: "text-purple-600",
     },
   ],
 };
