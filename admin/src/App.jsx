@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
 import React from "react";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -7,8 +7,20 @@ import Dashboard from "./pages/Dashboard";
 import Users from "./pages/User";
 
 function App() {
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
   return (
     <Routes>
+      <Route
+        path="/"
+        element={
+          token && user?.role === "admin" ? (
+            <Navigate to="/admin/dashboard" />
+          ) : (
+            <Navigate to="/auth/login" />
+          )
+        }
+      />
       <Route path="/auth/login" element={<Login />} />
       <Route
         path="/admin"

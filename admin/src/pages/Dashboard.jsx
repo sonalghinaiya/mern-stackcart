@@ -8,7 +8,6 @@ function Dashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       const res = await api.get("/admin/stats");
-      console.log("res.....", res)
       setStats(res.data.data);
     };
 
