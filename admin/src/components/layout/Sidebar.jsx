@@ -1,44 +1,58 @@
 import { NavLink } from "react-router-dom";
-import React from "react";
+import { LayoutDashboard, Users, Package } from "lucide-react";
 
 function Sidebar() {
   return (
-    <div className="w-64 bg-gray-900 text-white min-h-screen p-6">
-      <h1 className="text-2xl font-bold mb-10">StackCart</h1>
+    <div className="w-64 bg-slate-900 text-slate-300 min-h-screen p-6">
 
-      <nav className="space-y-4 text-sm">
+      <h1 className="text-xl font-bold text-white mb-10">
+        StackCart
+      </h1>
+
+      <nav className="space-y-2 text-sm">
+
         <NavLink
-          to="/dashboard"
+          to="/admin/dashboard"
           className={({ isActive }) =>
-            `block px-4 py-2 rounded-lg ${
-              isActive ? "bg-gray-700" : "hover:bg-gray-800"
+            `flex items-center gap-3 px-4 py-2 rounded-lg transition ${
+              isActive
+                ? "bg-slate-800 text-white"
+                : "hover:bg-slate-800 hover:text-white"
             }`
           }
         >
+          <LayoutDashboard size={18} />
           Dashboard
         </NavLink>
 
         <NavLink
-          to="/users"
+          to="/admin/users"
           className={({ isActive }) =>
-            `block px-4 py-2 rounded-lg ${
-              isActive ? "bg-gray-700" : "hover:bg-gray-800"
+            `flex items-center gap-3 px-4 py-2 rounded-lg transition ${
+              isActive
+                ? "bg-slate-800 text-white"
+                : "hover:bg-slate-800 hover:text-white"
             }`
           }
         >
+          <Users size={18} />
           Users
         </NavLink>
 
         <NavLink
-          to="/products"
+          to="/admin/products"
           className={({ isActive }) =>
-            `block px-4 py-2 rounded-lg ${
-              isActive ? "bg-gray-700" : "hover:bg-gray-800"
+            `flex items-center gap-3 px-4 py-2 rounded-lg transition ${
+              isActive
+                ? "bg-slate-800 text-white"
+                : "hover:bg-slate-800 hover:text-white"
             }`
           }
         >
+          <Package size={18} />
           Products
         </NavLink>
+
       </nav>
     </div>
   );

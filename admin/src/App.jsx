@@ -11,7 +11,7 @@ function App() {
     <Routes>
       <Route path="/auth/login" element={<Login />} />
       <Route
-        path="/admin/dashboard"
+        path="/admin"
         element={
           <ProtectedRoute>
             <AdminLayout />
