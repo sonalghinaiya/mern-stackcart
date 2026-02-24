@@ -9,17 +9,19 @@ import Users from "./pages/User";
 function App() {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
+      <Route path="/auth/login" element={<Login />} />
       <Route
-        path="/"
+        path="/admin/dashboard"
         element={
           <ProtectedRoute>
             <AdminLayout />
           </ProtectedRoute>
         }
-      />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/users" element={<Users />} />
+      >
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="users" element={<Users />} />
+        <Route path="products" element={<Users />} />
+      </Route>
     </Routes>
   );
 }
