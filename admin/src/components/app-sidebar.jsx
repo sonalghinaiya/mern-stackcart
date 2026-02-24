@@ -1,10 +1,10 @@
 "use client";
 
 import {
-  GalleryVerticalEnd,
   LayoutDashboard,
   Package,
-  Users,
+  ShoppingCart,
+  Users
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -27,7 +27,7 @@ const data = {
   teams: [
     {
       name: "StackCart",
-      logo: GalleryVerticalEnd,
+      logo: ShoppingCart,
     },
   ],
   navMain: [
@@ -35,7 +35,6 @@ const data = {
       title: "Dashboard",
       url: "/admin/dashboard",
       icon: LayoutDashboard,
-      color: "text-blue-600",
     },
     {
       title: "Users",
