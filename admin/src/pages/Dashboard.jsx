@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
-import React from "react";
+import UsersChart from "@/components/charts/UsersChart";
+import ProductsChart from "@/components/charts/ProductsChart";
 import { Package, Users } from "lucide-react";
 
 function Dashboard() {
@@ -15,24 +16,19 @@ function Dashboard() {
     fetchStats();
   }, []);
 
-  if (!stats) return <p>Loading...</p>;
-
   return (
-    <div className="px-4 py-2 space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          Dashboard Overview
-        </h1>
-        <p className="text-muted-foreground mt-2">
-          Here’s a summary of your store performance.
-        </p>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        <div className="bg-white rounded-2xl p-6 shadow-sm border hover:shadow-md transition">
+    <div>
+      <h1 className="text-2xl font-bold mb-2">Dashboard Overview</h1>
+      <p className="text-muted-foreground mb-6">
+        Here's a summary of your store performance.
+      </p>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div className="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Total Users</p>
-              <h2 className="text-3xl font-bold mt-2">{stats.users.total}</h2>
+              <h3 className="text-sm text-muted-foreground">Total Users</h3>
+              <p className="text-3xl font-bold mt-2">{stats?.users?.total}</p>
             </div>
 
             <div className="p-3 rounded-xl bg-blue-100">
@@ -40,13 +36,14 @@ function Dashboard() {
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-2xl p-6 shadow-sm border hover:shadow-md transition">
+
+        <div className="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Total Products</p>
-              <h2 className="text-3xl font-bold mt-2">
-                {stats.products.total}
-              </h2>
+              <h3 className="text-muted-foreground">Total Products</h3>
+              <p className="text-3xl font-bold mt-2">
+                {stats?.products?.total}
+              </p>
             </div>
 
             <div className="p-3 rounded-xl bg-purple-100">
@@ -54,6 +51,11 @@ function Dashboard() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <UsersChart />
+        <ProductsChart />
       </div>
     </div>
   );
