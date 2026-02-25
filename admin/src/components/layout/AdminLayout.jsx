@@ -2,7 +2,14 @@ import { Outlet, useLocation } from "react-router-dom";
 import { AppSidebar } from "../app-sidebar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "../ui/sidebar";
 import { NavUser } from "../nav-user";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "../ui/breadcrumb";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "../ui/breadcrumb";
 
 function AdminLayout() {
   const location = useLocation();

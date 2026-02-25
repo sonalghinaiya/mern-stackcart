@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  LayoutDashboard,
-  Package,
-  ShoppingCart,
-  Users
-} from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, Users } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -19,11 +14,6 @@ import {
 } from "@/components/ui/sidebar";
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   teams: [
     {
       name: "StackCart",
@@ -57,11 +47,14 @@ export function AppSidebar({ ...props }) {
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="bg-white border-t">
         <NavMain items={data.navMain} />
       </SidebarContent>
-      <SidebarFooter>
-        {/* <NavUser user={data.user} /> */}
+      <SidebarFooter className="border-t p-3 text-xs text-muted-foreground bg-white">
+        <div className="flex flex-col">
+          <span className="font-semibold">StackCart Admin</span>
+          <span>v1.0.0</span>
+        </div>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
