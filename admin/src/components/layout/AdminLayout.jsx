@@ -16,57 +16,62 @@ function AdminLayout() {
 
   const pathnames = location.pathname.split("/").filter(Boolean);
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-background/80 backdrop-blur px-6">
-          <div className="flex items-center gap-4">
-            <SidebarTrigger />
+    <div className="flex h-screen">
+      <SidebarProvider
+        className="flex flex-1"
+      >
+        <AppSidebar />
+        <SidebarInset className="flex flex-col flex-1 overflow-hidden">
+          <header className="h-16 shrink flex items-center justify-between border-b bg-background/80 backdrop-blur px-6">
+            <div className="flex items-center gap-4">
+              <SidebarTrigger />
 
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink to="/admin/dashboard">
-                    Dashboard
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink to="/admin/dashboard">
+                      Dashboard
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
 
-                {pathnames.slice(1).map((name, index) => {
-                  const routeTo = "/" + pathnames.slice(0, index + 2).join("/");
+                  {pathnames.slice(1).map((name, index) => {
+                    const routeTo =
+                      "/" + pathnames.slice(0, index + 2).join("/");
 
-                  const isLast = index === pathnames.slice(1).length - 1;
+                    const isLast = index === pathnames.slice(1).length - 1;
 
-                  return (
-                    <div key={routeTo} className="flex items-center">
-                      <BreadcrumbSeparator />
+                    return (
+                      <div key={routeTo} className="flex items-center">
+                        <BreadcrumbSeparator />
 
-                      <BreadcrumbItem>
-                        {isLast ? (
-                          <BreadcrumbPage className="capitalize">
-                            {name}
-                          </BreadcrumbPage>
-                        ) : (
-                          <BreadcrumbLink to={routeTo} className="capitalize">
-                            {name}
-                          </BreadcrumbLink>
-                        )}
-                      </BreadcrumbItem>
-                    </div>
-                  );
-                })}
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
+                        <BreadcrumbItem>
+                          {isLast ? (
+                            <BreadcrumbPage className="capitalize">
+                              {name}
+                            </BreadcrumbPage>
+                          ) : (
+                            <BreadcrumbLink to={routeTo} className="capitalize">
+                              {name}
+                            </BreadcrumbLink>
+                          )}
+                        </BreadcrumbItem>
+                      </div>
+                    );
+                  })}
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div>
 
-          <div className="flex items-center gap-4">
-            <NavUser />
-          </div>
-        </header>
-        <main className="p-6 bg-gray-50 min-h-screen">
-          <Outlet />
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
+            <div className="flex items-center gap-4">
+              <NavUser />
+            </div>
+          </header>
+          <main className="flex-1 p-6 bg-gray-50 overflow-y-auto">
+            <Outlet />
+          </main>
+        </SidebarInset>
+      </SidebarProvider>
+    </div>
   );
 }
 

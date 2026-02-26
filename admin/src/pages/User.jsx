@@ -45,8 +45,8 @@ function Users() {
   };
 
   return (
-    <div className="p-1 space-y-6">
-      <div className="flex justify-between shadow-sm bg-white rounded-lg p-4">
+    <div className="flex flex-col h-full gap-4">
+      <div className="flex justify-between shadow-sm bg-white rounded-lg p-4 shrink-0">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Users</h1>
           <p className="text-muted-foreground">
@@ -60,8 +60,8 @@ function Users() {
         </div>
       </div>
 
-      <div className="bg-white border rounded-lg shadow-sm p-4 -mt-2">
-        <div className="relative w-64">
+      <div className="bg-white border rounded-lg shadow-sm p-4 flex flex-col flex-1 min-h-0">
+        <div className="relative w-64 shrink-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search..."
@@ -71,102 +71,153 @@ function Users() {
           />
         </div>
         <div className="bg-white rounded-lg shadow-sm border overflow-hidden mt-4">
-          <Table>
-            <TableHeader className="bg-gray-50">
-              <TableRow>
-                <TableHead>Profile</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead>Updated</TableHead>
-                <TableHead className="text-center border-s-2">Action</TableHead>
-              </TableRow>
-            </TableHeader>
+          <div className="h-full overflow-y-auto">
+            <Table>
+              <TableHeader className="bg-gray-50 sticky top-0 z-10">
+                <TableRow>
+                  <TableHead>Profile</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead>Updated</TableHead>
+                  <TableHead className="text-center border-s-2">
+                    Action
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
 
-            <TableBody>
-              {users.length > 0 ? (
-                users.map((user) => (
-                  <TableRow key={user._id} className="hover:bg-muted/40">
-                    <TableCell>
-                      {user.profileImage ? (
-                        <img
-                          src={user.profileImage}
-                          alt={user.firstName}
-                          className="h-10 w-10 rounded-full object-cover border"
-                        />
-                      ) : (
-                        <div className="h-12 w-12 flex items-center justify-center rounded-md bg-gray-100 border">
-                          <ImageOff className="h-5 w-5 text-gray-400" />
-                        </div>
-                      )}
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {user.firstName} {user.lastName}
-                    </TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>
-                      <span className="px-2 py-1 text-xs rounded-md bg-blue-100 text-blue-600">
-                        {user.role}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span
-                        className={`px-2 py-1 text-xs rounded-md ${
-                          user.isDeleted
-                            ? "bg-red-100 text-red-600"
-                            : "bg-green-100 text-green-600"
-                        }`}
-                      >
-                        {user.isDeleted ? "Deleted" : "Active"}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      {new Date(user.createdAt).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      {new Date(user.updatedAt).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className="text-center border-s-2">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreVertical className="h-5 w-5" />
-                          </Button>
-                        </DropdownMenuTrigger>
+              <TableBody>
+                {users.length > 0 ? (
+                  users.map((user) => (
+                    <TableRow key={user._id} className="hover:bg-muted/40">
+                      <TableCell>
+                        {user.profileImage ? (
+                          <img
+                            src={user.profileImage}
+                            alt={user.firstName}
+                            className="h-10 w-10 rounded-full object-cover border"
+                          />
+                        ) : (
+                          <div className="h-12 w-12 flex items-center justify-center rounded-md bg-gray-100 border">
+                            <ImageOff className="h-5 w-5 text-gray-400" />
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {user.firstName} {user.lastName}
+                      </TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell>
+                        <span className="px-2 py-1 text-xs rounded-md bg-blue-100 text-blue-600">
+                          {user.role}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={`px-2 py-1 text-xs rounded-md ${
+                            user.isDeleted
+                              ? "bg-red-100 text-red-600"
+                              : "bg-green-100 text-green-600"
+                          }`}
+                        >
+                          {user.isDeleted ? "Deleted" : "Active"}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        {new Date(user.createdAt).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        {new Date(user.updatedAt).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell className="text-center border-s-2">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreVertical className="h-5 w-5" />
+                            </Button>
+                          </DropdownMenuTrigger>
 
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={() => console.log("Edit", user._id)}
-                          >
-                            <Pencil className="mr-2 h-4 w-4 text-blue-500" />
-                            Edit
-                          </DropdownMenuItem>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => console.log("Edit", user._id)}
+                            >
+                              <Pencil className="mr-2 h-4 w-4 text-blue-500" />
+                              Edit
+                            </DropdownMenuItem>
 
-                          <DropdownMenuItem
-                            onClick={() => deleteUser(user._id)}
-                          >
-                            <Trash2 className="mr-2 h-4 w-4 text-red-500" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                            <DropdownMenuItem
+                              onClick={() => deleteUser(user._id)}
+                            >
+                              <Trash2 className="mr-2 h-4 w-4 text-red-500" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={4}
+                      className="text-center py-6 text-muted-foreground"
+                    >
+                      No users found.
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={4}
-                    className="text-center py-6 text-muted-foreground"
-                  >
-                    No users found.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+        <div className="flex items-center justify-between p-4 border-t">
+          <p className="text-md text-muted-foreground">
+            Total records:{" "}
+            <span className="font-semibold">{users.length}</span>
+          </p>
+
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">
+                Rows per page
+              </span>
+              <select
+                className="border rounded-md px-2 py-1 text-sm"
+                // value={recordsPerPage}
+                // onChange={(e) => setRecordsPerPage(Number(e.target.value))}
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">
+                Page 1 of 5{/* Page {currentPage} of {totalPages} */}
+              </span>
+
+              <Button
+                size="icon"
+                variant="outline"
+                // disabled={currentPage === 1}
+                // onClick={() => setCurrentPage((prev) => prev - 1)}
+              >
+                ‹
+              </Button>
+
+              <Button
+                size="icon"
+                variant="outline"
+                // disabled={currentPage === totalPages}
+                // onClick={() => setCurrentPage((prev) => prev + 1)}
+              >
+                ›
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
