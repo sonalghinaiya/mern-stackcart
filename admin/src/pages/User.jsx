@@ -138,14 +138,14 @@ function Users() {
 
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem
-                            onClick={() => console.log("Edit", product._id)}
+                            onClick={() => console.log("Edit", user._id)}
                           >
                             <Pencil className="mr-2 h-4 w-4 text-blue-500" />
                             Edit
                           </DropdownMenuItem>
 
                           <DropdownMenuItem
-                            onClick={() => deleteProducts(product._id)}
+                            onClick={() => deleteUser(user._id)}
                           >
                             <Trash2 className="mr-2 h-4 w-4 text-red-500" />
                             Delete

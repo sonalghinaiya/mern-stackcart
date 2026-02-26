@@ -107,9 +107,19 @@ function Products() {
                     <TableCell className="font-medium">
                       {product.name}
                     </TableCell>
-                    <TableCell>{product.description}</TableCell>
-                    <TableCell>₹{product.price}</TableCell>
-                    <TableCell>{product.rating}</TableCell>
+                    <TableCell className="max-w-xs">
+                      <p className="truncate" title={product.description}>
+                        {product.description}
+                      </p>
+                    </TableCell>
+                    <TableCell>
+                      ₹{product.price.toLocaleString("en-IN")}
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-yellow-500">
+                        {"★".repeat(product.rating)}
+                      </span>
+                    </TableCell>
                     <TableCell>
                       <span
                         className={`px-2 py-1 text-xs rounded-md ${
@@ -127,7 +137,7 @@ function Products() {
                     <TableCell>
                       {new Date(product.updatedAt).toLocaleDateString()}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-center border-s-2">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="icon">
