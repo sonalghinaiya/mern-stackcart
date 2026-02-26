@@ -5,6 +5,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import AdminLayout from "./components/layout/AdminLayout";
 import Dashboard from "./pages/Dashboard";
 import Users from "./pages/User";
+import Products from "./pages/Product";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -32,7 +33,7 @@ function App() {
       >
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="users" element={<Users />} />
-        <Route path="products" element={<Users />} />
+        <Route path="products" element={<Products />} />
       </Route>
     </Routes>
   );

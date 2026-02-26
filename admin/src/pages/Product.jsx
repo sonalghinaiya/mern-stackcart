@@ -10,43 +10,41 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PlusIcon, Trash2 } from "lucide-react";
+import { ImageOff, PlusIcon, Trash2 } from "lucide-react";
 
-function Users() {
-  const [users, setUsers] = useState([]);
+function Products() {
+  const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
 
-  const fetchUsers = async () => {
-    const res = await api.get("/admin/users");
-    setUsers(res.data.data);
+  const fetchProducts = async () => {
+    const res = await api.get("/admin/products");
+    setProducts(res.data.data);
   };
 
   useEffect(() => {
-    fetchUsers();
+    fetchProducts();
   }, []);
 
-  const deleteUser = async (id) => {
+  const deleteProducts = async (id) => {
     if (!window.confirm("Are you sure?")) return;
-    await api.delete(`/users/${id}`);
-    fetchUsers();
+    await api.delete(`/products/${id}`);
+    fetchProducts();
   };
 
-  const filteredUsers = users.filter((user) =>
-    user.firstName.toLowerCase().includes(search.toLowerCase()),
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
     <div className="p-1 space-y-6">
       <div className="flex justify-between shadow-sm bg-white rounded-lg p-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Users</h1>
-          <p className="text-muted-foreground">
-            Manage and monitor your customers
-          </p>
+          <h1 className="text-2xl font-bold tracking-tight">Products</h1>
+          <p className="text-muted-foreground">Manage your products</p>
         </div>
         <div className="flex justify-center items-center">
           <Button className="text-md">
-            <PlusIcon /> Add User
+            <PlusIcon /> Add Product
           </Button>
         </div>
       </div>
@@ -64,10 +62,11 @@ function Users() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Profile</TableHead>
+              <TableHead>Image</TableHead>
               <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead>Price</TableHead>
+              <TableHead>Rating</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Created</TableHead>
               <TableHead>Updated</TableHead>
@@ -76,47 +75,42 @@ function Users() {
           </TableHeader>
 
           <TableBody>
-            {filteredUsers.length > 0 ? (
-              filteredUsers.map((user) => (
-                <TableRow key={user._id} className="hover:bg-muted/40">
+            {filteredProducts.length > 0 ? (
+              filteredProducts.map((product) => (
+                <TableRow key={product._id} className="hover:bg-muted/40">
                   <TableCell>
                     <img
-                      src={user.profileImage}
-                      alt={user.firstName}
-                      className="h-10 w-10 rounded-full object-cover border"
+                      src={product.image}
+                      alt={<ImageOff />}
+                      className="h-12 w-12 rounded-md object-cover border"
                     />
                   </TableCell>
-                  <TableCell className="font-medium">
-                    {user.firstName} {user.lastName}
-                  </TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>
-                    <span className="px-2 py-1 text-xs rounded-md bg-blue-100 text-blue-600">
-                      {user.role}
-                    </span>
-                  </TableCell>
+                  <TableCell className="font-medium">{product.name}</TableCell>
+                  <TableCell>{product.description}</TableCell>
+                  <TableCell>₹{product.price}</TableCell>
+                  <TableCell>{product.rating}</TableCell>
                   <TableCell>
                     <span
                       className={`px-2 py-1 text-xs rounded-md ${
-                        user.isDeleted
+                        product.isDeleted
                           ? "bg-red-100 text-red-600"
                           : "bg-green-100 text-green-600"
                       }`}
                     >
-                      {user.isDeleted ? "Deleted" : "Active"}
+                      {product.isDeleted ? "Deleted" : "Active"}
                     </span>
                   </TableCell>
                   <TableCell>
-                    {new Date(user.createdAt).toLocaleDateString()}
+                    {new Date(product.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
-                    {new Date(user.updatedAt).toLocaleDateString()}
+                    {new Date(product.updatedAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="text-right">
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => deleteUser(user._id)}
+                      onClick={() => deleteProducts(product._id)}
                     >
                       <Trash2 className="h-4 w-4 text-red-500" />
                     </Button>
@@ -129,7 +123,7 @@ function Users() {
                   colSpan={4}
                   className="text-center py-6 text-muted-foreground"
                 >
-                  No users found.
+                  No products found.
                 </TableCell>
               </TableRow>
             )}
@@ -140,4 +134,4 @@ function Users() {
   );
 }
 
-export default Users;
+export default Products;
