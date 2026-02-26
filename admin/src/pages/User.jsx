@@ -10,7 +10,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PlusIcon, Trash2 } from "lucide-react";
+import { ImageOff, MoreVertical, Pencil, PlusIcon, Trash2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 function Users() {
   const [users, setUsers] = useState([]);
@@ -30,10 +36,6 @@ function Users() {
     await api.delete(`/users/${id}`);
     fetchUsers();
   };
-
-  const filteredUsers = users.filter((user) =>
-    user.firstName.toLowerCase().includes(search.toLowerCase()),
-  );
 
   return (
     <div className="p-1 space-y-6">
@@ -76,15 +78,21 @@ function Users() {
           </TableHeader>
 
           <TableBody>
-            {filteredUsers.length > 0 ? (
-              filteredUsers.map((user) => (
+            {users.length > 0 ? (
+              users.map((user) => (
                 <TableRow key={user._id} className="hover:bg-muted/40">
                   <TableCell>
-                    <img
-                      src={user.profileImage}
-                      alt={user.firstName}
-                      className="h-10 w-10 rounded-full object-cover border"
-                    />
+                    {user.profileImage ? (
+                      <img
+                        src={user.profileImage}
+                        alt={user.firstName}
+                        className="h-10 w-10 rounded-full object-cover border"
+                      />
+                    ) : (
+                      <div className="h-12 w-12 flex items-center justify-center rounded-md bg-gray-100 border">
+                        <ImageOff className="h-5 w-5 text-gray-400" />
+                      </div>
+                    )}
                   </TableCell>
                   <TableCell className="font-medium">
                     {user.firstName} {user.lastName}
@@ -113,13 +121,29 @@ function Users() {
                     {new Date(user.updatedAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => deleteUser(user._id)}
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <MoreVertical className="h-5 w-5" />
+                        </Button>
+                      </DropdownMenuTrigger>
+
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={() => console.log("Edit", product._id)}
+                        >
+                          <Pencil className="mr-2 h-4 w-4 text-blue-500" />
+                          Edit
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem
+                          onClick={() => deleteProducts(product._id)}
+                        >
+                          <Trash2 className="mr-2 h-4 w-4 text-red-500" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))

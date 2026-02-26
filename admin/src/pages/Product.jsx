@@ -1,7 +1,11 @@
-import { useEffect, useState } from "react";
-import api from "../api/axios";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -10,7 +14,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ImageOff, PlusIcon, Trash2 } from "lucide-react";
+import {
+  ImageOff,
+  MoreVertical,
+  Pencil,
+  PlusIcon,
+  Trash2
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import api from "../api/axios";
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -30,10 +42,6 @@ function Products() {
     await api.delete(`/products/${id}`);
     fetchProducts();
   };
-
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(search.toLowerCase()),
-  );
 
   return (
     <div className="p-1 space-y-6">
@@ -75,15 +83,22 @@ function Products() {
           </TableHeader>
 
           <TableBody>
-            {filteredProducts.length > 0 ? (
-              filteredProducts.map((product) => (
+            {products.length > 0 ? (
+              products.map((product) => (
                 <TableRow key={product._id} className="hover:bg-muted/40">
                   <TableCell>
-                    <img
-                      src={product.image}
-                      alt={<ImageOff />}
-                      className="h-12 w-12 rounded-md object-cover border"
-                    />
+                    {product.image ? (
+                      <img
+                      //  src={`http://localhost:5000/${product.image}`}
+                        src={product.image}
+                        alt={product.name}
+                        className="h-12 w-12 rounded-md object-cover border"
+                      />
+                    ) : (
+                      <div className="h-12 w-12 flex items-center justify-center rounded-md bg-gray-100 border">
+                        <ImageOff className="h-5 w-5 text-gray-400" />
+                      </div>
+                    )}
                   </TableCell>
                   <TableCell className="font-medium">{product.name}</TableCell>
                   <TableCell>{product.description}</TableCell>
@@ -107,13 +122,29 @@ function Products() {
                     {new Date(product.updatedAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => deleteProducts(product._id)}
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <MoreVertical className="h-5 w-5" />
+                        </Button>
+                      </DropdownMenuTrigger>
+
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={() => console.log("Edit", product._id)}
+                        >
+                          <Pencil className="mr-2 h-4 w-4 text-blue-500" />
+                          Edit
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem
+                          onClick={() => deleteProducts(product._id)}
+                        >
+                          <Trash2 className="mr-2 h-4 w-4 text-red-500" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))
