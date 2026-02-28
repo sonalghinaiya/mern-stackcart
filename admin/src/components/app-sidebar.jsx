@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutDashboard, Package, ShoppingCart, Users } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, Users, Settings } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -30,13 +30,21 @@ const data = {
       title: "Users",
       url: "/admin/users",
       icon: Users,
-      color: "text-emerald-600",
     },
     {
       title: "Products",
       url: "/admin/products",
       icon: Package,
-      color: "text-purple-600",
+    },
+     {
+      title: "Orders",
+      url: "#",
+      icon: ShoppingCart,
+    },
+     {
+      title: "Settings",
+      url: "#",
+      icon: Settings,
     },
   ],
 };
@@ -51,10 +59,7 @@ export function AppSidebar({ ...props }) {
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter className="border-t p-3 text-xs text-muted-foreground bg-white">
-        <div className="flex flex-col">
-          <span className="font-semibold">StackCart Admin</span>
-          <span>v1.0.0</span>
-        </div>
+        <NavUser variant="sidebar"/>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

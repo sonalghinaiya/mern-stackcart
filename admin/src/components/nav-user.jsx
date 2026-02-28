@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  ChevronDown,
-  LogOut
-} from "lucide-react";
+import { ChevronDown, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -26,7 +23,7 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export function NavUser() {
+export function NavUser({ variant = "navbar" }) {
   const navigate = useNavigate();
 
   const [user, setUser] = useState({
@@ -58,6 +55,31 @@ export function NavUser() {
     navigate("/auth/login");
   };
 
+  if (variant === "sidebar") {
+    return (
+      <div className="flex items-center gap-3 p-2">
+        <Avatar className="h-9 w-9">
+          {user.profileImage ? (
+            <AvatarImage src={user.profileImage} />
+          ) : (
+            <AvatarFallback className="text-indigo-700 font-bold bg-indigo-100">
+              {user.fname
+                ? user.fname.charAt(0).toUpperCase() +
+                  (user.lname ? user.lname.charAt(0).toUpperCase() : "")
+                : "U"}
+            </AvatarFallback>
+          )}
+        </Avatar>
+        <div className="flex flex-col text-left">
+          <span className="text-sm font-semibold text-gray-800">
+            {user.fname} {user.lname}
+          </span>
+          <span className="text-xs text-muted-foreground">{user.email}</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <DropdownMenu>
@@ -70,7 +92,7 @@ export function NavUser() {
               {user.profileImage ? (
                 <AvatarImage src={user.profileImage} />
               ) : (
-                <AvatarFallback>
+                <AvatarFallback className="text-white font-bold bg-indigo-600">
                   {user.fname
                     ? user.fname.charAt(0).toUpperCase() +
                       (user.lname ? user.lname.charAt(0).toUpperCase() : "")
@@ -90,12 +112,12 @@ export function NavUser() {
 
         <DropdownMenuContent align="end" className="w-55">
           <DropdownMenuItem>
-            <h2 className="font-semibold">
+            <h2 className="font-medium">
               {user.fname} {user.lname}
             </h2>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <h2 className="-mt-2 text-gray-500 font-semibold">{user.email}</h2>
+            <h2 className="-mt-2 text-gray-500 text-xs">{user.email}</h2>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem

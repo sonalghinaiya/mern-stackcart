@@ -1,6 +1,7 @@
 import { NavLink, useLocation } from "react-router-dom";
 import {
   SidebarGroup,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -11,7 +12,10 @@ export function NavMain({ items }) {
 
   return (
     <SidebarGroup>
-      <SidebarMenu className="space-y-1">
+      <SidebarGroupLabel className="uppercase text-gray-400">
+        Menu
+      </SidebarGroupLabel>
+      <SidebarMenu>
         {items.map((item) => {
           const isActive = location.pathname.startsWith(item.url);
 
@@ -19,7 +23,7 @@ export function NavMain({ items }) {
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
                 asChild
-                size="lg"
+                size="md"
                 isActive={isActive}
                 tooltip={item.title}
                 className="transition-all duration-200"
@@ -29,27 +33,32 @@ export function NavMain({ items }) {
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg 
                   ${
                     isActive
-                      ? "bg-blue-50 border-l-blue-600 text-blue-600 border-l-4"
+                      ? "bg-indigo-50 border-l-indigo-600 text-indigo-600 border-l-4"
                       : "text-gray-600 hover:text-black"
                   }`}
                 >
                   {item.icon && (
                     <item.icon
-                      className={`!h-5 !w-5 ${
-                        isActive ? "text-blue-600" : item.color
+                      className={`h-5 w-5 ${
+                        isActive ? "text-indigo-600" : item.color
                       }`}
                     />
                   )}
 
                   <span
-                    className={`text-base ${
-                      isActive
-                        ? "font-semibold text-blue-600"
-                        : "font-medium"
+                    className={`${
+                      isActive ? "font-semibold text-indigo-600" : "font-medium"
                     }`}
                   >
                     {item.title}
                   </span>
+                  <span
+                    className={`${
+                      isActive
+                        ? "ml-auto w-1.5 h-1.5 rounded-full bg-indigo-500 flex-shrink-0"
+                        : ""
+                    }`}
+                  ></span>
                 </NavLink>
               </SidebarMenuButton>
             </SidebarMenuItem>
