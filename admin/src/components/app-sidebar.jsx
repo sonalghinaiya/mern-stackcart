@@ -61,15 +61,15 @@ export function AppSidebar({ ...props }) {
   const isCollapsed = state === "collapsed";
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
+      <SidebarHeader className="bg-white">
         <TeamSwitcher teams={data.teams} />
-      </SidebarHeader>
-      <SidebarContent className="bg-white border-t">
         {isCollapsed && (
           <div className="flex items-center justify-center pt-2 -mb-2">
             <SidebarTrigger />
           </div>
         )}
+      </SidebarHeader>
+      <SidebarContent className="bg-white border-t">
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter className="border-t p-3 text-xs text-muted-foreground bg-white">

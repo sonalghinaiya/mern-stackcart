@@ -5,7 +5,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { CheckIcon, Lock, MailIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
@@ -16,6 +16,14 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = "Login | StackCart";
+
+    return () => {
+      document.title = "StackCart";
+    };
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -95,7 +103,10 @@ function Login() {
                 </InputGroupAddon>
               </InputGroup>
             </div>
-            <Button type="submit" className="w-full h-11 text-base cursor-pointer">
+            <Button
+              type="submit"
+              className="w-full h-11 text-base cursor-pointer"
+            >
               Sign In
             </Button>
           </form>

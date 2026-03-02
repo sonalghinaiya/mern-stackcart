@@ -27,7 +27,7 @@ export function TeamSwitcher({ teams }) {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="data-[state=open]:bg-white data-[state=open]:text-sidebar-accent-foreground"
             >
               <div className="flex aspect-square size-10 items-center justify-center rounded-lg shadow-2xl shrink-0">
                 <img
