@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -10,16 +9,16 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
 
 export function TeamSwitcher({ teams }) {
-  const { isMobile } = useSidebar();
+  const { state } = useSidebar();
   const [activeTeam, setActiveTeam] = React.useState(teams[0]);
+  const isCollapsed = state === "collapsed";
 
-  if (!activeTeam) {
-    return null;
-  }
+  if (!activeTeam) return null;
 
   return (
     <SidebarMenu>
@@ -30,19 +29,21 @@ export function TeamSwitcher({ teams }) {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="flex aspect-square size-10 items-center justify-center rounded-lg shadow-2xl">
-                <activeTeam.logo className="size-6" />
+              <div className="flex aspect-square size-10 items-center justify-center rounded-lg shadow-2xl shrink-0">
+                <img
+                  src="/stackcart-icon.svg"
+                  alt="StackCart"
+                  className="size-10 rounded-lg"
+                />
               </div>
-              <div className="grid flex-1 text-left text-lg leading-tight">
-                <div className="flex items-center gap-2">
-                  <span className="truncate font-semibold">
+              {!isCollapsed && (
+                <div className="flex flex-1 items-center justify-between gap-2 overflow-hidden">
+                  <span className="truncate font-bold text-[15px] text-slate-800 tracking-tight">
                     {activeTeam.name}
                   </span>
-                  <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-md bg-blue-100 text-blue-700">
-                    Admin
-                  </span>
+                  <SidebarTrigger />
                 </div>
-              </div>
+              )}
             </SidebarMenuButton>
           </DropdownMenuTrigger>
         </DropdownMenu>

@@ -4,7 +4,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { CheckIcon, MailIcon } from "lucide-react";
+import { CheckIcon, Lock, MailIcon } from "lucide-react";
 import { useState } from "react";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
@@ -77,22 +77,25 @@ function Login() {
 
             <div>
               <label className="text-sm font-medium">Password</label>
-              <InputGroup className="mt-2">
+              <InputGroup className="relative mt-2">
                 <InputGroupInput
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
+                <InputGroupAddon>
+                  <Lock size={18} />
+                </InputGroupAddon>
                 <InputGroupAddon
                   onClick={() => setShowPassword(!showPassword)}
-                  className="cursor-pointer"
+                  className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
                   {showPassword ? <IoEyeOff size={18} /> : <IoEye size={18} />}
                 </InputGroupAddon>
               </InputGroup>
             </div>
-            <Button type="submit" className="w-full h-11 text-base">
+            <Button type="submit" className="w-full h-11 text-base cursor-pointer">
               Sign In
             </Button>
           </form>

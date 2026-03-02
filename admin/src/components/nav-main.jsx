@@ -33,32 +33,32 @@ export function NavMain({ items }) {
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg 
                   ${
                     isActive
-                      ? "bg-indigo-50 border-l-indigo-600 text-indigo-600 border-l-4"
+                      ? "bg-indigo-50 border-l-blue-700 text-blue-700 border-l-4"
                       : "text-gray-600 hover:text-black"
                   }`}
                 >
                   {item.icon && (
                     <item.icon
                       className={`h-5 w-5 ${
-                        isActive ? "text-indigo-600" : item.color
+                        isActive ? "text-blue-700" : item.color
                       }`}
                     />
                   )}
 
                   <span
                     className={`${
-                      isActive ? "font-semibold text-indigo-600" : "font-medium"
+                      isActive ? "font-semibold text-blue-700" : "font-medium"
                     }`}
                   >
                     {item.title}
                   </span>
-                  <span
+                  {/* <span
                     className={`${
                       isActive
                         ? "ml-auto w-1.5 h-1.5 rounded-full bg-indigo-500 flex-shrink-0"
                         : ""
                     }`}
-                  ></span>
+                  ></span> */}
                 </NavLink>
               </SidebarMenuButton>
             </SidebarMenuItem>

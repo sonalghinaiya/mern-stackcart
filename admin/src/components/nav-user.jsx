@@ -22,6 +22,7 @@ import {
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSidebar } from "./ui/sidebar";
 
 export function NavUser({ variant = "navbar" }) {
   const navigate = useNavigate();
@@ -35,6 +36,8 @@ export function NavUser({ variant = "navbar" }) {
   });
 
   const [openLogout, setOpenLogout] = useState(false);
+
+  const { state } = useSidebar();
 
   useEffect(() => {
     const userProfile = localStorage.getItem("user");
@@ -56,13 +59,14 @@ export function NavUser({ variant = "navbar" }) {
   };
 
   if (variant === "sidebar") {
+    if (state === "collapsed") return null;
     return (
       <div className="flex items-center gap-3 p-2">
         <Avatar className="h-9 w-9">
           {user.profileImage ? (
             <AvatarImage src={user.profileImage} />
           ) : (
-            <AvatarFallback className="text-indigo-700 font-bold bg-indigo-100">
+            <AvatarFallback className="text-blue-700 font-bold bg-blue-100">
               {user.fname
                 ? user.fname.charAt(0).toUpperCase() +
                   (user.lname ? user.lname.charAt(0).toUpperCase() : "")
@@ -92,7 +96,7 @@ export function NavUser({ variant = "navbar" }) {
               {user.profileImage ? (
                 <AvatarImage src={user.profileImage} />
               ) : (
-                <AvatarFallback className="text-white font-bold bg-indigo-600">
+                <AvatarFallback className="text-white font-bold bg-blue-700">
                   {user.fname
                     ? user.fname.charAt(0).toUpperCase() +
                       (user.lname ? user.lname.charAt(0).toUpperCase() : "")

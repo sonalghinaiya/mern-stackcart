@@ -24,8 +24,6 @@ function AdminLayout() {
         <SidebarInset className="flex flex-col flex-1 overflow-hidden">
           <header className="h-16 shrink flex items-center justify-between border-b bg-background/80 backdrop-blur px-6">
             <div className="flex items-center gap-4">
-              <SidebarTrigger />
-
               <Breadcrumb>
                 <BreadcrumbList>
                   <BreadcrumbItem>
@@ -63,7 +61,7 @@ function AdminLayout() {
             </div>
 
             <div className="flex items-center gap-4">
-              <NavUser />
+              <NavUser variant="navbar"/>
             </div>
           </header>
           <main className="flex-1 p-6 bg-gray-50 overflow-y-auto">

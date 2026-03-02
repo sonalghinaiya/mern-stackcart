@@ -246,9 +246,9 @@ function SidebarTrigger({ className, onClick, ...props }) {
       {...props}
     >
       {state === "expanded" ? (
-        <PanelLeftClose className="h-5 w-5 text-gray-400" />
+        <PanelLeftClose className="h-5 w-5 text-gray-400 group-hover:text-gray-800 transition-colors" />
       ) : (
-        <PanelRightClose className="h-5 w-5 text-gray-400" />
+        <PanelRightClose className="h-5 w-5 text-gray-400 group-hover:text-gray-800 transition-colors" />
       )}
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
