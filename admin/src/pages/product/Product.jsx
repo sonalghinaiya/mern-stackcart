@@ -23,7 +23,8 @@ import {
   Trash2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import api from "../api/axios";
+import api from "../../api/axios";
+import { Link } from "react-router-dom";
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -54,9 +55,11 @@ function Products() {
           </p>
         </div>
         <div className="flex justify-center items-center">
-          <Button className="text-md">
-            <PlusIcon /> Add Product
-          </Button>
+          <Link to="/admin/products/add">
+            <Button className="text-md">
+              <PlusIcon /> Add Product
+            </Button>
+          </Link>
         </div>
       </div>
 
