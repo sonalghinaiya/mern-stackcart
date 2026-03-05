@@ -13,15 +13,16 @@ import {
 import {
   ImageOff,
   MoreVertical,
-  Pencil,
-  PlusIcon,
   Search,
+  Shield,
   Trash2,
+  UserCheck,
 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -44,19 +45,39 @@ function Users() {
     fetchUsers();
   };
 
+  const changeUserRole = async (id, role) => {
+    try {
+      await api.patch(`/admin/users/${id}/role`, { role });
+      fetchUsers();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const totalAdmins = users.filter((u) => u.role === "admin").length;
+  const totalUsers = users.filter((u) => u.role === "user").length;
+
   return (
     <div className="flex flex-col h-full gap-4">
-      <div className="flex justify-between shadow-sm bg-white rounded-lg p-4 shrink-0">
+      <div className="flex justify-between items-center shadow-sm bg-white rounded-lg p-4 shrink-0">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Users</h1>
           <p className="text-muted-foreground">
             Manage and monitor your customers
           </p>
         </div>
-        <div className="flex justify-center items-center">
-          <Button className="text-md">
-            <PlusIcon /> Add User
-          </Button>
+        <div>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 border border-blue-200 text-xs font-semibold text-blue-600 shadow-sm">
+              <Shield className="w-3.5 h-3.5" />
+              {totalAdmins} Admins
+            </div>
+
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-50 border border-gray-200 text-xs font-semibold text-gray-600 shadow-sm">
+              <UserCheck className="w-3.5 h-3.5" />
+              {totalUsers} Users
+            </div>
+          </div>
         </div>
       </div>
 
@@ -73,7 +94,7 @@ function Users() {
         <div className="bg-white rounded-lg shadow-sm border overflow-hidden mt-4">
           <div className="h-full overflow-y-auto">
             <Table>
-              <TableHeader className="bg-gray-50 sticky top-0 z-10">
+              <TableHeader className="bg-gray-50 sticky top-0 z-10 capitalize">
                 <TableRow>
                   <TableHead>Profile</TableHead>
                   <TableHead>Name</TableHead>
@@ -82,9 +103,7 @@ function Users() {
                   <TableHead>Status</TableHead>
                   <TableHead>Created</TableHead>
                   <TableHead>Updated</TableHead>
-                  <TableHead className="text-center border-s-2">
-                    Action
-                  </TableHead>
+                  <TableHead className="text-center border-s-2"></TableHead>
                 </TableRow>
               </TableHeader>
 
@@ -110,21 +129,38 @@ function Users() {
                       </TableCell>
                       <TableCell>{user.email}</TableCell>
                       <TableCell>
-                        <span className="px-2 py-1 text-xs rounded-md bg-blue-100 text-blue-600">
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full capitalize ${
+                            user.role === "admin"
+                              ? "bg-blue-50 text-blue-600 border border-blue-200"
+                              : "bg-gray-50 text-gray-600 border border-gray-200"
+                          }`}
+                        >
+                          {user.role === "admin" && (
+                            <Shield className="h-3.5 w-3.5 text-blue-500" />
+                          )}
+
                           {user.role}
                         </span>
                       </TableCell>
                       <TableCell>
                         <span
-                          className={`px-2 py-1 text-xs rounded-md ${
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md ${
                             user.isDeleted
-                              ? "bg-red-100 text-red-600"
-                              : "bg-green-100 text-green-600"
+                              ? "bg-red-50 text-red-600"
+                              : "bg-emerald-50 text-emerald-600"
                           }`}
                         >
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${
+                              user.isDeleted ? "bg-red-500" : "bg-emerald-500"
+                            }`}
+                          ></span>
+
                           {user.isDeleted ? "Deleted" : "Active"}
                         </span>
                       </TableCell>
+
                       <TableCell>
                         {new Date(user.createdAt).toLocaleDateString()}
                       </TableCell>
@@ -141,11 +177,21 @@ function Users() {
 
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem
-                              onClick={() => console.log("Edit", user._id)}
+                              disabled={user.role === "admin"}
+                              onClick={() => changeUserRole(user._id, "admin")}
                             >
-                              <Pencil className="mr-2 h-4 w-4 text-blue-500" />
-                              Edit
+                              <Shield className="mr-2 h-4 w-4 text-blue-500" />
+                              Make Admin
                             </DropdownMenuItem>
+
+                            <DropdownMenuItem
+                              disabled={user.role === "user"}
+                              onClick={() => changeUserRole(user._id, "user")}
+                            >
+                              <UserCheck className="mr-2 h-4 w-4" />
+                              Make User
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
 
                             <DropdownMenuItem
                               onClick={() => deleteUser(user._id)}
@@ -174,8 +220,7 @@ function Users() {
         </div>
         <div className="flex items-center justify-between p-4 border-t">
           <p className="text-md text-muted-foreground">
-            Total records:{" "}
-            <span className="font-semibold">{users.length}</span>
+            Total records: <span className="font-semibold">{users.length}</span>
           </p>
 
           <div className="flex items-center gap-6">
