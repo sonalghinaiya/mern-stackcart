@@ -25,10 +25,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 function Users() {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
+
+  const [openDelete, setOpenDelete] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const fetchUsers = async () => {
     const res = await api.get("/admin/users");
@@ -39,9 +50,9 @@ function Users() {
     fetchUsers();
   }, []);
 
-  const deleteUser = async (id) => {
-    if (!window.confirm("Are you sure?")) return;
-    await api.delete(`/users/${id}`);
+  const deleteUser = async () => {
+    await api.delete(`/users/${selectedUser}`);
+    setOpenDelete(false);
     fetchUsers();
   };
 
@@ -194,7 +205,10 @@ function Users() {
                             <DropdownMenuSeparator />
 
                             <DropdownMenuItem
-                              onClick={() => deleteUser(user._id)}
+                              onClick={() => {
+                                setSelectedUser(user._id);
+                                setOpenDelete(true);
+                              }}
                             >
                               <Trash2 className="mr-2 h-4 w-4 text-red-500" />
                               Delete
@@ -265,6 +279,27 @@ function Users() {
           </div>
         </div>
       </div>
+
+      {/* Delete User Dialog */}
+      <Dialog open={openDelete} onOpenChange={setOpenDelete}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete User?</DialogTitle>
+            <DialogDescription>
+              This action will mark the user as deleted. You can restore later
+              if needed.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpenDelete(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={deleteUser}>
+              Yes, Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
