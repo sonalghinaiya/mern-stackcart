@@ -23,6 +23,33 @@ export const adminGetAllProducts = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updateUserRole = async (req, res, next) => {
+  try {
+    const { role } = req.body;
+
+    if (!["admin", "user"].includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid role",
+      });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { role },
+      { new: true },
+    );
+
+    res.json({
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getAdminStats = async (req, res, next) => {
   try {
     const totalUsers = await User.countDocuments();
