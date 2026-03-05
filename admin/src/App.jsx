@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import Users from "./pages/User";
 import Products from "./pages/product/Product";
 import AddProduct from "./pages/product/AddProduct";
+import EditProduct from "./pages/product/EditProduct";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -36,6 +37,7 @@ function App() {
         <Route path="users" element={<Users />} />
         <Route path="products" element={<Products />} />
         <Route path="products/add" element={<AddProduct />} />
+        <Route path="products/edit/:id" element={<EditProduct />} />
       </Route>
     </Routes>
   );

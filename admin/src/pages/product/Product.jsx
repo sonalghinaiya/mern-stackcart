@@ -24,11 +24,24 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
-import { Link } from "react-router-dom";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Link, useNavigate } from "react-router-dom";
 
 function Products() {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
+
+  const [openDelete, setOpenDelete] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  const navigate = useNavigate();
 
   const fetchProducts = async () => {
     const res = await api.get("/admin/products");
@@ -39,9 +52,9 @@ function Products() {
     fetchProducts();
   }, []);
 
-  const deleteProducts = async (id) => {
-    if (!window.confirm("Are you sure?")) return;
-    await api.delete(`/products/${id}`);
+  const deleteProducts = async () => {
+    await api.delete(`/products/${selectedProduct}`);
+    setOpenDelete(false);
     fetchProducts();
   };
 
@@ -154,14 +167,19 @@ function Products() {
 
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem
-                              onClick={() => console.log("Edit", product._id)}
+                              onClick={() =>
+                                navigate(`/admin/products/edit/${product._id}`)
+                              }
                             >
                               <Pencil className="mr-2 h-4 w-4 text-blue-500" />
                               Edit
                             </DropdownMenuItem>
 
                             <DropdownMenuItem
-                              onClick={() => deleteProducts(product._id)}
+                              onClick={() => {
+                                setSelectedProduct(product._id);
+                                setOpenDelete(true);
+                              }}
                             >
                               <Trash2 className="mr-2 h-4 w-4 text-red-500" />
                               Delete
@@ -233,6 +251,25 @@ function Products() {
           </div>
         </div>
       </div>
+      {/* Delete Product Dialog */}
+      <Dialog open={openDelete} onOpenChange={setOpenDelete}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Product?</DialogTitle>
+            <DialogDescription>
+             Are you sure you want to delete this product?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpenDelete(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={deleteProducts}>
+              Yes, Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
