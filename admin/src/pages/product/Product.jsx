@@ -15,6 +15,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
   ImageOff,
   MoreVertical,
   Pencil,
@@ -38,19 +45,35 @@ function Products() {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
 
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [order, setOrder] = useState("desc");
+
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const navigate = useNavigate();
 
   const fetchProducts = async () => {
-    const res = await api.get("/admin/products");
+    const res = await api.get("/admin/products", {
+      params: {
+        page,
+        limit,
+        name: search,
+        sortBy,
+        order,
+      },
+    });
     setProducts(res.data.data);
+    setTotalPages(res.data.pagination.totalPages);
   };
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [page, limit, search, sortBy, order]);
 
   const deleteProducts = async () => {
     await api.delete(`/products/${selectedProduct}`);
@@ -58,6 +81,27 @@ function Products() {
     fetchProducts();
   };
 
+  const handleSort = (field) => {
+    if (sortBy === field) {
+      setOrder(order === "asc" ? "desc" : "asc");
+    } else {
+      setSortBy(field);
+      setOrder("asc");
+    }
+    setPage(1);
+  };
+
+  const getSortIcon = (field) => {
+    if (sortBy !== field) {
+      return <ArrowUpDown className="inline w-3 h-3 ml-1 text-gray-400" />;
+    }
+
+    return order === "asc" ? (
+      <ArrowUp className="inline w-3 h-3 ml-1" />
+    ) : (
+      <ArrowDown className="inline w-3 h-3 ml-1" />
+    );
+  };
   return (
     <div className="flex flex-col h-full gap-4">
       <div className="flex justify-between shadow-sm bg-white rounded-lg p-4 shrink-0">
@@ -93,13 +137,38 @@ function Products() {
               <TableHeader className="bg-gray-50">
                 <TableRow>
                   <TableHead>Image</TableHead>
-                  <TableHead>Name</TableHead>
+                  <TableHead
+                    className="cursor-pointer"
+                    onClick={() => handleSort("name")}
+                  >
+                    Name {getSortIcon("name")}
+                  </TableHead>
                   <TableHead>Description</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Rating</TableHead>
+                  <TableHead
+                    className="cursor-pointer"
+                    onClick={() => handleSort("price")}
+                  >
+                    Price {getSortIcon("price")}
+                  </TableHead>
+                  <TableHead
+                    className="cursor-pointer"
+                    onClick={() => handleSort("rating")}
+                  >
+                    Rating {getSortIcon("rating")}
+                  </TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead>Updated</TableHead>
+                  <TableHead
+                    className="cursor-pointer"
+                    onClick={() => handleSort("firstName")}
+                  >
+                    Created {getSortIcon("firstName")}
+                  </TableHead>
+                  <TableHead
+                    className="cursor-pointer"
+                    onClick={() => handleSort("firstName")}
+                  >
+                    Updated {getSortIcon("firstName")}
+                  </TableHead>
                   <TableHead className="text-center border-s-2">
                     Action
                   </TableHead>
@@ -218,8 +287,11 @@ function Products() {
               </span>
               <select
                 className="border rounded-md px-2 py-1 text-sm"
-                // value={recordsPerPage}
-                // onChange={(e) => setRecordsPerPage(Number(e.target.value))}
+                value={limit}
+                onChange={(e) => {
+                  setLimit(Number(e.target.value));
+                  setPage(1);
+                }}
               >
                 <option value={5}>5</option>
                 <option value={10}>10</option>
@@ -229,25 +301,43 @@ function Products() {
 
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">
-                Page 1 of 5{/* Page {currentPage} of {totalPages} */}
+                Page {page} of {totalPages}
               </span>
 
               <Button
                 size="icon"
                 variant="outline"
-                // disabled={currentPage === 1}
-                // onClick={() => setCurrentPage((prev) => prev - 1)}
+                disabled={page === 1}
+                onClick={() => setPage(1)}
               >
-                ‹
+                <ChevronsLeft className="h-4 w-4" />
               </Button>
 
               <Button
                 size="icon"
                 variant="outline"
-                // disabled={currentPage === totalPages}
-                // onClick={() => setCurrentPage((prev) => prev + 1)}
+                disabled={page === 1}
+                onClick={() => setPage(page - 1)}
               >
-                ›
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+
+              <Button
+                size="icon"
+                variant="outline"
+                disabled={page === totalPages}
+                onClick={() => setPage(page + 1)}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+
+              <Button
+                size="icon"
+                variant="outline"
+                disabled={page === totalPages}
+                onClick={() => setPage(totalPages)}
+              >
+                <ChevronsRight className="h-4 w-4" />
               </Button>
             </div>
           </div>

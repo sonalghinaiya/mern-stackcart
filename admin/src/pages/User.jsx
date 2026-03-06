@@ -60,7 +60,7 @@ function Users() {
   const [selectedUser, setSelectedUser] = useState(null);
 
   const fetchUsers = async () => {
-    const res = await api.get("/users", {
+    const res = await api.get("/admin/users", {
       params: {
         page,
         limit,
