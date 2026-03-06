@@ -1,17 +1,16 @@
 import { User } from "../models/user.js";
-import path from "path";
-import fs from "fs/promises";
 
 export const getAllUsers = async (req, res, next) => {
   try {
-    const page = req.query.page || 1;
-    const limit = req.query.limit || 10;
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
     const offset = (page - 1) * limit;
 
-    const totalUsers = await User.countDocuments({ isDeleted: false });
-    const totalPages = Math.ceil(totalUsers / limit);
+    const query = {};
 
-    const query = { isDeleted: false };
+    if (req.user?.role !== "admin") {
+      query.isDeleted = false;
+    }
 
     if (req.query.firstName) {
       query.firstName = { $regex: req.query.firstName, $options: "i" };
@@ -33,10 +32,13 @@ export const getAllUsers = async (req, res, next) => {
       query.gender = { $regex: req.query.gender, $options: "i" };
     }
 
+    const totalUsers = await User.countDocuments(query);
+    const totalPages = Math.ceil(totalUsers / limit);
+
     const sortBy = req.query.sortBy || "createdAt";
     const order = req.query.order === "asc" ? 1 : -1;
 
-    const sort = { [sortBy]: order }
+    const sort = { [sortBy]: order };
 
     const user = await User.find(query)
       .select("-password")
@@ -47,7 +49,7 @@ export const getAllUsers = async (req, res, next) => {
     return res.json({
       success: true,
       data: user,
-      pagintaion: {
+      pagination: {
         page,
         limit,
         totalPages,
@@ -99,7 +101,7 @@ export const updateUser = async (req, res, next) => {
         ...req.body,
         profileImage,
       },
-      { new: true }
+      { new: true },
     );
 
     return res.json({

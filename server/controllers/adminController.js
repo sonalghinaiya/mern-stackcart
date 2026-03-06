@@ -1,28 +1,28 @@
 import { Product } from "../models/product.js";
 import { User } from "../models/user.js";
 
-export const adminGetAllUsers = async (req, res, next) => {
-  try {
-    const users = await User.find().select("-password");
-    res.json({
-      success: true,
-      data: users,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-export const adminGetAllProducts = async (req, res, next) => {
-  try {
-    const products = await Product.find();
-    res.json({
-      success: true,
-      data: products,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+// export const adminGetAllUsers = async (req, res, next) => {
+//   try {
+//     const users = await User.find().select("-password");
+//     res.json({
+//       success: true,
+//       data: users,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+// export const adminGetAllProducts = async (req, res, next) => {
+//   try {
+//     const products = await Product.find();
+//     res.json({
+//       success: true,
+//       data: products,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 export const updateUserRole = async (req, res, next) => {
   try {
