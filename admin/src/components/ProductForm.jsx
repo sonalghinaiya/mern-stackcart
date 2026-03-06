@@ -5,15 +5,6 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, PlusIcon, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import api from "@/api/axios";
 
 function ProductForm({ productId }) {
@@ -38,6 +29,7 @@ function ProductForm({ productId }) {
       setDescription(product.description);
       setPrice(product.price);
       setRating(product.rating);
+      setImage(product.image)
     };
     fetchProduct();
   }, [productId]);
@@ -137,7 +129,7 @@ function ProductForm({ productId }) {
           <div className="h-24 w-24 border-2 border-dashed rounded-md flex items-center justify-center text-muted-foreground">
             {image ? (
               <img
-                src={URL.createObjectURL(image)}
+                src={typeof image === "string" ? image : URL.createObjectURL(image)}
                 alt="preview"
                 className="h-full w-full object-cover rounded-md"
               />

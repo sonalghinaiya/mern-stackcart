@@ -111,17 +111,19 @@ function Products() {
                   products.map((product) => (
                     <TableRow key={product._id} className="hover:bg-muted/40">
                       <TableCell>
-                        {product.image ? (
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            className="h-12 w-12 rounded-md object-cover border"
-                          />
-                        ) : (
-                          <div className="h-12 w-12 flex items-center justify-center rounded-md bg-gray-100 border">
-                            <ImageOff className="h-5 w-5 text-gray-400" />
-                          </div>
-                        )}
+                        <img
+                          src={product.image}
+                          alt=""
+                          className="h-12 w-12 rounded-md object-cover border"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                            e.currentTarget.nextSibling.style.display = "flex";
+                          }}
+                        />
+
+                        <div className="h-12 w-12 items-center justify-center rounded-md bg-gray-100 border hidden">
+                          <ImageOff className="h-5 w-5 text-gray-400" />
+                        </div>
                       </TableCell>
                       <TableCell className="font-medium">
                         {product.name}
@@ -257,7 +259,7 @@ function Products() {
           <DialogHeader>
             <DialogTitle>Delete Product?</DialogTitle>
             <DialogDescription>
-             Are you sure you want to delete this product?
+              Are you sure you want to delete this product?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
