@@ -11,6 +11,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ArrowRightIcon,
+  ArrowUp,
+  ArrowUpDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
   ImageOff,
   MoreVertical,
   Search,
@@ -38,17 +48,35 @@ function Users() {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
 
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [order, setOrder] = useState("desc");
+  const [roleFilter, setRoleFilter] = useState("");
+
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
   const fetchUsers = async () => {
-    const res = await api.get("/admin/users");
+    const res = await api.get("/users", {
+      params: {
+        page,
+        limit,
+        firstName: search,
+        role: roleFilter,
+        sortBy,
+        order,
+      },
+    });
     setUsers(res.data.data);
+    setTotalPages(res.data.pagination.totalPages);
   };
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [page, limit, search, roleFilter, sortBy, order]);
 
   const deleteUser = async () => {
     await api.delete(`/users/${selectedUser}`);
@@ -63,6 +91,28 @@ function Users() {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleSort = (field) => {
+    if (sortBy === field) {
+      setOrder(order === "asc" ? "desc" : "asc");
+    } else {
+      setSortBy(field);
+      setOrder("asc");
+    }
+    setPage(1);
+  };
+
+  const getSortIcon = (field) => {
+    if (sortBy !== field) {
+      return <ArrowUpDown className="inline w-3 h-3 ml-1 text-gray-400" />;
+    }
+
+    return order === "asc" ? (
+      <ArrowUp className="inline w-3 h-3 ml-1" />
+    ) : (
+      <ArrowDown className="inline w-3 h-3 ml-1" />
+    );
   };
 
   const totalAdmins = users.filter((u) => u.role === "admin").length;
@@ -94,13 +144,27 @@ function Users() {
 
       <div className="bg-white border rounded-lg shadow-sm p-4 flex flex-col flex-1 min-h-0">
         <div className="relative w-64 shrink-0">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search..."
-            className="pl-9 h-9 bg-gray-50 text-sm rounded-lg border-muted-foreground/20 focus:ring-1 focus:ring-blue-500"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <div className="flex gap-6">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search..."
+              className="pl-9 h-9 bg-gray-50 text-sm rounded-lg border-muted-foreground/20 focus:ring-1 focus:ring-blue-500"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <select
+              className="border rounded-md px-2 py-1 text-sm"
+              value={roleFilter}
+              onChange={(e) => {
+                setRoleFilter(e.target.value);
+                setPage(1);
+              }}
+            >
+              <option value="">All Roles</option>
+              <option value="admin">Admin</option>
+              <option value="user">User</option>
+            </select>
+          </div>
         </div>
         <div className="bg-white rounded-lg shadow-sm border overflow-hidden mt-4">
           <div className="h-full overflow-y-auto">
@@ -108,12 +172,32 @@ function Users() {
               <TableHeader className="bg-gray-50 sticky top-0 z-10 capitalize">
                 <TableRow>
                   <TableHead>Profile</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
+                  <TableHead
+                    className="cursor-pointer"
+                    onClick={() => handleSort("firstName")}
+                  >
+                    Name {getSortIcon("firstName")}
+                  </TableHead>
+                  <TableHead
+                    className="cursor-pointer"
+                    onClick={() => handleSort("firstName")}
+                  >
+                    Email {getSortIcon("firstName")}
+                  </TableHead>
                   <TableHead>Role</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead>Updated</TableHead>
+                  <TableHead
+                    className="cursor-pointer"
+                    onClick={() => handleSort("firstName")}
+                  >
+                    Created {getSortIcon("firstName")}
+                  </TableHead>
+                  <TableHead
+                    className="cursor-pointer"
+                    onClick={() => handleSort("firstName")}
+                  >
+                    Updated {getSortIcon("firstName")}
+                  </TableHead>
                   <TableHead className="text-center border-s-2"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -244,8 +328,11 @@ function Users() {
               </span>
               <select
                 className="border rounded-md px-2 py-1 text-sm"
-                // value={recordsPerPage}
-                // onChange={(e) => setRecordsPerPage(Number(e.target.value))}
+                value={limit}
+                onChange={(e) => {
+                  setLimit(Number(e.target.value));
+                  setPage(1);
+                }}
               >
                 <option value={5}>5</option>
                 <option value={10}>10</option>
@@ -255,25 +342,43 @@ function Users() {
 
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">
-                Page 1 of 5{/* Page {currentPage} of {totalPages} */}
+                Page {page} of {totalPages}
               </span>
 
               <Button
                 size="icon"
                 variant="outline"
-                // disabled={currentPage === 1}
-                // onClick={() => setCurrentPage((prev) => prev - 1)}
+                disabled={page === 1}
+                onClick={() => setPage(1)}
               >
-                ‹
+                <ChevronsLeft className="h-4 w-4" />
               </Button>
 
               <Button
                 size="icon"
                 variant="outline"
-                // disabled={currentPage === totalPages}
-                // onClick={() => setCurrentPage((prev) => prev + 1)}
+                disabled={page === 1}
+                onClick={() => setPage(page - 1)}
               >
-                ›
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+
+              <Button
+                size="icon"
+                variant="outline"
+                disabled={page === totalPages}
+                onClick={() => setPage(page + 1)}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+
+              <Button
+                size="icon"
+                variant="outline"
+                disabled={page === totalPages}
+                onClick={() => setPage(totalPages)}
+              >
+                <ChevronsRight className="h-4 w-4" />
               </Button>
             </div>
           </div>
