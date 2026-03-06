@@ -153,15 +153,7 @@ export const updateProduct = async (req, res, next) => {
     let imagePath = product.image;
 
     if (req.file) {
-      if (product.image) {
-        const oldPath = path.join(process.cwd(), "public", product.image);
-        try {
-          await fs.unlink(oldPath);
-        } catch (error) {
-          console.log("Old Product image not found");
-        }
-      }
-      imagePath = `uploads/products/${req.file.filename}`;
+      imagePath = req.file.path;
     }
 
     const updatedProduct = await Product.findByIdAndUpdate(

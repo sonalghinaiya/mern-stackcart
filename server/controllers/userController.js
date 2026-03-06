@@ -90,15 +90,7 @@ export const updateUser = async (req, res, next) => {
     let profileImage = user.profileImage;
 
     if (req.file) {
-      if (user.profileImage) {
-        const oldPath = path.join(process.cwd(), "public", user.profileImage);
-        try {
-          await fs.unlink(oldPath);
-        } catch (error) {
-          console.log("Old image not found");
-        }
-      }
-      profileImage = `uploads/users/${req.file.filename}`;
+      profileImage = req.file.path;
     }
 
     const updateUser = await User.findByIdAndUpdate(
