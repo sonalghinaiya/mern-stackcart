@@ -51,6 +51,7 @@ function Users() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
 
   const [sortBy, setSortBy] = useState("createdAt");
   const [order, setOrder] = useState("desc");
@@ -72,6 +73,7 @@ function Users() {
     });
     setUsers(res.data.data);
     setTotalPages(res.data.pagination.totalPages);
+    setTotalItems(res.data.pagination.totalUsers);
   };
 
   useEffect(() => {
@@ -318,7 +320,7 @@ function Users() {
         </div>
         <div className="flex items-center justify-between p-4 border-t">
           <p className="text-md text-muted-foreground">
-            Total records: <span className="font-semibold">{users.length}</span>
+            Total records: <span className="font-semibold">{totalItems}</span>
           </p>
 
           <div className="flex items-center gap-6">
