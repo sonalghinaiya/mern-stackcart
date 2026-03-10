@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import OtpInput from "react-otp-input";
 import { useLocation, useNavigate } from "react-router-dom";
-import api from "../api/axios";
+import api from "../../api/axios";
 import { useEffect } from "react";
 
 function VerifyOtp() {

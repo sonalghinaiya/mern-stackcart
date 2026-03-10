@@ -1,15 +1,14 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
 import Profile from "./pages/profile/Profile";
 import ProductList from "./pages/products/ProductList";
 import ProtectedRoutes from "./components/ProtectedRoutes";
-import Navbar from "./components/Navbar";
 import React from "react";
-import ForgotPassword from "./pages/auth/ForgotPassword";
-import VerifyOtp from "./pages/VerifyOtp";
-import ResetPassword from "./pages/ResetPassword";
 import Layout from "./Layout";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import VerifyOtp from "./pages/auth/VerifyOtp";
+import ResetPassword from "./pages/auth/ResetPassword";
 
 function App() {
   return (
@@ -27,7 +26,6 @@ function App() {
             }
           />
         </Route>
-
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />

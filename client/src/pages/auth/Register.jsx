@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import api from "../api/axios";
+import api from "../../api/axios";
 import { FcGoogle } from "react-icons/fc";
 import { FiUpload } from "react-icons/fi";
 import { IoEye, IoEyeOff } from "react-icons/io5";
-import { useGoogleAuth } from "../utils/googleAuth";
+import { useGoogleAuth } from "../../utils/googleAuth";
 
 function Register() {
   const navigate = useNavigate();
