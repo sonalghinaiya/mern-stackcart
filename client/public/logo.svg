@@ -1,0 +1,11 @@
+<svg width="100%" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <!-- Stack layers -->
+  <rect x="120" y="120" width="176" height="40" rx="10" fill="#111827"/>
+  <rect x="144" y="174" width="176" height="40" rx="10" fill="#374151"/>
+  <rect x="168" y="228" width="176" height="40" rx="10" fill="#6B7280"/>
+  <!-- Cart wheels -->
+  <circle cx="188" cy="318" r="22" fill="#111827"/>
+  <circle cx="300" cy="318" r="22" fill="#111827"/>
+  <!-- Cart handle -->
+  <path d="M60 60 L100 60 L168 228" stroke="#111827" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -15,7 +15,7 @@ function Profile() {
     navigate("/login");
   };
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white shadow p-6 rounded w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">My Profile</h2>
         {user.profileImage && (
