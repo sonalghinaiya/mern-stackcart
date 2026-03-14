@@ -12,7 +12,7 @@ import Unauthorized from "./pages/Unauthorized";
 
 function App() {
   const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const user = JSON.parse(localStorage.getItem("user"));
   return (
     <Routes>
       <Route
@@ -31,7 +31,7 @@ function App() {
         path="/auth/login"
         element={
           token && user?.role === "admin" ? (
-            <Navigate to="/admin/dashboard" replace />
+            <Navigate to="/admin/dashboard" />
           ) : (
             <Login />
           )

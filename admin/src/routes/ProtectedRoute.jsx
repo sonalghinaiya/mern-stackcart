@@ -3,13 +3,13 @@ import { Navigate } from "react-router-dom";
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const user = JSON.parse(localStorage.getItem("user") || "null");
 
   if (!token) {
     return <Navigate to="/auth/login" replace />;
   }
 
-  if (user?.role !== "admin") {
+  if (!user || user.role !== "admin") {
     return <Navigate to="/unauthorized" replace />;
   }
   return children;
