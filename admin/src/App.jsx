@@ -8,6 +8,7 @@ import Users from "./pages/User";
 import Products from "./pages/product/Product";
 import AddProduct from "./pages/product/AddProduct";
 import EditProduct from "./pages/product/EditProduct";
+import Unauthorized from "./pages/Unauthorized";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -17,14 +18,26 @@ function App() {
       <Route
         path="/"
         element={
-          token && user?.role === "admin" ? (
+          !token ? (
+            <Navigate to="/auth/login" />
+          ) : user?.role === "admin" ? (
             <Navigate to="/admin/dashboard" />
           ) : (
-            <Navigate to="/auth/login" />
+            <Navigate to="/unauthorized" />
           )
         }
       />
-      <Route path="/auth/login" element={<Login />} />
+      <Route
+        path="/auth/login"
+        element={
+          token && user?.role === "admin" ? (
+            <Navigate to="/admin/dashboard" replace />
+          ) : (
+            <Login />
+          )
+        }
+      />
+      <Route path="/unauthorized" element={<Unauthorized />} />
       <Route
         path="/admin"
         element={

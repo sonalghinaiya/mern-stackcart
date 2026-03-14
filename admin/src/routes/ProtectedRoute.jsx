@@ -5,10 +5,13 @@ function ProtectedRoute({ children }) {
   const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-  if (!token || user?.role !== "admin") {
-    return <Navigate to="/auth/login" />;
+  if (!token) {
+    return <Navigate to="/auth/login" replace />;
   }
 
+  if (user?.role !== "admin") {
+    return <Navigate to="/unauthorized" replace />;
+  }
   return children;
 }
 
