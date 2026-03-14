@@ -9,6 +9,7 @@ import Products from "./pages/product/Product";
 import AddProduct from "./pages/product/AddProduct";
 import EditProduct from "./pages/product/EditProduct";
 import Unauthorized from "./pages/Unauthorized";
+import NotFound from "./pages/NotFound";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -51,6 +52,7 @@ function App() {
         <Route path="products" element={<Products />} />
         <Route path="products/add" element={<AddProduct />} />
         <Route path="products/edit/:id" element={<EditProduct />} />
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );
