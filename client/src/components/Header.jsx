@@ -15,13 +15,13 @@ function Header() {
   };
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex justify-between items-center">
+      <div className="max-w-7xl mx-auto px-8 h-16 flex justify-between items-center">
         <button
           onClick={() => navigate("/")}
           className="flex items-center gap-2 group"
         >
           <img src="/logo.svg" alt="logo" className="w-8 h-8" />
-          <span className="font-bold text-lg text-gray-900 group-hover:text-gray-700">
+          <span className="font-bold text-xl text-gray-900 group-hover:text-gray-700">
             Stack<span className="text-gray-500">Cart</span>
           </span>
         </button>
@@ -44,11 +44,11 @@ function Header() {
         </div>
         <div className="flex items-center gap-1 relative">
           <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100">
-            <Search className="w-4.5 h-4.5 text-gray-600" />
+            <Search className="w-5.5 h-5.5 text-gray-600" />
           </button>
 
           <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100">
-            <ShoppingCart className="w-4.5 h-4.5 text-gray-600" />
+            <ShoppingCart className="w-5.5 h-5.5 text-gray-600" />
           </button>
 
           <div className="relative">
@@ -56,7 +56,7 @@ function Header() {
               onClick={toggleMenu}
               className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100"
             >
-              <CircleUserRound className="w-4.5 h-4.5 text-gray-600" />
+              <CircleUserRound className="w-5.5 h-5.5 text-gray-600" />
             </button>
 
             {menuVisible && (
