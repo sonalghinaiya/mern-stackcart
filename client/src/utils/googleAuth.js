@@ -14,7 +14,7 @@ export const useGoogleAuth = () => {
 
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("user", JSON.stringify(res.data.data));
-        navigate("/profile");
+        navigate("/");
       } catch (error) {
         console.log(error);
       }

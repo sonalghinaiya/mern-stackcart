@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CircleUserRound, Search, ShoppingCart } from "lucide-react";
+import { BsFillCartFill } from "react-icons/bs";
+import { PiUserCircleFill } from "react-icons/pi";
+import { IoSearch } from "react-icons/io5";
 
 function Header() {
   const navigate = useNavigate();
@@ -14,14 +17,14 @@ function Header() {
     navigate("/login");
   };
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-xs">
       <div className="max-w-7xl mx-auto px-8 h-16 flex justify-between items-center">
         <button
           onClick={() => navigate("/")}
           className="flex items-center gap-2 group"
         >
-          <img src="/logo.svg" alt="logo" className="w-8 h-8" />
-          <span className="font-bold text-xl text-gray-900 group-hover:text-gray-700">
+          <img src="/logo.svg" alt="logo" className="w-9 h-9" />
+          <span className="font-bold text-2xl text-gray-900 group-hover:text-gray-700">
             Stack<span className="text-gray-500">Cart</span>
           </span>
         </button>
@@ -42,13 +45,15 @@ function Header() {
             Cart
           </button>
         </div>
-        <div className="flex items-center gap-1 relative">
+        <div className="flex items-center gap-2 relative">
           <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100">
-            <Search className="w-5.5 h-5.5 text-gray-600" />
+            <IoSearch className="w-5.5 h-5.5 text-gray-700" />
           </button>
-
-          <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100">
-            <ShoppingCart className="w-5.5 h-5.5 text-gray-600" />
+          <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 relative">
+            <BsFillCartFill className="w-5.5 h-5.5 text-gray-700" />
+            <span className="absolute text-sm text-white bg-rose-500 rounded-full px-1 left-4 -top-1">
+              0
+            </span>
           </button>
 
           <div className="relative">
@@ -56,7 +61,7 @@ function Header() {
               onClick={toggleMenu}
               className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100"
             >
-              <CircleUserRound className="w-5.5 h-5.5 text-gray-600" />
+              <PiUserCircleFill className="w-7 h-7 text-gray-700" />
             </button>
 
             {menuVisible && (

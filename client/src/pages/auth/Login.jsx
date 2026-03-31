@@ -12,7 +12,7 @@ function Login() {
 
   const navigate = useNavigate();
 
-  const googleLogin = useGoogleAuth()
+  const googleLogin = useGoogleAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,7 +25,7 @@ function Login() {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.data));
 
-      navigate("/profile");
+      navigate("/");
     } catch (error) {
       console.log(error);
     }

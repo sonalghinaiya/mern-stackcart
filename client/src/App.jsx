@@ -11,6 +11,7 @@ import VerifyOtp from "./pages/auth/VerifyOtp";
 import ResetPassword from "./pages/auth/ResetPassword";
 import NotFound from "./pages/NotFound";
 import Home from "./pages/home/Home";
+import ProductDetails from "./pages/products/ProductDetails";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<ProductList />} />
+          <Route path="/products/:id" element={<ProductDetails />} />
           <Route
             path="/profile"
             element={
