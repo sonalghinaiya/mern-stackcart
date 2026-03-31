@@ -61,6 +61,19 @@ export const getProducts = async (req, res, next) => {
   }
 };
 
+export const getFeaturedProducts = async (req, res, next) => {
+  try {
+    const products = await Product.find({ isDeleted: false }).limit(3);
+
+    return res.json({
+      success: true,
+      data: products,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const createProduct = async (req, res, next) => {
   try {
     const result = productCreateSchema.safeParse(req.body);

@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   createProduct,
   deleteProduct,
+  getFeaturedProducts,
   getProductById,
   getProducts,
   updateProduct,
@@ -10,6 +11,8 @@ import { isAuthenticated } from "../middlewares/authMiddleware.js";
 import { uploadProduct } from "../middlewares/upload.js";
 
 const router = Router();
+
+router.route("/featured_products").get(getFeaturedProducts)
 
 router
   .route("/")
