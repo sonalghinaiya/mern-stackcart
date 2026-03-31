@@ -24,6 +24,18 @@ export const getProducts = async (req, res, next) => {
       query.rating = req.query.rating;
     }
 
+    if (req.query.brand) {
+      query.brand = req.query.brand;
+    }
+
+    if (req.query.inStock) {
+      query.inStock = req.query.inStock === "true";
+    }
+
+    if (req.query.bestSeller) {
+      query.isBestSeller = req.query.bestSeller === "true";
+    }
+
     if (req.query.priceMin || req.query.priceMax) {
       query.price = {};
       if (req.query.priceMin) {
@@ -63,7 +75,10 @@ export const getProducts = async (req, res, next) => {
 
 export const getFeaturedProducts = async (req, res, next) => {
   try {
-    const products = await Product.find({ isDeleted: false }).limit(3);
+    const products = await Product.find({
+      isDeleted: false,
+      isBestSeller: true,
+    }).limit(3);
 
     return res.json({
       success: true,
@@ -91,16 +106,29 @@ export const createProduct = async (req, res, next) => {
         message: "Product image is required.",
       });
     }
-    const { name, description, price, rating } = result.data;
+    const {
+      name,
+      description,
+      longDescription,
+      price,
+      rating,
+      inStock,
+      isBestSeller,
+      brand,
+    } = result.data;
 
     // const image = `uploads/products/${req.file.filename}`;
     const image = req.file.path;
     const product = await Product.create({
       name,
       description,
+      longDescription,
       price,
       rating,
       image,
+      inStock,
+      isBestSeller,
+      brand,
       createdBy: req.user.id,
     });
 
@@ -145,7 +173,16 @@ export const updateProduct = async (req, res, next) => {
       });
     }
 
-    const { name, description, price, rating } = result.data;
+    const {
+      name,
+      description,
+      longDescription,
+      price,
+      rating,
+      inStock,
+      isBestSeller,
+      brand,
+    } = result.data;
 
     const product = await Product.findOne({
       _id: req.params.id,
@@ -176,7 +213,11 @@ export const updateProduct = async (req, res, next) => {
         name,
         price,
         description,
+        longDescription,
         rating,
+        inStock,
+        isBestSeller,
+        brand,
         image: imagePath,
       },
       { new: true },
@@ -222,67 +263,6 @@ export const deleteProduct = async (req, res, next) => {
 
     // await product.deleteOne();
     return res.json({ success: true, message: "Product deleted successfully" });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getAllUsers = async (req, res, next) => {
-  try {
-    const page = req.query.page || 1;
-    const limit = req.query.limit || 10;
-    const offset = (page - 1) * limit;
-
-    const query = {};
-
-    if (req.user?.role !== "admin") {
-      query.isDeleted = false;
-    }
-
-    if (req.query.firstName) {
-      query.firstName = { $regex: req.query.firstName, $options: "i" };
-    }
-
-    if (req.query.lastName) {
-      query.lastName = { $regex: req.query.lastName, $options: "i" };
-    }
-
-    if (req.query.email) {
-      query.email = { $regex: req.query.email, $options: "i" };
-    }
-
-    if (req.query.role) {
-      query.role = req.query.role;
-    }
-
-    if (req.query.gender) {
-      query.gender = { $regex: req.query.gender, $options: "i" };
-    }
-
-    const totalUsers = await User.countDocuments(query);
-    const totalPages = Math.ceil(totalUsers / limit);
-
-    const sortBy = req.query.sortBy || "createdAt";
-    const order = req.query.order === "asc" ? 1 : -1;
-
-    const sort = { [sortBy]: order };
-
-    const user = await User.find(query)
-      .select("-password")
-      .sort(sort)
-      .skip(offset)
-      .limit(limit);
-
-    return res.json({
-      success: true,
-      data: user,
-      pagination: {
-        page,
-        limit,
-        totalPages,
-        totalUsers,
-      },
-    });
   } catch (error) {
     next(error);
   }
