@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Profile from "./pages/profile/Profile";
 import ProductList from "./pages/products/ProductList";
 import ProtectedRoutes from "./components/ProtectedRoutes";
@@ -10,13 +10,14 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import VerifyOtp from "./pages/auth/VerifyOtp";
 import ResetPassword from "./pages/auth/ResetPassword";
 import NotFound from "./pages/NotFound";
+import Home from "./pages/home/Home";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
-          <Route path="/" element={<ProductList />} />
+          <Route path="/" element={<Home />} />
           <Route path="/products" element={<ProductList />} />
           <Route
             path="/profile"

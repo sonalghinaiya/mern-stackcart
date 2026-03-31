@@ -59,7 +59,7 @@ export default function Hero() {
   const scrollTo = (index) => emblaApi && emblaApi.scrollTo(index);
 
   return (
-    <div className="pt-16">
+    <div className="pt-10">
       <div className="max-w-7xl mx-auto p-8">
         <div
           className="relative h-[560px] md:h-[640px] overflow-hidden rounded-2xl"
