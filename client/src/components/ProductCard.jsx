@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ShoppingCart, Star } from "lucide-react";
+import { Eye, ShoppingCart, Star } from "lucide-react";
 
 function ProductCard({ product }) {
   const navigate = useNavigate();
@@ -10,21 +10,29 @@ function ProductCard({ product }) {
       key={product._id}
       className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden"
     >
-      <div className="relative p-4">
+      <div className="relative w-full h-52 bg-gray-100 overflow-hidden group">
         {product.isBestSeller && (
-          <span className="absolute top-4 left-4 bg-amber-600 text-white text-xs px-2 py-1 rounded-lg">
+          <span className="absolute top-3 left-3 bg-amber-600 text-white text-xs px-2 py-1 rounded-md z-10">
             Best Seller
           </span>
         )}
-
         <img
-          onClick={() => navigate(`/products/${product._id}`)}
           src={product.image}
           alt={product.name}
-          className="h-48 w-full object-contain cursor-pointer"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-end justify-end p-3 transition">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/products/${product._id}`);
+            }}
+            className="bg-white text-gray-900 p-2 rounded-full shadow-lg hover:scale-110 transition"
+          >
+            <Eye className="w-3 h-3" />
+          </button>
+        </div>
       </div>
-
       <div className="p-4">
         <h2 className="text-xl sm:text-2xl font-semibold mb-2 line-clamp-1">
           {product.name}

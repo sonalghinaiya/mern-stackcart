@@ -22,11 +22,11 @@ function ProductList() {
   }, []);
 
   return (
-    <section className="max-w-6xl mx-auto px-4 py-10 sm:py-12">
+    <section className="max-w-7xl mx-auto px-4 py-10 sm:py-12">
       <h2 className="text-2xl sm:text-3xl mt-4 font-bold text-center mb-8">
         All Products
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {products.map((product) => (
           <ProductCard key={product._id} product={product} />
         ))}

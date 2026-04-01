@@ -22,7 +22,7 @@ function FeaturedProducts() {
   }, []);
 
   return (
-    <section className="max-w-6xl mx-auto px-4 py-10 sm:py-12">
+    <section className="max-w-7xl mx-auto px-4 py-10 sm:py-12">
       <div className="flex items-center justify-between mb-8 sm:mb-10">
         <div>
           <p className="text-xs text-indigo-600 font-semibold uppercase tracking-widest mb-1">
@@ -40,7 +40,7 @@ function FeaturedProducts() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {products.map((product) => (
           <ProductCard key={product._id} product={product} />
         ))}

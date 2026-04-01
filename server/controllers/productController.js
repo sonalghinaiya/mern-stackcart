@@ -78,7 +78,7 @@ export const getFeaturedProducts = async (req, res, next) => {
     const products = await Product.find({
       isDeleted: false,
       isBestSeller: true,
-    }).limit(3);
+    }).limit(4);
 
     return res.json({
       success: true,
