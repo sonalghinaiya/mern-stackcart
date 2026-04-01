@@ -45,6 +45,8 @@ function ProductForm({ productId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
+    formData.append("inStock", inStock);
+    formData.append("isBestSeller", isBestSeller);
     try {
       if (isEdit) {
         await api.patch(`/products/${productId}`, formData);
@@ -241,7 +243,7 @@ function ProductForm({ productId }) {
               <p className="text-xs text-muted-foreground">Max 3MB</p>
             </div>
           </div>
-        <Button type="submit">{isEdit ? "Update" : "Save"} Product</Button>
+          <Button type="submit">{isEdit ? "Update" : "Save"} Product</Button>
         </div>
       </form>
     </div>

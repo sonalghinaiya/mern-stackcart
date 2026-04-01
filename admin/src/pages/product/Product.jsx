@@ -159,6 +159,8 @@ function Products() {
                     Rating {getSortIcon("rating")}
                   </TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Brand</TableHead>
+                  <TableHead>Availability</TableHead>
                   <TableHead
                     className="cursor-pointer"
                     onClick={() => handleSort("firstName")}
@@ -225,6 +227,22 @@ function Products() {
                         </span>
                       </TableCell>
                       <TableCell>
+                        <p>{product.brand}</p>
+                      </TableCell>
+                      <TableCell>
+                        {product.isBestSeller && (
+                          <span className="ml-2 text-[10px] bg-orange-100 text-orange-600 px-2 py-1 rounded">
+                            Best Seller
+                          </span>
+                        )}
+
+                        {!product.inStock && (
+                          <span className="ml-2 text-[10px] bg-red-100 text-red-600 px-2 py-1 rounded">
+                            Out of Stock
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell>
                         {new Date(product.createdAt).toLocaleDateString()}
                       </TableCell>
                       <TableCell>
@@ -278,8 +296,7 @@ function Products() {
         </div>
         <div className="flex items-center justify-between p-4 border-t">
           <p className="text-md text-muted-foreground">
-            Total records:{" "}
-            <span className="font-semibold">{totalItems}</span>
+            Total records: <span className="font-semibold">{totalItems}</span>
           </p>
 
           <div className="flex items-center gap-6">
