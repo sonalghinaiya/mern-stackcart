@@ -1,8 +1,7 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
-import { Star, StarHalf } from "lucide-react";
+import { Star } from "lucide-react";
 
 function ProductList() {
   const [products, setProducts] = useState([]);
@@ -22,16 +21,18 @@ function ProductList() {
   }, []);
 
   return (
-    <section className="max-w-6xl mx-auto px-4 py-12">
-      <h2 className="text-3xl mt-4 font-bold text-center mb-6">All Products</h2>
+    <section className="max-w-6xl mx-auto px-4 py-10 sm:py-12">
+      <h2 className="text-2xl sm:text-3xl mt-4 font-bold text-center mb-8">
+        All Products
+      </h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((product) => (
           <div
             key={product._id}
             className="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden"
           >
-            <div className="h-56 w-full flex items-center justify-center p-4">
+            <div className="h-48 sm:h-56 w-full flex items-center justify-center p-4">
               <img
                 onClick={() => navigate(`/products/${product._id}`)}
                 className="h-full w-full object-contain cursor-pointer"
@@ -39,12 +40,16 @@ function ProductList() {
                 alt={product.name}
               />
             </div>
+
             <div className="p-4 bg-gray-50">
-              <h3 className="text-2xl font-semibold mb-1">{product.name}</h3>
+              <h3 className="text-lg sm:text-xl font-semibold mb-2 line-clamp-1">
+                {product.name}
+              </h3>
 
               <p className="text-gray-500 text-sm line-clamp-2 mb-3">
                 {product.description}
               </p>
+
               <div className="flex items-center gap-1 text-yellow-400 mb-3">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
@@ -56,8 +61,10 @@ function ProductList() {
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-lg font-bold">₹{product.price}</span>
-                <button className="bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-blue-600">
+                <span className="text-lg font-bold">
+                  ₹{product.price.toLocaleString("en-IN")}
+                </span>
+                <button className="bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition">
                   Add to Cart
                 </button>
               </div>
