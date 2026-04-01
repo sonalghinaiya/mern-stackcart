@@ -159,8 +159,8 @@ function Products() {
                     Rating {getSortIcon("rating")}
                   </TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Brand</TableHead>
-                  <TableHead>Availability</TableHead>
+                  {/* <TableHead>Brand</TableHead>
+                  <TableHead>Availability</TableHead> */}
                   <TableHead
                     className="cursor-pointer"
                     onClick={() => handleSort("firstName")}
@@ -217,31 +217,37 @@ function Products() {
                       </TableCell>
                       <TableCell>
                         <span
-                          className={`px-2 py-1 text-xs rounded-md ${
+                          className={`px-2 py-1 text-xs font-medium rounded-md whitespace-nowrap ${
                             product.isDeleted
-                              ? "bg-red-100 text-red-600"
-                              : "bg-green-100 text-green-600"
+                              ? "bg-red-100 text-red-700"
+                              : "bg-emerald-100 text-emerald-700"
                           }`}
                         >
                           {product.isDeleted ? "Deleted" : "Active"}
                         </span>
                       </TableCell>
-                      <TableCell>
+                      {/* <TableCell>
                         <p>{product.brand}</p>
                       </TableCell>
                       <TableCell>
-                        {product.isBestSeller && (
-                          <span className="ml-2 text-[10px] bg-orange-100 text-orange-600 px-2 py-1 rounded">
-                            Best Seller
-                          </span>
-                        )}
+                        <div className="flex flex-wrap gap-2">
+                          {product.isBestSeller && (
+                            <span className="text-[10px] font-medium bg-orange-100 text-orange-700 px-2.5 py-1 rounded-full whitespace-nowrap">
+                              Best Seller
+                            </span>
+                          )}
 
-                        {!product.inStock && (
-                          <span className="ml-2 text-[10px] bg-red-100 text-red-600 px-2 py-1 rounded">
-                            Out of Stock
-                          </span>
-                        )}
-                      </TableCell>
+                          {product.inStock ? (
+                            <span className="text-[10px] font-medium bg-green-100 text-green-700 px-2.5 py-1 rounded-full whitespace-nowrap">
+                              In Stock
+                            </span>
+                          ) : (
+                            <span className="text-[10px] font-medium bg-red-100 text-red-700 px-2.5 py-1 rounded-full whitespace-nowrap">
+                              Out of Stock
+                            </span>
+                          )}
+                        </div>
+                      </TableCell> */}
                       <TableCell>
                         {new Date(product.createdAt).toLocaleDateString()}
                       </TableCell>
