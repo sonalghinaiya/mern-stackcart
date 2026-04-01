@@ -33,7 +33,7 @@ const productSchema = new mongoose.Schema(
     },
     isBestSeller: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     brand: {
       type: String,

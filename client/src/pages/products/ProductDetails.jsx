@@ -29,12 +29,12 @@ function ProductDetails() {
   }
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 py-12">
       <div className="text-center max-w-3xl mx-auto mb-6">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
           {product.name}
         </h1>
-        <p className="text-gray-600 text-sm sm:text-base md:text-lg leading-7 sm:leading-8">
+        <p className="text-gray-600 text-sm sm:text-base md:text-lg">
           {product.description}
         </p>
       </div>
@@ -99,7 +99,7 @@ function ProductDetails() {
               disabled={!product.inStock}
               className={`px-8 sm:px-10 py-3 rounded-lg text-white text-sm sm:text-base font-medium transition ${
                 product.inStock
-                  ? "bg-blue-700 hover:bg-blue-800"
+                  ? "bg-indigo-600 hover:bg-indigo-700"
                   : "bg-gray-400 cursor-not-allowed"
               }`}
             >
