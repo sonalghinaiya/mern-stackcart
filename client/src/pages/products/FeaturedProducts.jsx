@@ -42,14 +42,15 @@ function FeaturedProducts() {
             key={product._id}
             className="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden"
           >
-            <img
-              onClick={() => navigate(`/products/${product._id}`)}
-              className="h-56 w-full object-cover cursor-pointer"
-              src={product.image}
-              alt={product.name}
-            />
-
-            <div className="p-4">
+            <div className="h-56 w-full flex items-center justify-center p-4">
+              <img
+                onClick={() => navigate(`/products/${product._id}`)}
+                className="h-full w-full object-contain cursor-pointer"
+                src={product.image}
+                alt={product.name}
+              />
+            </div>
+            <div className="p-4 bg-gray-50">
               <h3 className="text-2xl font-semibold mb-1">{product.name}</h3>
 
               <p className="text-gray-500 text-sm line-clamp-2 mb-3">
