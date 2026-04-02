@@ -5,6 +5,7 @@ import { IoEye, IoEyeOff } from "react-icons/io5";
 import { useGoogleAuth } from "../../utils/googleAuth";
 import api from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
+import toast from "react-hot-toast";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -25,10 +26,11 @@ function Login() {
       });
 
       login(res.data.data, res.data.token);
+      toast.success(res.data.message || "Login Successful");
 
       navigate("/");
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.message || "Login failed");
     }
   };
 

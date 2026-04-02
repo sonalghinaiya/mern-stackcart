@@ -5,13 +5,14 @@ import { FcGoogle } from "react-icons/fc";
 import { FiUpload } from "react-icons/fi";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { useGoogleAuth } from "../../utils/googleAuth";
+import toast from "react-hot-toast";
 
 function Register() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [preview, setPreview] = useState(null);
 
-  const googleLogin = useGoogleAuth()
+  const googleLogin = useGoogleAuth();
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -23,10 +24,10 @@ function Register() {
     try {
       const formData = new FormData(e.target);
       const res = await api.post("/auth/register", formData);
-
+      toast.success(res.data.message || "Register Successful");
       navigate("/login");
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.message || "Register failed");
     }
   };
   return (

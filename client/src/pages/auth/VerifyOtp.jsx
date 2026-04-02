@@ -4,6 +4,7 @@ import OtpInput from "react-otp-input";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 function VerifyOtp() {
   const [otp, setOtp] = useState("");
@@ -37,11 +38,12 @@ function VerifyOtp() {
         email,
         otp,
       });
+      toast.success(res.data.message || "OTP verified successfully");
       navigate("/reset-password", {
         state: { email },
       });
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.message);
     } finally {
       setLoading(false);
     }

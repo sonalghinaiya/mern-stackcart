@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import api from "../../api/axios";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -14,11 +15,12 @@ function ForgotPassword() {
       const res = await api.post("/auth/forgot-password", {
         email,
       });
+      toast.success(res.data.message || "OTP sent to your email");
       navigate("/verify-otp", {
         state: { email },
       });
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.message);
     }
   };
   return (

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
+import toast from "react-hot-toast";
 
 function ResetPassword() {
   const [password, setPassword] = useState("");
@@ -17,10 +18,12 @@ function ResetPassword() {
         email,
         password,
       });
-
+      toast.success(
+        res.data.message || "Password reset successfully. Please login",
+      );
       navigate("/login");
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.message);
     }
   };
   return (

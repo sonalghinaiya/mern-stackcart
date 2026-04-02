@@ -5,14 +5,22 @@ import { BsFillCartFill } from "react-icons/bs";
 import { PiUserCircleFill } from "react-icons/pi";
 import { IoSearch } from "react-icons/io5";
 import { useAuth } from "../context/AuthContext";
+import Dialog from "./Dialog";
 
 function Header() {
   const navigate = useNavigate();
   const [menuVisible, setMenuVisible] = useState(false);
+  const [openLogout, setOpenLogout] = useState(false);
+  const { user, logout } = useAuth();
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
   };
-  const { user, logout } = useAuth();
+
+  const handleLogut = () => {
+    logout();
+    setOpenLogout(false);
+    navigate("/");
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-xs">
@@ -86,7 +94,10 @@ function Header() {
                     </button>
                     <div className="border-t border-gray-100">
                       <button
-                        onClick={logout}
+                        onClick={() => {
+                          setOpenLogout(true);
+                          setMenuVisible(false);
+                        }}
                         className="w-full text-left px-4 py-2.5 text-sm text-red-500 hover:bg-red-50"
                       >
                         Logout
@@ -129,6 +140,11 @@ function Header() {
           </div>
         </div>
       </div>
+      <Dialog
+        open={openLogout}
+        onClose={() => setOpenLogout(false)}
+        onConfirm={handleLogut}
+      />
     </nav>
   );
 }
