@@ -4,18 +4,16 @@ import { CircleUserRound, Search, ShoppingCart } from "lucide-react";
 import { BsFillCartFill } from "react-icons/bs";
 import { PiUserCircleFill } from "react-icons/pi";
 import { IoSearch } from "react-icons/io5";
+import { useAuth } from "../context/AuthContext";
 
 function Header() {
   const navigate = useNavigate();
   const [menuVisible, setMenuVisible] = useState(false);
-  const token = localStorage.getItem("token");
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
   };
-  const logout = () => {
-    localStorage.clear();
-    navigate("/login");
-  };
+  const { user, logout } = useAuth();
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-xs">
       <div className="max-w-7xl mx-auto px-8 h-16 flex justify-between items-center">
@@ -66,7 +64,7 @@ function Header() {
 
             {menuVisible && (
               <div className="absolute top-11 right-0 w-44 bg-white border border-gray-100 rounded-xl shadow-lg overflow-hidden">
-                {token ? (
+                {user ? (
                   <>
                     <button
                       onClick={() => {

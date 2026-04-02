@@ -4,12 +4,14 @@ import { FcGoogle } from "react-icons/fc";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { useGoogleAuth } from "../../utils/googleAuth";
 import api from "../../api/axios";
+import { useAuth } from "../../context/AuthContext";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const googleLogin = useGoogleAuth();
@@ -22,8 +24,7 @@ function Login() {
         password,
       });
 
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.data));
+      login(res.data.data, res.data.token);
 
       navigate("/");
     } catch (error) {

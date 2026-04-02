@@ -1,19 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 function Profile() {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
+  const { user, logout } = useAuth();
 
-  if (!user) {
-    navigate("/login");
-    return null;
-  }
+  useEffect(() => {
+    if (!user) navigate("/login");
+  }, [user]);
 
-  const logout = () => {
-    localStorage.clear();
-    navigate("/login");
-  };
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white shadow p-6 rounded w-full max-w-md">
