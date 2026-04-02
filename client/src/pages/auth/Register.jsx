@@ -6,11 +6,16 @@ import { FiUpload } from "react-icons/fi";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { useGoogleAuth } from "../../utils/googleAuth";
 import toast from "react-hot-toast";
+import { registerSchema } from "../../validators/authValidation";
+import Input from "../../components/ui/Input";
+import Button from "../../components/ui/Button";
 
 function Register() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [preview, setPreview] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const googleLogin = useGoogleAuth();
 
@@ -21,13 +26,47 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formData = new FormData(e.target);
+
+    const data = {
+      firstName: formData.get("firstName"),
+      lastName: formData.get("lastName"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+      gender: formData.get("gender"),
+      jobTitle: formData.get("jobTitle"),
+      profileImage: formData.get("profileImage"),
+    };
+
+    const result = registerSchema.safeParse(data);
+    if (!result.success) {
+      const error = {};
+      result.error.issues.forEach((err) => {
+        error[err.path[0]] = err.message;
+      });
+      setErrors(error);
+      return;
+    }
+
+    setErrors({});
+    if (loading) return;
+
+    setLoading(true);
+
     try {
-      const formData = new FormData(e.target);
       const res = await api.post("/auth/register", formData);
       toast.success(res.data.message || "Register Successful");
       navigate("/login");
     } catch (error) {
-      toast.error(error.response.data.message || "Register failed");
+      if (error.code === "ECONNABORTED") {
+        toast.error("Server is taking too long. Try again.");
+      } else if (error.response) {
+        toast.error(error.response?.data?.message);
+      } else {
+        toast.error("Server not reachable. Please try again later.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -41,34 +80,50 @@ function Register() {
           Signup to your StackCart
         </p>
         <div className="grid grid-cols-2 gap-3">
-          <input className="input" name="firstName" placeholder="First name" />
-          <input className="input" name="lastName" placeholder="Last name" />
+          <Input
+            className="input"
+            name="firstName"
+            placeholder="First name"
+            error={errors.firstName}
+            required
+          />
+          <Input
+            className="input"
+            name="lastName"
+            placeholder="Last name"
+            error={errors.lastName}
+          />
         </div>
 
-        <input
-          className="input"
-          type="email"
+        <Input
           name="email"
+          type="email"
+          className="input"
+          error={errors.email}
           placeholder="Email"
+          required
         />
 
-        <div className="relative">
-          <input
-            className="input"
-            type={showPassword ? "text" : "password"}
-            name="password"
-            placeholder="Password"
-          />
-          <button
-            onClick={() => setShowPassword(!showPassword)}
-            type="button"
-            className="absolute right-2 -translate-y-1/2 top-1/2 text-gray-600"
-          >
-            {showPassword ? <IoEyeOff /> : <IoEye />}
-          </button>
-        </div>
+        <Input
+          type={showPassword ? "text" : "password"}
+          placeholder="Password"
+          className="input"
+          name="password"
+          error={errors.password}
+          required
+          rightIcon={
+            <span onClick={() => setShowPassword(!showPassword)}>
+              {showPassword ? <IoEyeOff size={16} /> : <IoEye size={16} />}
+            </span>
+          }
+        />
 
-        <input className="input" name="jobTitle" placeholder="Job title" />
+        <Input
+          className="input"
+          name="jobTitle"
+          placeholder="Job title"
+          error={errors.jobTitle}
+        />
 
         <div className="flex flex-col text-sm">
           <select name="gender" className="input">
@@ -84,6 +139,7 @@ function Register() {
             type="file"
             name="profileImage"
             className="hidden"
+            error={errors.profileImage}
             onChange={handleImageChange}
           />
           {preview ? (
@@ -98,14 +154,15 @@ function Register() {
               <p className="text-sm text-gray-500">Upload profile photo</p>
             </>
           )}
+          {errors.profileImage && (
+            <p className="text-red-500 text-xs mt-2 text-center">
+              {errors.profileImage}
+            </p>
+          )}
         </label>
-
-        <button
-          className="w-full bg-gray-800 text-white px-2 py-1.5 mt-4 rounded"
-          type="submit"
-        >
+        <Button type="submit" className="w-full mt-4" loading={loading}>
           Signup
-        </button>
+        </Button>
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t" />

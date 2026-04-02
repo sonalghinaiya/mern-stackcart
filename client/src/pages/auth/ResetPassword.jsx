@@ -2,9 +2,16 @@ import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import toast from "react-hot-toast";
+import { resetPasswordSchema } from "../../validators/authValidation";
+import Input from "../../components/ui/Input";
+import { IoEye, IoEyeOff } from "react-icons/io5";
+import Button from "../../components/ui/Button";
 
 function ResetPassword() {
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const navigate = useNavigate();
 
@@ -13,6 +20,21 @@ function ResetPassword() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const result = resetPasswordSchema.safeParse({ password });
+    if (!result.success) {
+      const error = {};
+      result.error.issues.forEach((err) => {
+        error[err.path[0]] = err.message;
+      });
+      setErrors(error);
+      return;
+    }
+
+    setErrors({});
+    if (loading) return;
+
+    setLoading(true);
+
     try {
       const res = await api.post("/auth/reset-password", {
         email,
@@ -23,7 +45,15 @@ function ResetPassword() {
       );
       navigate("/login");
     } catch (error) {
-      toast.error(error.response.data.message);
+      if (error.code === "ECONNABORTED") {
+        toast.error("Server is taking too long. Try again.");
+      } else if (error.response) {
+        toast.error(error.response?.data?.message);
+      } else {
+        toast.error("Server not reachable. Please try again later.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -39,19 +69,23 @@ function ResetPassword() {
           It must be at least 6 characters.
         </p>
 
-        <input
-          type="password"
-          placeholder="password"
+        <Input
+          label="Password"
+          type={showPassword ? "text" : "password"}
+          placeholder="••••••••"
           value={password}
           className="input"
+          error={errors.password}
           onChange={(e) => setPassword(e.target.value)}
+          rightIcon={
+            <span onClick={() => setShowPassword(!showPassword)}>
+              {showPassword ? <IoEyeOff size={18} /> : <IoEye size={18} />}
+            </span>
+          }
         />
-        <button
-          type="submit"
-          className="bg-gray-900 text-white rounded-lg w-full px-2 py-1.5 mt-4"
-        >
+        <Button type="submit" className="w-full mt-3" loading={loading}>
           Change Password
-        </button>
+        </Button>
       </form>
     </div>
   );

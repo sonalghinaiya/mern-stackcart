@@ -3,14 +3,33 @@ import { useState } from "react";
 import api from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import Input from "../../components/ui/Input";
+import { forgotPasswordSchema } from "../../validators/authValidation";
+import Button from "../../components/ui/Button";
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const result = forgotPasswordSchema.safeParse({ email });
+    if (!result.success) {
+      const error = {};
+      result.error.issues.forEach((err) => {
+        error[err.path[0]] = err.message;
+      });
+      setErrors(error);
+      return;
+    }
+
+    setErrors({});
+    if (loading) return;
+
+    setLoading(true);
     try {
       const res = await api.post("/auth/forgot-password", {
         email,
@@ -20,7 +39,15 @@ function ForgotPassword() {
         state: { email },
       });
     } catch (error) {
-      toast.error(error.response.data.message);
+      if (error.code === "ECONNABORTED") {
+        toast.error("Server is taking too long. Try again.");
+      } else if (error.response) {
+        toast.error(error.response?.data?.message);
+      } else {
+        toast.error("Server not reachable. Please try again later.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -33,22 +60,18 @@ function ForgotPassword() {
         <p className="text-gray-500 text-md -mt-3">
           We’ll send a verification code to your email
         </p>
-        <label htmlFor="email" className="text-sm font-semibold">
-          Enter Your Email
-        </label>
-        <input
+        <Input
+          label="Enter Your Email"
           type="email"
-          placeholder="Enter Your Email"
           value={email}
           className="input"
+          error={errors.email}
           onChange={(e) => setEmail(e.target.value)}
+          placeholder="Enter Your Email"
         />
-        <button
-          type="submit"
-          className="bg-gray-900 text-white rounded w-full font-semibold px-2 py-1.5 mt-4"
-        >
+        <Button type="submit" className="w-full" loading={loading}>
           send
-        </button>
+        </Button>
       </form>
     </div>
   );

@@ -6,11 +6,16 @@ import { useGoogleAuth } from "../../utils/googleAuth";
 import api from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
+import { loginSchema } from "../../validators/authValidation";
+import Input from "../../components/ui/Input";
+import Button from "../../components/ui/Button";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -19,6 +24,21 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const result = loginSchema.safeParse({ email, password });
+    if (!result.success) {
+      const error = {};
+      result.error.issues.forEach((err) => {
+        error[err.path[0]] = err.message;
+      });
+      setErrors(error);
+      return;
+    }
+
+    setErrors({});
+    if (loading) return;
+
+    setLoading(true);
+
     try {
       const res = await api.post("/auth/login", {
         email,
@@ -30,7 +50,15 @@ function Login() {
 
       navigate("/");
     } catch (error) {
-      toast.error(error.response.data.message || "Login failed");
+      if (error.code === "ECONNABORTED") {
+        toast.error("Server is taking too long. Try again.");
+      } else if (error.response) {
+        toast.error(error.response?.data?.message);
+      } else {
+        toast.error("Server not reachable. Please try again later.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -45,43 +73,38 @@ function Login() {
           Login to your StackCart account
         </p>
         <div>
-          <label className="text-sm font-semibold">Email</label>
-          <input
+          <Input
+            label="Email"
             type="email"
-            placeholder="you@example.com"
             value={email}
             className="input"
+            error={errors.email}
             onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
           />
         </div>
         <div>
-          <label className="text-sm font-semibold">Password</label>
-          <div className="relative mt-1">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="••••••••"
-              value={password}
-              className="input"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-            >
-              {showPassword ? <IoEyeOff size={18} /> : <IoEye size={18} />}
-            </button>
-          </div>
+          <Input
+            label="Password"
+            type={showPassword ? "text" : "password"}
+            placeholder="••••••••"
+            value={password}
+            className="input"
+            error={errors.password}
+            onChange={(e) => setPassword(e.target.value)}
+            rightIcon={
+              <span onClick={() => setShowPassword(!showPassword)}>
+                {showPassword ? <IoEyeOff size={18} /> : <IoEye size={18} />}
+              </span>
+            }
+          />
         </div>
         <p className="text-sm text-right mb-4 text-gray-800 cursor-pointer hover:underline">
           <Link to="/forgot-password">Forgot your password?</Link>
         </p>
-        <button
-          type="submit"
-          className="bg-gray-900 text-white rounded-lg w-full px-2 py-1.5"
-        >
+        <Button type="submit" className="w-full" loading={loading}>
           Login
-        </button>
+        </Button>
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t" />

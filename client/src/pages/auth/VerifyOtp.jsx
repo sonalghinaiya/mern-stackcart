@@ -5,12 +5,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
+import { verifyOtpSchema } from "../../validators/authValidation";
 
 function VerifyOtp() {
   const [otp, setOtp] = useState("");
   const [timer, setTimer] = useState(60);
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (timer === 0) return;
@@ -29,6 +31,18 @@ function VerifyOtp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const result = verifyOtpSchema.safeParse({ otp });
+    if (!result.success) {
+      const error = {};
+      result.error.issues.forEach((err) => {
+        error[err.path[0]] = err.message;
+      });
+      setErrors(error);
+      return;
+    }
+
+    setErrors({});
+    if (loading) return;
     setLoading(true);
     if (!email) {
       navigate("/forgot-password");
@@ -43,7 +57,13 @@ function VerifyOtp() {
         state: { email },
       });
     } catch (error) {
-      toast.error(error.response.data.message);
+      if (error.code === "ECONNABORTED") {
+        toast.error("Server is taking too long. Try again.");
+      } else if (error.response) {
+        toast.error(error.response?.data?.message);
+      } else {
+        toast.error("Server not reachable. Please try again later.");
+      }
     } finally {
       setLoading(false);
     }
@@ -53,10 +73,11 @@ function VerifyOtp() {
     setResending(true);
 
     try {
-      await api.post("/auth/resend-otp", { email });
+      const res = await api.post("/auth/resend-otp", { email });
+      toast.success(res.data.message || "OTP resent successfully");
       setTimer(60);
     } catch (error) {
-      console.log(error);
+      toast.error(error.response?.data?.message);
     } finally {
       setResending(false);
     }
@@ -87,6 +108,9 @@ function VerifyOtp() {
           renderSeparator={<span> </span>}
           renderInput={(props) => <input {...props} />}
         />
+        {errors.otp && (
+          <p className="text-red-500 text-sm text-center">{errors.otp}</p>
+        )}
 
         <button
           type="submit"
