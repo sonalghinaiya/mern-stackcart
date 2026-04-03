@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import { ArrowRight, ShoppingCart, Star } from "lucide-react";
 import ProductCard from "../../components/product/ProductCard";
+import ProductSkeleton from "../../components/product/ProductSkeleton";
 
 function FeaturedProducts() {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const fetchProducts = async () => {
@@ -14,6 +16,8 @@ function FeaturedProducts() {
       setProducts(res.data.data);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -41,9 +45,11 @@ function FeaturedProducts() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <ProductCard key={product._id} product={product} />
-        ))}
+        {loading
+          ? Array.from({ length: 4 }).map((_, i) => <ProductSkeleton key={i} />)
+          : products.map((product) => (
+              <ProductCard key={product._id} product={product} />
+            ))}
       </div>
     </section>
   );

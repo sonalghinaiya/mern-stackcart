@@ -5,7 +5,7 @@ import { BsFillCartFill } from "react-icons/bs";
 import { PiUserCircleFill } from "react-icons/pi";
 import { IoSearch } from "react-icons/io5";
 import { useAuth } from "../../context/AuthContext";
-import Dialog from "./Dialog";
+import Dialog from "../ui/Dialog";
 
 function Header() {
   const navigate = useNavigate();

@@ -22,8 +22,16 @@ function ProductDetails() {
 
   if (!product) {
     return (
-      <div className="text-center py-20 text-gray-500 text-lg">
-        Loading product...
+      <div className="max-w-7xl mx-auto px-4 py-10 animate-pulse">
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="h-[400px] bg-gray-200 rounded-xl" />
+          <div className="space-y-4">
+            <div className="h-6 bg-gray-200 w-1/2 rounded" />
+            <div className="h-4 bg-gray-200 w-1/3 rounded" />
+            <div className="h-10 bg-gray-200 w-1/4 rounded" />
+            <div className="h-32 bg-gray-200 rounded" />
+          </div>
+        </div>
       </div>
     );
   }

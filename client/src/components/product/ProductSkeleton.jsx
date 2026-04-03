@@ -1,3 +1,5 @@
+import React from "react";
+
 function ProductSkeleton() {
   return (
     <div className="bg-white rounded-2xl shadow p-4 animate-pulse">
@@ -8,3 +10,5 @@ function ProductSkeleton() {
     </div>
   );
 }
+
+export default ProductSkeleton;
