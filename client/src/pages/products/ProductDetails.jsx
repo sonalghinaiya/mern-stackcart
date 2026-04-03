@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../api/axios";
 import { Star } from "lucide-react";
+import toast from "react-hot-toast";
 
 function ProductDetails() {
   const { id } = useParams();
@@ -12,7 +13,9 @@ function ProductDetails() {
       const res = await api.get(`/products/${id}`);
       setProduct(res.data.data);
     } catch (error) {
-      console.log(error);
+      toast.error(
+        error.response?.data?.message || "Failed to load product details",
+      );
     }
   };
 

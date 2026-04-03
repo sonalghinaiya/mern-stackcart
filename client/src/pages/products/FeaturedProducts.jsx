@@ -4,6 +4,7 @@ import api from "../../api/axios";
 import { ArrowRight, ShoppingCart, Star } from "lucide-react";
 import ProductCard from "../../components/product/ProductCard";
 import ProductSkeleton from "../../components/product/ProductSkeleton";
+import toast from "react-hot-toast";
 
 function FeaturedProducts() {
   const [products, setProducts] = useState([]);
@@ -15,7 +16,9 @@ function FeaturedProducts() {
       const res = await api.get("/products/featured_products");
       setProducts(res.data.data);
     } catch (error) {
-      console.log(error);
+      toast.error(
+        error.response?.data?.message || "Failed to load featured products",
+      );
     } finally {
       setLoading(false);
     }

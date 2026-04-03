@@ -4,6 +4,7 @@ import api from "../../api/axios";
 import { ShoppingCart, Star } from "lucide-react";
 import ProductCard from "../../components/product/ProductCard";
 import ProductSkeleton from "../../components/product/ProductSkeleton";
+import toast from "react-hot-toast";
 
 function ProductList() {
   const [products, setProducts] = useState([]);
@@ -14,7 +15,7 @@ function ProductList() {
       const res = await api.get("/products");
       setProducts(res.data.data);
     } catch (error) {
-      console.log(error);
+      toast.error(error.response?.data?.message || "Failed to load products");
     } finally {
       setLoading(false);
     }

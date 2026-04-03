@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, ShoppingCart, Star } from "lucide-react";
+import toast from "react-hot-toast";
 
 function ProductCard({ product }) {
   const navigate = useNavigate();
@@ -8,6 +9,13 @@ function ProductCard({ product }) {
   const handleNavigate = () => {
     navigate(`/products/${product._id}`);
   };
+
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
+    toast.success("Added to cart");
+  };
+
+  const rating = product.rating || 0;
 
   return (
     <div
@@ -22,7 +30,8 @@ function ProductCard({ product }) {
         )}
 
         <img
-          src={product.image}
+          src={product.image || "/placeholder.png"}
+          onError={(e) => (e.target.src = "/placeholder.png")}
           alt={product.name}
           loading="lazy"
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
@@ -55,7 +64,7 @@ function ProductCard({ product }) {
             <Star
               key={star}
               size={16}
-              fill={product.rating >= star ? "currentColor" : "none"}
+              fill={rating >= star ? "currentColor" : "none"}
             />
           ))}
         </div>
@@ -72,10 +81,16 @@ function ProductCard({ product }) {
           </div>
 
           <button
-            className="flex items-center gap-1 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-sm transition"
+            onClick={handleAddToCart}
+            disabled={!product.inStock}
+            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm transition ${
+              product.inStock
+                ? "bg-indigo-600 hover:bg-indigo-700 text-white"
+                : "bg-gray-300 cursor-not-allowed text-gray-500"
+            }`}
           >
             <ShoppingCart className="w-3.5 h-3.5" />
-            Add
+            {product.inStock ? "Add" : "Out"}
           </button>
         </div>
       </div>
