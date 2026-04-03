@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import { ArrowRight, ShoppingCart, Star } from "lucide-react";
-import ProductCard from "../../components/ProductCard";
+import ProductCard from "../../components/product/ProductCard";
 
 function FeaturedProducts() {
   const [products, setProducts] = useState([]);
