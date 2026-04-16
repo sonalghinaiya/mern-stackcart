@@ -6,7 +6,9 @@ import { useCart } from "../../context/CartContext";
 
 function ProductCard({ product }) {
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+  const { cartItem, addToCart } = useCart();
+
+  const isInCart = cartItem.some((item) => item._id === product?._id);
 
   const handleNavigate = () => {
     navigate(`/products/${product._id}`);
@@ -14,7 +16,7 @@ function ProductCard({ product }) {
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
-    addToCart(product)
+    addToCart(product);
   };
 
   const rating = product.rating || 0;
@@ -85,14 +87,20 @@ function ProductCard({ product }) {
           <button
             onClick={handleAddToCart}
             disabled={!product.inStock}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm transition ${
-              product.inStock
-                ? "bg-indigo-600 hover:bg-indigo-700 text-white"
-                : "bg-gray-300 cursor-not-allowed text-gray-500"
+            className={`flex items-center gap-1 px-3 text-white py-1.5 rounded-lg text-sm transition ${
+              !product.inStock
+                ? "bg-gray-400 cursor-not-allowed"
+                : isInCart
+                  ? "bg-red-500 hover:bg-red-600"
+                  : "bg-indigo-600 hover:bg-indigo-700"
             }`}
           >
             <ShoppingCart className="w-3.5 h-3.5" />
-            {product.inStock ? "Add" : "Out"}
+            {!product.inStock
+              ? "Out"
+              : isInCart
+                ? "Remove"
+                : "Add"}
           </button>
         </div>
       </div>

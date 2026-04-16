@@ -8,7 +8,9 @@ import { useCart } from "../../context/CartContext";
 function ProductDetails() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
-  const { addToCart } = useCart();
+  const { addToCart, removeFromCart, cartItem } = useCart();
+
+  const isInCart = cartItem.some((item) => item._id === product?._id);
 
   const fetchProduct = async () => {
     try {
@@ -109,15 +111,23 @@ function ProductDetails() {
 
           <div className="flex justify-center md:justify-start">
             <button
-              onClick={() => addToCart(product)}
+              onClick={() =>
+                isInCart ? removeFromCart(product._id) : addToCart(product)
+              }
               disabled={!product.inStock}
               className={`px-8 sm:px-10 py-3 rounded-lg text-white text-sm sm:text-base font-medium transition ${
-                product.inStock
-                  ? "bg-indigo-600 hover:bg-indigo-700"
-                  : "bg-gray-400 cursor-not-allowed"
+                !product.inStock
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : isInCart
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "bg-indigo-600 hover:bg-indigo-700"
               }`}
             >
-              {product.inStock ? "Add to Cart" : "Out of Stock"}
+              {!product.inStock
+                ? "Out of Stock"
+                : isInCart
+                  ? "Remove from Cart"
+                  : "Add to Cart"}
             </button>
           </div>
 
