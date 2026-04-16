@@ -3,10 +3,12 @@ import { useParams } from "react-router-dom";
 import api from "../../api/axios";
 import { Star } from "lucide-react";
 import toast from "react-hot-toast";
+import { useCart } from "../../context/CartContext";
 
 function ProductDetails() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const { addToCart } = useCart();
 
   const fetchProduct = async () => {
     try {
@@ -107,6 +109,7 @@ function ProductDetails() {
 
           <div className="flex justify-center md:justify-start">
             <button
+              onClick={() => addToCart(product)}
               disabled={!product.inStock}
               className={`px-8 sm:px-10 py-3 rounded-lg text-white text-sm sm:text-base font-medium transition ${
                 product.inStock

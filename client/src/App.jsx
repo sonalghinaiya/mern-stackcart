@@ -12,6 +12,7 @@ import ResetPassword from "./pages/auth/ResetPassword";
 import NotFound from "./pages/NotFound";
 import Home from "./pages/home/Home";
 import ProductDetails from "./pages/products/ProductDetails";
+import Cart from "./pages/cart/Cart";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<ProductList />} />
           <Route path="/products/:id" element={<ProductDetails />} />
+          <Route path="/cart" element={<Cart />} />
           <Route
             path="/profile"
             element={

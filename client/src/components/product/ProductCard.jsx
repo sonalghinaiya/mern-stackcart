@@ -2,9 +2,11 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, ShoppingCart, Star } from "lucide-react";
 import toast from "react-hot-toast";
+import { useCart } from "../../context/CartContext";
 
 function ProductCard({ product }) {
   const navigate = useNavigate();
+  const { addToCart } = useCart();
 
   const handleNavigate = () => {
     navigate(`/products/${product._id}`);
@@ -12,7 +14,7 @@ function ProductCard({ product }) {
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
-    toast.success("Added to cart");
+    addToCart(product)
   };
 
   const rating = product.rating || 0;

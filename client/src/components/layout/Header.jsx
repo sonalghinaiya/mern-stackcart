@@ -6,12 +6,15 @@ import { PiUserCircleFill } from "react-icons/pi";
 import { IoSearch } from "react-icons/io5";
 import { useAuth } from "../../context/AuthContext";
 import Dialog from "../ui/Dialog";
+import { useCart } from "../../context/CartContext";
 
 function Header() {
   const navigate = useNavigate();
   const [menuVisible, setMenuVisible] = useState(false);
   const [openLogout, setOpenLogout] = useState(false);
   const { user, logout } = useAuth();
+  const { getTotalItems } = useCart();
+
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
   };
@@ -55,10 +58,13 @@ function Header() {
           <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100">
             <IoSearch className="w-5.5 h-5.5 text-gray-700" />
           </button>
-          <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 relative">
+          <button
+            onClick={() => navigate("/cart")}
+            className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 relative"
+          >
             <BsFillCartFill className="w-5.5 h-5.5 text-gray-700" />
             <span className="absolute text-sm text-white bg-rose-500 rounded-full px-1 left-4 -top-1">
-              0
+              {getTotalItems()}
             </span>
           </button>
 
@@ -85,7 +91,7 @@ function Header() {
                     </button>
                     <button
                       onClick={() => {
-                        navigate("/");
+                        navigate("/cart");
                         setMenuVisible(false);
                       }}
                       className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
