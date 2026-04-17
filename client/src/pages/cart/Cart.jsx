@@ -7,11 +7,19 @@ import CartSummary from "../../components/cart/CartSummary";
 
 function Cart() {
   const navigate = useNavigate();
-  const { cartItem, clearCart } = useCart();
+  const { cartItem, clearCart, getTotalItems } = useCart();
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 mt-6">
       <div className="flex items-center justify-between mb-6">
+        <div className="flex items-end gap-2 m-6">
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            Shopping Cart
+          </h1>
+          <p className="text-gray-400 mt-1">
+            ({getTotalItems()} {getTotalItems() === 1 ? "item" : "items"})
+          </p>
+        </div>
         {cartItem.length > 0 && (
           <button
             onClick={clearCart}
@@ -23,9 +31,9 @@ function Cart() {
       </div>
 
       {cartItem.length === 0 ? (
-        <div className="text-center py-16">
-          <div className="w-28 h-28 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <ShoppingCart className="w-16 h-16 text-green-800" />
+        <div className="text-center py-16 bg-gray-50">
+          <div className="w-24 h-24 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+            <ShoppingCart className="w-14 h-14 text-green-800" />
           </div>
           <h2 className="text-2xl font-semibold text-gray-900 mb-2">
             Your cart is empty
@@ -44,14 +52,6 @@ function Cart() {
       ) : (
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">
-            <button
-              onClick={() => navigate("/products")}
-              className="text-indigo-600 hover:text-indigo-700 text-sm font-medium flex items-center gap-1 mb-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Continue Shopping
-            </button>
-
             {cartItem.map((item) => (
               <CartItem key={item._id} item={item} />
             ))}

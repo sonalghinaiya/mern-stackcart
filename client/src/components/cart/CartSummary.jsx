@@ -1,9 +1,11 @@
 import React from "react";
-import { ShoppingBag } from "lucide-react";
+import { ArrowLeft, ArrowRight, ShoppingBag } from "lucide-react";
 import { useCart } from "../../context/CartContext";
+import { useNavigate } from "react-router-dom";
 
 function CartSummary() {
   const { getTotalItems, getTotalPrice } = useCart();
+  const navigate = useNavigate();
 
   const totalItems = getTotalItems();
   const subtotal = getTotalPrice();
@@ -75,23 +77,13 @@ function CartSummary() {
         Proceed to Checkout
       </button>
 
-      <div className="mt-4 text-center">
-        <p className="text-xs text-gray-500 flex items-center justify-center gap-1">
-          <svg
-            className="w-4 h-4 text-green-600"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-            />
-          </svg>
-          Secure Checkout
-        </p>
+      <div className="mt-4 text-center flex items-center justify-center">
+        <button
+          onClick={() => navigate("/products")}
+          className="text-indigo-600 hover:text-indigo-700 text-sm font-medium flex items-center justify-center gap-1 mb-2"
+        >
+          Continue Shopping
+        </button>
       </div>
     </div>
   );

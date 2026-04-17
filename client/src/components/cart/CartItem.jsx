@@ -19,7 +19,7 @@ function CartItem({ item }) {
 
       <div className="flex-1 flex flex-col justify-between">
         <div>
-          <h3 className="font-semibold text-gray-900 mb-1">{item.name}</h3>
+          <h3 className="font-bold text-gray-900 mb-1">{item.name}</h3>
           <p className="text-sm text-gray-500 line-clamp-1">
             {item.description}
           </p>
@@ -31,16 +31,16 @@ function CartItem({ item }) {
               onClick={() => updateQuantity(item._id, item.quantity - 1)}
               className="p-2 hover:bg-gray-100 transition"
             >
-              <Minus className="w-4 h-4 text-gray-600" />
+              <Minus className="w-3 h-3 text-gray-600" />
             </button>
 
-            <span className="w-8 text-center font-medium">{item.quantity}</span>
+            <span className="w-6 text-center font-medium">{item.quantity}</span>
 
             <button
               onClick={() => updateQuantity(item._id, item.quantity + 1)}
               className="p-2 hover:bg-gray-100 transition"
             >
-              <Plus className="w-4 h-4 text-gray-600" />
+              <Plus className="w-3 h-3 text-gray-600" />
             </button>
           </div>
 
