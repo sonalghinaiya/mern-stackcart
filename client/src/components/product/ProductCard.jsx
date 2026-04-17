@@ -6,9 +6,9 @@ import { useCart } from "../../context/CartContext";
 
 function ProductCard({ product }) {
   const navigate = useNavigate();
-  const { cartItem, addToCart } = useCart();
+  const { cartItem, addToCart, removeFromCart } = useCart();
 
-  const isInCart = cartItem.some((item) => item._id === product?._id);
+  const isInCart = cartItem.find((item) => item._id === product._id);
 
   const handleNavigate = () => {
     navigate(`/products/${product._id}`);
@@ -16,7 +16,11 @@ function ProductCard({ product }) {
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
-    addToCart(product);
+    if (isInCart) {
+      removeFromCart(product._id);
+    } else {
+      addToCart(product);
+    }
   };
 
   const rating = product.rating || 0;
@@ -96,11 +100,7 @@ function ProductCard({ product }) {
             }`}
           >
             <ShoppingCart className="w-3.5 h-3.5" />
-            {!product.inStock
-              ? "Out"
-              : isInCart
-                ? "Remove"
-                : "Add"}
+            {!product.inStock ? "Out" : isInCart ? "Remove" : "Add"}
           </button>
         </div>
       </div>
