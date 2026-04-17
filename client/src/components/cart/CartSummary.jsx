@@ -65,6 +65,7 @@ function CartSummary() {
       </div>
 
       <button
+      onClick={() => navigate("/checkout")}
         className={`w-full py-3 rounded-lg font-semibold transition
        disabled={totalItems === 0}
          ${

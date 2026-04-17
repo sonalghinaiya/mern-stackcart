@@ -13,6 +13,8 @@ import NotFound from "./pages/NotFound";
 import Home from "./pages/home/Home";
 import ProductDetails from "./pages/products/ProductDetails";
 import Cart from "./pages/cart/Cart";
+import Checkout from "./pages/checkout/Checkout";
+import OrderSuccess from "./pages/order/OrderSuccess";
 
 function App() {
   return (
@@ -30,6 +32,15 @@ function App() {
               </ProtectedRoutes>
             }
           />
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedRoutes>
+                <Checkout />
+              </ProtectedRoutes>
+            }
+          />
+          <Route path="/order-success" element={<OrderSuccess />} />
           <Route
             path="/profile"
             element={
