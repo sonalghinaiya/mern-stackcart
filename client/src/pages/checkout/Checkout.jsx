@@ -302,7 +302,6 @@ function Checkout() {
             </div>
           )}
 
-          {/* Step 2: Payment Method */}
           {currentStep === 2 && (
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <div className="flex items-center gap-2 mb-6">
@@ -311,7 +310,6 @@ function Checkout() {
               </div>
 
               <div className="space-y-4">
-                {/* Cash on Delivery */}
                 <div
                   onClick={() => setPaymentMethod("cod")}
                   className={`border-2 rounded-lg p-4 cursor-pointer transition ${
@@ -335,7 +333,6 @@ function Checkout() {
                   </div>
                 </div>
 
-                {/* UPI */}
                 <div
                   onClick={() => setPaymentMethod("upi")}
                   className={`border-2 rounded-lg p-4 cursor-pointer transition ${
@@ -358,7 +355,6 @@ function Checkout() {
                   </div>
                 </div>
 
-                {/* Credit/Debit Card */}
                 <div
                   onClick={() => setPaymentMethod("card")}
                   className={`border-2 rounded-lg p-4 cursor-pointer transition ${
@@ -381,7 +377,6 @@ function Checkout() {
                     <CreditCard className="w-5 h-5 text-gray-400" />
                   </div>
 
-                  {/* Card Details (shown when selected) */}
                   {paymentMethod === "card" && (
                     <div className="mt-4 space-y-3 pl-7">
                       <input
@@ -425,7 +420,6 @@ function Checkout() {
                   )}
                 </div>
 
-                {/* Action Buttons */}
                 <div className="flex gap-3 pt-4">
                   <button
                     onClick={() => setCurrentStep(1)}
@@ -444,10 +438,8 @@ function Checkout() {
             </div>
           )}
 
-          {/* Step 3: Review Order */}
           {currentStep === 3 && (
             <div className="space-y-6">
-              {/* Shipping Details */}
               <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-bold text-lg">Shipping Details</h3>
@@ -469,7 +461,6 @@ function Checkout() {
                 </div>
               </div>
 
-              {/* Payment Method */}
               <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-bold text-lg">Payment Method</h3>
@@ -489,7 +480,6 @@ function Checkout() {
                 </p>
               </div>
 
-              {/* Place Order Button */}
               <button
                 onClick={handlePlaceOrder}
                 disabled={loading}
@@ -506,12 +496,10 @@ function Checkout() {
           )}
         </div>
 
-        {/* Right Column - Order Summary */}
         <div className="lg:col-span-1">
           <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-24">
             <h3 className="font-bold text-lg mb-4">Order Summary</h3>
 
-            {/* Cart Items */}
             <div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
               {cartItem.map((item) => (
                 <div key={item._id} className="flex gap-3">
