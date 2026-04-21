@@ -11,6 +11,7 @@ import {
 import ProductCard from "../../components/product/ProductCard";
 import ProductSkeleton from "../../components/product/ProductSkeleton";
 import toast from "react-hot-toast";
+import FilterDrawer from "../../components/filters/FilterDrawer";
 
 function ProductList() {
   const navigate = useNavigate();
@@ -18,7 +19,6 @@ function ProductList() {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showFilters, setShowFilters] = useState(false);
 
   const [filters, setFilters] = useState({
     search: searchParams.get("search") || "",
@@ -41,6 +41,8 @@ function ProductList() {
 
   const [availableBrands, setAvailableBrands] = useState([]);
 
+  const [showFilterDrawer, setShowFilterDrawer] = useState(false);
+
   const fetchProducts = async () => {
     setLoading(true);
     try {
@@ -57,7 +59,7 @@ function ProductList() {
       if (filters.order) params.order = filters.order;
 
       params.page = filters.page;
-      params.limit = 8;
+      params.limit = 9;
 
       const res = await api.get("/products", { params });
 
@@ -152,8 +154,11 @@ function ProductList() {
               const [sortBy, order] = e.target.value.split("-");
               setFilters((prev) => ({ ...prev, sortBy, order, page: 1 }));
             }}
-            className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 w-full sm:w-auto"
+            className="px-5 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 w-full sm:w-auto"
           >
+            <option value="" disabled>
+              Sort By
+            </option>
             <option value="createdAt-desc">Newest First</option>
             <option value="createdAt-asc">Oldest First</option>
             <option value="price-asc">Price: Low to High</option>
@@ -165,8 +170,8 @@ function ProductList() {
           </select>
 
           <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition w-full sm:w-auto justify-center"
+            onClick={() => setShowFilterDrawer(true)}
+            className="lg:hidden flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition w-full sm:w-auto justify-center"
           >
             <SlidersHorizontal className="w-5 h-5" />
             Filters
@@ -184,132 +189,126 @@ function ProductList() {
       </div>
 
       <div className="grid lg:grid-cols-4 gap-6">
-        {showFilters && (
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-24">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="font-bold text-lg">Filters</h3>
-                {activeFiltersCount > 0 && (
-                  <button
-                    onClick={clearFilters}
-                    className="text-sm text-red-500 hover:text-red-600 font-medium"
-                  >
-                    Clear All
-                  </button>
-                )}
+        <div className="hidden lg:block lg:col-span-1">
+          <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-24">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="font-bold text-lg">Filters</h3>
+              {activeFiltersCount > 0 && (
+                <button
+                  onClick={clearFilters}
+                  className="text-sm text-red-500 hover:text-red-600 font-medium"
+                >
+                  Clear All
+                </button>
+              )}
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Brand
+                </label>
+                <select
+                  value={filters.brand}
+                  onChange={(e) => handleFilterChange("brand", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                >
+                  <option value="">All Brands</option>
+                  {availableBrands.map((brand) => (
+                    <option key={brand} value={brand}>
+                      {brand}
+                    </option>
+                  ))}
+                </select>
               </div>
 
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Brand
-                  </label>
-                  <select
-                    value={filters.brand}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Price Range
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    placeholder="Min"
+                    value={filters.priceMin}
                     onChange={(e) =>
-                      handleFilterChange("brand", e.target.value)
+                      handleFilterChange("priceMin", e.target.value)
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="">All Brands</option>
-                    {availableBrands.map((brand) => (
-                      <option key={brand} value={brand}>
-                        {brand}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Price Range
-                  </label>
-                  <div className="flex gap-2">
-                    <input
-                      type="number"
-                      placeholder="Min"
-                      value={filters.priceMin}
-                      onChange={(e) =>
-                        handleFilterChange("priceMin", e.target.value)
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                    />
-                    <span className="text-gray-500 self-center">-</span>
-                    <input
-                      type="number"
-                      placeholder="Max"
-                      value={filters.priceMax}
-                      onChange={(e) =>
-                        handleFilterChange("priceMax", e.target.value)
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Minimum Rating
-                  </label>
-                  <select
-                    value={filters.rating}
+                  />
+                  <span className="text-gray-500 self-center">-</span>
+                  <input
+                    type="number"
+                    placeholder="Max"
+                    value={filters.priceMax}
                     onChange={(e) =>
-                      handleFilterChange("rating", e.target.value)
+                      handleFilterChange("priceMax", e.target.value)
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="">Any Rating</option>
-                    <option value="4">4★ & above</option>
-                    <option value="3">3★ & above</option>
-                    <option value="2">2★ & above</option>
-                    <option value="1">1★ & above</option>
-                  </select>
+                  />
                 </div>
+              </div>
 
-                <div>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={filters.inStock === "true"}
-                      onChange={(e) =>
-                        handleFilterChange(
-                          "inStock",
-                          e.target.checked ? "true" : "",
-                        )
-                      }
-                      className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                    />
-                    <span className="text-sm font-medium text-gray-700">
-                      In Stock Only
-                    </span>
-                  </label>
-                </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Minimum Rating
+                </label>
+                <select
+                  value={filters.rating}
+                  onChange={(e) => handleFilterChange("rating", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                >
+                  <option value="">Any Rating</option>
+                  <option value="4">4★ & above</option>
+                  <option value="3">3★ & above</option>
+                  <option value="2">2★ & above</option>
+                  <option value="1">1★ & above</option>
+                </select>
+              </div>
 
-                <div>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={filters.bestSeller === "true"}
-                      onChange={(e) =>
-                        handleFilterChange(
-                          "bestSeller",
-                          e.target.checked ? "true" : "",
-                        )
-                      }
-                      className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                    />
-                    <span className="text-sm font-medium text-gray-700">
-                      Best Sellers Only
-                    </span>
-                  </label>
-                </div>
+              <div>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={filters.inStock === "true"}
+                    onChange={(e) =>
+                      handleFilterChange(
+                        "inStock",
+                        e.target.checked ? "true" : "",
+                      )
+                    }
+                    className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                  />
+                  <span className="text-sm font-medium text-gray-700">
+                    In Stock Only
+                  </span>
+                </label>
+              </div>
+
+              <div>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={filters.bestSeller === "true"}
+                    onChange={(e) =>
+                      handleFilterChange(
+                        "bestSeller",
+                        e.target.checked ? "true" : "",
+                      )
+                    }
+                    className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                  />
+                  <span className="text-sm font-medium text-gray-700">
+                    Best Sellers Only
+                  </span>
+                </label>
               </div>
             </div>
           </div>
-        )}
+        </div>
 
-        <div className={showFilters ? "lg:col-span-3" : "lg:col-span-4"}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className={"lg:col-span-3"}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {loading ? (
               Array.from({ length: 8 }).map((_, i) => (
                 <ProductSkeleton key={i} />
@@ -396,6 +395,15 @@ function ProductList() {
           )}
         </div>
       </div>
+      <FilterDrawer
+        isOpen={showFilterDrawer}
+        onClose={() => setShowFilterDrawer(false)}
+        filters={filters}
+        handleFilterChange={handleFilterChange}
+        clearFilters={clearFilters}
+        availableBrands={availableBrands}
+        activeFiltersCount={activeFiltersCount}
+      />
     </section>
   );
 }
