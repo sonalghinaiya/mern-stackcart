@@ -12,6 +12,7 @@ import ProductCard from "../../components/product/ProductCard";
 import ProductSkeleton from "../../components/product/ProductSkeleton";
 import toast from "react-hot-toast";
 import FilterDrawer from "../../components/filters/FilterDrawer";
+import SearchBar from "../../components/ui/SearchBar";
 
 function ProductList() {
   const navigate = useNavigate();
@@ -42,6 +43,22 @@ function ProductList() {
   const [availableBrands, setAvailableBrands] = useState([]);
 
   const [showFilterDrawer, setShowFilterDrawer] = useState(false);
+
+  useEffect(() => {
+    setFilters((prev) => ({
+      ...prev,
+      search: searchParams.get("search") || "",
+      brand: searchParams.get("brand") || "",
+      rating: searchParams.get("rating") || "",
+      inStock: searchParams.get("inStock") || "",
+      bestSeller: searchParams.get("bestSeller") || "",
+      priceMin: searchParams.get("priceMin") || "",
+      priceMax: searchParams.get("priceMax") || "",
+      sortBy: searchParams.get("sortBy") || "createdAt",
+      order: searchParams.get("order") || "desc",
+      page: Number(searchParams.get("page")) || 1,
+    }));
+  }, [searchParams]);
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -149,7 +166,11 @@ function ProductList() {
           </div>
 
           <select
-            value={`${filters.sortBy}-${filters.order}`}
+            value={
+              filters.sortBy === "createdAt" && filters.order === "desc"
+                ? ""
+                : `${filters.sortBy}-${filters.order}`
+            }
             onChange={(e) => {
               const [sortBy, order] = e.target.value.split("-");
               setFilters((prev) => ({ ...prev, sortBy, order, page: 1 }));

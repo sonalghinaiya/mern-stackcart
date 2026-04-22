@@ -21,7 +21,7 @@ export const getProducts = async (req, res, next) => {
     }
 
     if (req.query.rating) {
-      query.rating = req.query.rating;
+      query.rating = { $gte: Number(req.query.rating) };
     }
 
     if (req.query.brand) {

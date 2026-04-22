@@ -7,11 +7,13 @@ import { IoSearch } from "react-icons/io5";
 import { useAuth } from "../../context/AuthContext";
 import Dialog from "../ui/Dialog";
 import { useCart } from "../../context/CartContext";
+import SearchBar from "../ui/SearchBar";
 
 function Header() {
   const navigate = useNavigate();
   const [menuVisible, setMenuVisible] = useState(false);
   const [openLogout, setOpenLogout] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const { user, logout } = useAuth();
   const { getTotalItems } = useCart();
 
@@ -55,9 +57,17 @@ function Header() {
           </button>
         </div>
         <div className="flex items-center gap-2 relative">
-          <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100">
+          <button
+            onClick={() => setShowSearch((prev) => !prev)}
+            className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100"
+          >
             <IoSearch className="w-5.5 h-5.5 text-gray-700" />
           </button>
+          {showSearch && (
+            <div className="flex items-center ml-2 transition-all">
+              <SearchBar onClose={() => setShowSearch(false)} />
+            </div>
+          )}
           <button
             onClick={() => navigate("/cart")}
             className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 relative"
