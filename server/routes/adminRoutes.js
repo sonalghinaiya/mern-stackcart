@@ -7,6 +7,10 @@ import {
 } from "../controllers/adminController.js";
 import { getAllUsers } from "../controllers/userController.js";
 import { getProducts } from "../controllers/productController.js";
+import {
+  getAllOrders,
+  updateOrderStatus,
+} from "../controllers/orderController.js";
 
 const router = Router();
 
@@ -20,5 +24,8 @@ router.get("/products", getProducts);
 router.get("/stats", getAdminStats);
 
 router.patch("/users/:id/role", updateUserRole);
+
+router.get("/orders", getAllOrders);
+router.patch("/orders/:id/status", updateOrderStatus);
 
 export default router;

@@ -11,6 +11,7 @@ import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 
@@ -51,6 +52,7 @@ connectDB(url).then(() => console.log("MongoDB Connected!"));
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/products", productRoutes);
+app.use("/api/v1/orders", orderRoutes);
 app.use("/api/v1/chat", chatRoutes);
 app.use("/api/v1/admin", adminRoutes);
 
