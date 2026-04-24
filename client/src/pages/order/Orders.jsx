@@ -107,10 +107,9 @@ export default function Orders() {
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
             No orders found
           </h2>
-          <p className="text-gray-600 mb-6">
-            {statusFilter
-              ? `You don't have any ${statusFilter} orders`
-              : "You haven't placed any orders yet"}
+          <p className="text-gray-500 mb-8 max-w-md mx-auto">
+            Looks like you haven’t placed any orders yet. Start shopping and
+            your orders will appear here.
           </p>
           <button
             onClick={() => navigate("/products")}
