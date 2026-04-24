@@ -93,6 +93,7 @@ function Header() {
                     <button
                       onClick={() => {
                         navigate("/profile");
+                        setMenuVisible(false);
                       }}
                       className="w-full text-left px-4 font-semibold py-2.5 text-sm text-gray-700 hover:bg-gray-50 p-2 border-b border-gray-100"
                     >
