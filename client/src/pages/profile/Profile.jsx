@@ -18,10 +18,12 @@ import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/CartContext";
 import api from "../../api/axios";
 import { useNavigate } from "react-router-dom";
+import Orders from "../order/Orders";
 
 export default function Profile() {
   const { user, logout, updateUser } = useAuth();
 
+  const [activeTab, setActiveTab] = useState("profile");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
@@ -78,9 +80,13 @@ export default function Profile() {
 
               <div className="bg-white rounded-2xl shadow overflow-hidden">
                 <button
-                  className="w-full flex items-center gap-3 px-4 py-3 text-sm 
-                        bg-indigo-50 text-indigo-600
-                        hover:bg-gray-50"
+                  onClick={() => setActiveTab("profile")}
+                  className={`w-full flex items-center gap-3 px-4 py-3 text-sm 
+                       ${
+                         activeTab === "profile"
+                           ? "bg-indigo-50 text-indigo-600"
+                           : "hover:bg-gray-50"
+                       }`}
                 >
                   <User className="w-4 h-4" />
                   Profile Settings
@@ -88,8 +94,13 @@ export default function Profile() {
                 </button>
 
                 <button
-                  onClick={() => navigate("/orders")}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-50"
+                  onClick={() => setActiveTab("orders")}
+                  className={`w-full flex items-center gap-3 px-4 py-3 text-sm
+                  ${
+                    activeTab === "orders"
+                      ? "bg-indigo-50 text-indigo-600"
+                      : "hover:bg-gray-50"
+                  }`}
                 >
                   <Package className="w-4 h-4" />
                   My Orders
@@ -105,52 +116,60 @@ export default function Profile() {
               </div>
             </div>
 
-            <div className="lg:col-span-3">
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                <h2 className="font-bold text-gray-900 mb-5">
-                  Profile Settings
-                </h2>
-                <div className="space-y-4 max-w-md">
-                  <div>
-                    <label className="text-xs font-semibold text-gray-600 mb-1 block">
-                      Full Name
-                    </label>
-                    <div className="flex gap-2">
+            {activeTab === "profile" && (
+              <div className="lg:col-span-3">
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                  <h2 className="font-bold text-gray-900 mb-5">
+                    Profile Settings
+                  </h2>
+                  <div className="space-y-4 max-w-md">
+                    <div>
+                      <label className="text-xs font-semibold text-gray-600 mb-1 block">
+                        Full Name
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          name="firstName"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                          className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
+                        />
+                        <input
+                          name="lastName"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                          className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-semibold text-gray-600 mb-1 block">
+                        Email
+                      </label>
                       <input
-                        name="firstName"
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
-                        className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
-                      />
-                      <input
-                        name="lastName"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
-                        className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
+                        defaultValue={user?.email}
+                        disabled
+                        className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 text-gray-500 cursor-not-allowed"
                       />
                     </div>
+                    <button
+                      onClick={handleSave}
+                      disabled={loading}
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-colors shadow-md"
+                    >
+                      {loading ? "Saving..." : "Save Changes"}
+                    </button>
                   </div>
-
-                  <div>
-                    <label className="text-xs font-semibold text-gray-600 mb-1 block">
-                      Email
-                    </label>
-                    <input
-                      defaultValue={user?.email}
-                      disabled
-                      className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 text-gray-500 cursor-not-allowed"
-                    />
-                  </div>
-                  <button
-                    onClick={handleSave}
-                    disabled={loading}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-colors shadow-md"
-                  >
-                    {loading ? "Saving..." : "Save Changes"}
-                  </button>
                 </div>
               </div>
-            </div>
+            )}
+
+            {activeTab === "orders" && (
+              <div className="lg:col-span-3 -mt-15">
+                <Orders />
+              </div>
+            )}
           </div>
         </div>
       </main>

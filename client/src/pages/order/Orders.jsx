@@ -93,7 +93,6 @@ export default function Orders() {
   }
 
   return (
-    <div className="bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 py-8 mt-6">
         <div className="mb-4">
           <h1 className="text-2xl font-bold mb-2">My Orders</h1>
@@ -190,6 +189,5 @@ export default function Orders() {
           </div>
         )}
       </div>
-    </div>
   );
 }
