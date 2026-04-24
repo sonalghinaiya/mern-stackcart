@@ -132,7 +132,7 @@ export default function Orders() {
                     <h3 className="font-bold text-lg">{order.orderNumber}</h3>
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${getStatusColor(
-                        order.status,
+                        order.orderStatus,
                       )}`}
                     >
                       {getStatusIcon(order.orderStatus)}
@@ -158,7 +158,6 @@ export default function Orders() {
                   </p>
                 </div>
               </div>
-
               <div className="space-y-3 mb-4">
                 {order.items.map((item, index) => (
                   <div key={index} className="flex gap-3">
@@ -180,7 +179,6 @@ export default function Orders() {
                   </div>
                 ))}
               </div>
-
               <div className="bg-gray-50 rounded-lg p-4 mb-4">
                 <p className="text-sm font-medium text-gray-700 mb-1">
                   Delivery Address
@@ -196,7 +194,6 @@ export default function Orders() {
                   {order.shippingAddress.pincode}
                 </p>
               </div>
-
               <div className="flex gap-3">
                 <button
                   onClick={() => navigate(`/orders/${order._id}`)}

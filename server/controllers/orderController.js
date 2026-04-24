@@ -27,7 +27,7 @@ export const createOrder = async (req, res, next) => {
     const orderNumber = `ORD-${Date.now()}`;
 
     const order = await Order.create({
-      user: req.user._id,
+      user: req.user.id,
       orderNumber,
       items,
       subtotal,
@@ -50,7 +50,7 @@ export const createOrder = async (req, res, next) => {
 
 export const getMyOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find({ user: req.user._id });
+    const orders = await Order.find({ user: req.user.id });
     return res.status(200).json({
       success: true,
       data: orders,
@@ -60,18 +60,18 @@ export const getMyOrders = async (req, res, next) => {
   }
 };
 
-export const getOrderById = async(req, res) => {
+export const getOrderById = async (req, res, next) => {
   try {
-    const order = await Order.findById(req.params.id)
+    const order = await Order.findById(req.params.id);
 
     if (!order) {
       return res.status(404).json({
         success: false,
-        message: "Order not found"
-      })
+        message: "Order not found",
+      });
     }
 
-    if (order.user._id.toString() !== req.user._id.toString()) {
+    if (order.user.toString() !== req.user.id.toString()) {
       return res.status(403).json({
         success: false,
         message: "Not authorized",
@@ -80,10 +80,10 @@ export const getOrderById = async(req, res) => {
 
     return res.status(200).json({
       success: true,
-      data: order
-    })
+      data: order,
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 // export const cancelOrder = (req, res) => {};

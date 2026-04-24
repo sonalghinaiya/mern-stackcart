@@ -117,7 +117,7 @@ export default function OrderDetails() {
 
   if (!order) return null;
 
-  const statusInfo = getStatusInfo(order.status);
+  const statusInfo = getStatusInfo(order.orderStatus);
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 mt-6">
@@ -136,12 +136,15 @@ export default function OrderDetails() {
           <div className="p-3 bg-white rounded-lg">{statusInfo.icon}</div>
           <div className="flex-1">
             <h1 className={`text-2xl font-bold ${statusInfo.color} mb-1`}>
-              Order {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+              Order{" "}
+              {order.orderStatus.charAt(0).toUpperCase() +
+                order.orderStatus.slice(1)}
             </h1>
             <p className="text-gray-700">{statusInfo.message}</p>
             <div className="mt-3 flex flex-wrap gap-4 text-sm">
               <span className="text-gray-600">
-                Order Number: <strong className="text-gray-900">{order.orderNumber}</strong>
+                Order Number:{" "}
+                <strong className="text-gray-900">{order.orderNumber}</strong>
               </span>
               <span className="text-gray-600">
                 Placed on:{" "}
@@ -155,7 +158,7 @@ export default function OrderDetails() {
               </span>
             </div>
           </div>
-          {order.status === "pending" && (
+          {order.orderStatus === "pending" && (
             <button
               onClick={handleCancelOrder}
               className="px-4 py-2 border border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition"
@@ -207,20 +210,20 @@ export default function OrderDetails() {
             </div>
             <div className="space-y-2 text-sm">
               <p className="font-medium text-gray-900">
-                {order.shippingInfo.fullName}
+                {order.shippingAddress.fullName}
               </p>
-              <p className="text-gray-600">{order.shippingInfo.address}</p>
+              <p className="text-gray-600">{order.shippingAddress.address}</p>
               <p className="text-gray-600">
-                {order.shippingInfo.city}, {order.shippingInfo.state} -{" "}
-                {order.shippingInfo.pincode}
+                {order.shippingAddress.city}, {order.shippingAddress.state} -{" "}
+                {order.shippingAddress.pincode}
               </p>
               <div className="flex items-center gap-2 pt-2">
                 <Phone className="w-4 h-4 text-gray-500" />
-                <p className="text-gray-600">{order.shippingInfo.phone}</p>
+                <p className="text-gray-600">{order.shippingAddress.phone}</p>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-gray-500" />
-                <p className="text-gray-600">{order.shippingInfo.email}</p>
+                <p className="text-gray-600">{order.shippingAddress.email}</p>
               </div>
             </div>
           </div>
@@ -270,18 +273,18 @@ export default function OrderDetails() {
                 {order.paymentMethod === "cod"
                   ? "Cash on Delivery"
                   : order.paymentMethod === "upi"
-                  ? "UPI Payment"
-                  : "Credit/Debit Card"}
+                    ? "UPI Payment"
+                    : "Credit/Debit Card"}
               </p>
               <div className="mt-3">
                 <span
                   className={`text-xs px-2 py-1 rounded ${
-                    order.isPaid
+                    order.paymentStatus === "paid"
                       ? "bg-green-100 text-green-700"
                       : "bg-amber-100 text-amber-700"
                   }`}
                 >
-                  {order.isPaid ? "Paid" : "Payment Pending"}
+                  {order.paymentStatus === "paid" ? "Paid" : "Payment Pending"}
                 </span>
               </div>
             </div>
