@@ -100,12 +100,12 @@ function Header() {
                     </button>
                     <button
                       onClick={() => {
-                        navigate("/products");
+                        navigate("/orders");
                         setMenuVisible(false);
                       }}
                       className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
                     >
-                      All Products
+                      My Orders
                     </button>
                     <button
                       onClick={() => {

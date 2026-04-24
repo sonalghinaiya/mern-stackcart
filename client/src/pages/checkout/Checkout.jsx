@@ -4,13 +4,14 @@ import { CreditCard, MapPin, Package, Shield, ArrowLeft } from "lucide-react";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
+import api from "../../api/axios";
 
 function Checkout() {
   const navigate = useNavigate();
   const { cartItem, getTotalPrice, clearCart } = useCart();
   const { user } = useAuth();
 
-  const [currentStep, setCurrentStep] = useState(1); 
+  const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
 
   const [shippingInfo, setShippingInfo] = useState({
@@ -24,7 +25,7 @@ function Checkout() {
     country: "India",
   });
 
-  const [paymentMethod, setPaymentMethod] = useState("cod"); 
+  const [paymentMethod, setPaymentMethod] = useState("cod");
 
   const [cardDetails, setCardDetails] = useState({
     cardNumber: "",
@@ -53,8 +54,14 @@ function Checkout() {
   };
 
   const validateShipping = () => {
-    if (!shippingInfo.fullName || !shippingInfo.phone || !shippingInfo.address || 
-        !shippingInfo.city || !shippingInfo.state || !shippingInfo.pincode) {
+    if (
+      !shippingInfo.fullName ||
+      !shippingInfo.phone ||
+      !shippingInfo.address ||
+      !shippingInfo.city ||
+      !shippingInfo.state ||
+      !shippingInfo.pincode
+    ) {
       toast.error("Please fill all required fields");
       return false;
     }
@@ -73,34 +80,39 @@ function Checkout() {
 
   const handlePlaceOrder = async () => {
     setLoading(true);
-    setTimeout(() => {
-      const order = {
-        orderNumber: `ORD${Date.now()}`,
-        items: cartItem,
-        shippingInfo,
+
+    try {
+      const orderData = {
+        items: cartItem.map((item) => ({
+          product: item._id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          image: item.image,
+        })),
+        shippingAddress: shippingInfo,
         paymentMethod,
         subtotal,
         shipping,
         tax,
         total,
-        orderDate: new Date().toISOString(),
       };
-
-      const existingOrders = JSON.parse(localStorage.getItem("orders") || "[]");
-      existingOrders.push(order);
-      localStorage.setItem("orders", JSON.stringify(existingOrders));
-
+      console.log("Order Data", orderData);
+      const res = await api.post("/orders", orderData);
+      toast.success(res.data.message || "Order placed successfully!");
       clearCart();
-
-      navigate("/order-success", { 
-        state: { 
-          orderNumber: order.orderNumber,
-          total: order.total 
-        } 
-      });
-
+      navigate("/order-success");
+      // navigate("/order-success", {
+      //   state: {
+      //     orderNumber: res.data.data.orderNumber,
+      //     total: res.data.data.total,
+      //   },
+      // });
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to place order");
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -326,8 +338,12 @@ function Checkout() {
                       className="w-4 h-4 text-indigo-600"
                     />
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900">Cash on Delivery</p>
-                      <p className="text-sm text-gray-500">Pay when you receive</p>
+                      <p className="font-medium text-gray-900">
+                        Cash on Delivery
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Pay when you receive
+                      </p>
                     </div>
                     <Package className="w-5 h-5 text-gray-400" />
                   </div>
@@ -350,7 +366,9 @@ function Checkout() {
                     />
                     <div className="flex-1">
                       <p className="font-medium text-gray-900">UPI Payment</p>
-                      <p className="text-sm text-gray-500">Pay via Google Pay, PhonePe, Paytm</p>
+                      <p className="text-sm text-gray-500">
+                        Pay via Google Pay, PhonePe, Paytm
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -371,8 +389,12 @@ function Checkout() {
                       className="w-4 h-4 text-indigo-600"
                     />
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900">Credit/Debit Card</p>
-                      <p className="text-sm text-gray-500">Visa, Mastercard, Rupay</p>
+                      <p className="font-medium text-gray-900">
+                        Credit/Debit Card
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Visa, Mastercard, Rupay
+                      </p>
                     </div>
                     <CreditCard className="w-5 h-5 text-gray-400" />
                   </div>
@@ -451,10 +473,13 @@ function Checkout() {
                   </button>
                 </div>
                 <div className="space-y-2 text-sm text-gray-600">
-                  <p className="font-medium text-gray-900">{shippingInfo.fullName}</p>
+                  <p className="font-medium text-gray-900">
+                    {shippingInfo.fullName}
+                  </p>
                   <p>{shippingInfo.address}</p>
                   <p>
-                    {shippingInfo.city}, {shippingInfo.state} - {shippingInfo.pincode}
+                    {shippingInfo.city}, {shippingInfo.state} -{" "}
+                    {shippingInfo.pincode}
                   </p>
                   <p>{shippingInfo.phone}</p>
                   <p>{shippingInfo.email}</p>
@@ -475,8 +500,8 @@ function Checkout() {
                   {paymentMethod === "cod"
                     ? "Cash on Delivery"
                     : paymentMethod === "upi"
-                    ? "UPI Payment"
-                    : "Credit/Debit Card"}
+                      ? "UPI Payment"
+                      : "Credit/Debit Card"}
                 </p>
               </div>
 
@@ -485,7 +510,9 @@ function Checkout() {
                 disabled={loading}
                 className="w-full bg-indigo-600 text-white py-4 rounded-lg hover:bg-indigo-700 transition font-medium text-lg disabled:bg-gray-400"
               >
-                {loading ? "Processing..." : `Place Order - ₹${total.toLocaleString("en-IN")}`}
+                {loading
+                  ? "Processing..."
+                  : `Place Order - ₹${total.toLocaleString("en-IN")}`}
               </button>
 
               <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
@@ -512,7 +539,9 @@ function Checkout() {
                     <p className="text-sm font-medium text-gray-900 line-clamp-1">
                       {item.name}
                     </p>
-                    <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+                    <p className="text-xs text-gray-500">
+                      Qty: {item.quantity}
+                    </p>
                     <p className="text-sm font-medium text-gray-900">
                       ₹{(item.price * item.quantity).toLocaleString("en-IN")}
                     </p>
@@ -524,7 +553,9 @@ function Checkout() {
             <div className="border-t border-gray-200 pt-4 space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Subtotal</span>
-                <span className="font-medium">₹{subtotal.toLocaleString("en-IN")}</span>
+                <span className="font-medium">
+                  ₹{subtotal.toLocaleString("en-IN")}
+                </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Shipping</span>
@@ -538,7 +569,9 @@ function Checkout() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Tax (GST 18%)</span>
-                <span className="font-medium">₹{tax.toLocaleString("en-IN")}</span>
+                <span className="font-medium">
+                  ₹{tax.toLocaleString("en-IN")}
+                </span>
               </div>
               <div className="border-t border-gray-200 pt-2 flex justify-between">
                 <span className="font-bold">Total</span>

@@ -2,7 +2,15 @@ import { Order } from "../models/order.js";
 
 export const createOrder = async (req, res, next) => {
   try {
-    const { items, totalAmount, shippingAddress, paymentMethod } = req.body;
+    const {
+      items,
+      subtotal,
+      shipping,
+      tax,
+      total,
+      shippingAddress,
+      paymentMethod,
+    } = req.body;
     if (!items || items.length === 0) {
       return res.status(400).json({
         success: false,
@@ -10,7 +18,7 @@ export const createOrder = async (req, res, next) => {
       });
     }
 
-    if (!shippingInfo) {
+    if (!shippingAddress) {
       return res.status(400).json({
         success: false,
         message: "Shipping information is required",
@@ -22,7 +30,10 @@ export const createOrder = async (req, res, next) => {
       user: req.user._id,
       orderNumber,
       items,
-      totalAmount,
+      subtotal,
+      shipping,
+      tax,
+      total,
       shippingAddress,
       paymentMethod,
     });
@@ -49,7 +60,32 @@ export const getMyOrders = async (req, res, next) => {
   }
 };
 
-export const getOrderById = (req, res) => {};
-export const cancelOrder = (req, res) => {};
-export const getAllOrders = (req, res) => {};
-export const updateOrderStatus = (req, res) => {};
+export const getOrderById = async(req, res) => {
+  try {
+    const order = await Order.findById(req.params.id)
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found"
+      })
+    }
+
+    if (order.user._id.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: order
+    })
+  } catch (error) {
+    next(error)
+  }
+};
+// export const cancelOrder = (req, res) => {};
+// export const getAllOrders = (req, res) => {};
+// export const updateOrderStatus = (req, res) => {};

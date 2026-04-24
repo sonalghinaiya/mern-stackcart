@@ -17,6 +17,7 @@ import ProtectedRoutes from "../../components/auth/ProtectedRoutes";
 import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/CartContext";
 import api from "../../api/axios";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const { user, logout, updateUser } = useAuth();
@@ -24,6 +25,8 @@ export default function Profile() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
@@ -84,6 +87,14 @@ export default function Profile() {
                   <ChevronRight className="ml-auto w-3 h-3" />
                 </button>
 
+                <button
+                  onClick={() => navigate("/orders")}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-gray-50"
+                >
+                  <Package className="w-4 h-4" />
+                  My Orders
+                  <ChevronRight className="ml-auto w-3 h-3" />
+                </button>
                 <button
                   onClick={logout}
                   className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50"

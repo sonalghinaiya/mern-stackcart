@@ -22,7 +22,20 @@ const orderSchema = new mongoose.Schema(
         image: String,
       },
     ],
-    totalAmount: {
+    subtotal: {
+      type: Number,
+      required: true,
+    },
+    shipping: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    tax: {
+      type: Number,
+      required: true,
+    },
+    total: {
       type: Number,
       required: true,
     },
