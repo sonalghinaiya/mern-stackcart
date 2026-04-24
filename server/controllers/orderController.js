@@ -50,7 +50,9 @@ export const createOrder = async (req, res, next) => {
 
 export const getMyOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find({ user: req.user.id });
+    const orders = await Order.find({ user: req.user.id }).sort({
+      createdAt: -1,
+    });
     return res.status(200).json({
       success: true,
       data: orders,
@@ -86,6 +88,43 @@ export const getOrderById = async (req, res, next) => {
     next(error);
   }
 };
-// export const cancelOrder = (req, res) => {};
+
+export const cancelOrder = async (req, res, next) => {
+  try {
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    if (order.user.toString() !== req.user.id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized",
+      });
+    }
+
+    if (order.orderStatus === "shipped" || order.orderStatus === "delivered") {
+      return res.status(400).json({
+        success: false,
+        message: "Order cannot be cancelled",
+      });
+    }
+
+    order.orderStatus = "cancelled";
+    await order.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Order cancelled successfully",
+      data: order,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 // export const getAllOrders = (req, res) => {};
 // export const updateOrderStatus = (req, res) => {};

@@ -14,11 +14,13 @@ import {
 } from "lucide-react";
 import api from "../../api/axios";
 import toast from "react-hot-toast";
+import Dialog from "../../components/ui/Dialog";
 
 export default function OrderDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
+  const [openCancelDialog, setOpenCancelDialog] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -91,11 +93,11 @@ export default function OrderDetails() {
   };
 
   const handleCancelOrder = async () => {
-    if (!window.confirm("Are you sure you want to cancel this order?")) return;
-
     try {
       await api.patch(`/orders/${id}/cancel`);
       toast.success("Order cancelled successfully");
+      setOpenCancelDialog(false);
+
       const res = await api.get(`/orders/${id}`);
       setOrder(res.data.data);
     } catch (error) {
@@ -160,7 +162,7 @@ export default function OrderDetails() {
           </div>
           {order.orderStatus === "pending" && (
             <button
-              onClick={handleCancelOrder}
+              onClick={() => setOpenCancelDialog(true)}
               className="px-4 py-2 border border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition"
             >
               Cancel Order
@@ -175,10 +177,7 @@ export default function OrderDetails() {
             <h2 className="font-bold text-lg mb-4">Order Items</h2>
             <div className="space-y-4">
               {order.items.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex gap-4 pb-4 last:pb-0"
-                >
+                <div key={index} className="flex gap-4 pb-4 last:pb-0">
                   <img
                     src={item.image}
                     alt={item.name}
@@ -306,6 +305,14 @@ export default function OrderDetails() {
           </div>
         </div>
       </div>
+      <Dialog
+        open={openCancelDialog}
+        onClose={() => setOpenCancelDialog(false)}
+        onConfirm={handleCancelOrder}
+        title="Cancel Order?"
+        message="Are you sure you want to cancel this order?"
+        confirmText="Yes, Cancel Order"
+      />
     </div>
   );
 }

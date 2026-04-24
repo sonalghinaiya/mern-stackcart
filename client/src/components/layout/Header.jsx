@@ -169,6 +169,9 @@ function Header() {
         open={openLogout}
         onClose={() => setOpenLogout(false)}
         onConfirm={handleLogut}
+        title="Logout?"
+        message="Are you sure you want to log out?"
+        confirmText=" Yes, Logout"
       />
     </nav>
   );

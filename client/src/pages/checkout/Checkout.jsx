@@ -101,13 +101,13 @@ function Checkout() {
       const res = await api.post("/orders", orderData);
       toast.success(res.data.message || "Order placed successfully!");
       clearCart();
-      navigate("/order-success");
-      // navigate("/order-success", {
-      //   state: {
-      //     orderNumber: res.data.data.orderNumber,
-      //     total: res.data.data.total,
-      //   },
-      // });
+  
+      navigate("/order-success", {
+        state: {
+          orderNumber: res.data.data.orderNumber,
+          total: res.data.data.total,
+        },
+      });
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to place order");
     } finally {
