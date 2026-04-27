@@ -1,3 +1,4 @@
+import { Order } from "../models/order.js";
 import { Product } from "../models/product.js";
 import { User } from "../models/user.js";
 
@@ -60,6 +61,8 @@ export const getAdminStats = async (req, res, next) => {
     const activeProducts = await Product.countDocuments({ isDeleted: false });
     const deletedProducts = await Product.countDocuments({ isDeleted: true });
 
+    const totalOrders= await Order.countDocuments();
+
     res.json({
       success: true,
       data: {
@@ -73,6 +76,9 @@ export const getAdminStats = async (req, res, next) => {
           active: activeProducts,
           deleted: deletedProducts,
         },
+        orders: {
+          total: totalOrders,
+        }
       },
     });
   } catch (error) {

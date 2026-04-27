@@ -91,9 +91,9 @@ function Dashboard() {
               <h3 className="text-sm text-muted-foreground font-medium">
                 Total Orders
               </h3>
-              <p className="text-3xl font-bold mt-1">-</p>
+              <p className="text-3xl font-bold mt-1"> {stats?.orders?.total}</p>
               <p className="text-muted-foreground mt-1 text-xs">
-                API coming soon
+                All customer orders
               </p>
             </div>
           </div>

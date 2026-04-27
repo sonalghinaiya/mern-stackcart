@@ -81,7 +81,7 @@ function Orders() {
         params: {
           page,
           limit,
-          orderStatus: statusFilter,
+          orderStatus: statusFilter === "all" ? undefined : statusFilter,
           orderNumber: search,
           sortBy,
           order,
@@ -311,15 +311,25 @@ function Orders() {
                         {item.orderNumber}
                       </TableCell>
                       <TableCell>
-                        {" "}
-                        <div>
-                          <p className="font-medium">
-                            {item.user?.firstName} {item.user?.lastName}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {item.user?.email}
-                          </p>
-                        </div>
+                        {item.user ? (
+                          <>
+                            <p className="font-medium">
+                              {item.user.firstName} {item.user.lastName}
+                            </p>
+
+                            <p className="text-xs text-gray-500">
+                              {item.user.email}
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="font-medium text-red-500">
+                              User Deleted
+                            </p>
+
+                            <p className="text-xs text-gray-500">N/A</p>
+                          </>
+                        )}
                       </TableCell>
                       <TableCell className="font-semibold">
                         ₹{item.total.toLocaleString("en-IN")}
@@ -350,11 +360,48 @@ function Orders() {
                             <DropdownMenuItem
                               onClick={() => {
                                 setSelectedOrder(item._id);
-                                setOpenDelete(true);
+                                setNewStatus("processing");
+                                setOpenStatusUpdate(true);
                               }}
                             >
-                              <Trash2 className="mr-2 h-4 w-4 text-red-500" />
-                              Delete
+                              <Package className="mr-2 h-4 w-4" />
+                              Mark Processing
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedOrder(item._id);
+                                setNewStatus("shipped");
+                                setOpenStatusUpdate(true);
+                              }}
+                            >
+                              <Truck className="mr-2 h-4 w-4" />
+                              Mark Shipped
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedOrder(item._id);
+                                setNewStatus("delivered");
+                                setOpenStatusUpdate(true);
+                              }}
+                            >
+                              <CheckCircle className="mr-2 h-4 w-4" />
+                              Mark Delivered
+                            </DropdownMenuItem>
+
+                            <DropdownMenuSeparator />
+
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedOrder(item._id);
+                                setNewStatus("cancelled");
+                                setOpenStatusUpdate(true);
+                              }}
+                              className="text-red-500"
+                            >
+                              <XCircle className="mr-2 h-4 w-4" />
+                              Cancel Order
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -444,21 +491,21 @@ function Orders() {
         </div>
       </div>
 
-      <Dialog open={openDelete} onOpenChange={setOpenDelete}>
+      <Dialog open={openStatusUpdate} onOpenChange={setOpenStatusUpdate}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete User?</DialogTitle>
+            <DialogTitle>Update Order Status</DialogTitle>
             <DialogDescription>
-              This action will mark the user as deleted. You can restore later
-              if needed.
+              Change order status to:
+              <b> {newStatus}</b> ?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setOpenDelete(false)}>
+            <Button variant="outline" onClick={() => setOpenStatusUpdate(false)}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={deleteOrder}>
-              Yes, Delete
+            <Button variant="destructive" onClick={updateOrderStatus}>
+              Update Status
             </Button>
           </DialogFooter>
         </DialogContent>

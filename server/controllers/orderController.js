@@ -148,7 +148,7 @@ export const getAllOrders = async (req, res, next) => {
     const totalOrders = await Order.countDocuments(query);
     const totalPages = Math.ceil(totalOrders / limit);
 
-       const sortBy = req.query.sortBy || "createdAt";
+    const sortBy = req.query.sortBy || "createdAt";
     const order = req.query.order === "asc" ? 1 : -1;
 
     const sort = { [sortBy]: order };
@@ -174,4 +174,48 @@ export const getAllOrders = async (req, res, next) => {
   }
 };
 
-// export const updateOrderStatus = (req, res) => {};
+export const updateOrderStatus = async (req, res, next) => {
+  try {
+    const { orderStatus } = req.body;
+
+    const validStatuses = [
+      "pending",
+      "processing",
+      "shipped",
+      "delivered",
+      "cancelled",
+    ];
+
+    if (!validStatuses.includes(orderStatus)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status",
+      });
+    }
+
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    order.orderStatus = orderStatus;
+
+    if (orderStatus === "delivered") {
+      order.paymentStatus = "paid";
+    }
+
+    await order.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Order updated",
+      data: order,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
