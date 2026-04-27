@@ -126,5 +126,52 @@ export const cancelOrder = async (req, res, next) => {
     next(error);
   }
 };
-// export const getAllOrders = (req, res) => {};
+export const getAllOrders = async (req, res, next) => {
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 20;
+    const offset = (page - 1) * limit;
+
+    const query = {};
+
+    if (req.query.orderStatus) {
+      query.orderStatus = req.query.orderStatus;
+    }
+
+    if (req.query.orderNumber) {
+      query.orderNumber = {
+        $regex: req.query.orderNumber,
+        $options: "i",
+      };
+    }
+
+    const totalOrders = await Order.countDocuments(query);
+    const totalPages = Math.ceil(totalOrders / limit);
+
+       const sortBy = req.query.sortBy || "createdAt";
+    const order = req.query.order === "asc" ? 1 : -1;
+
+    const sort = { [sortBy]: order };
+
+    const orders = await Order.find(query)
+      .populate("user", "firstName lastName email")
+      .sort({ createdAt: -1 })
+      .skip(offset)
+      .limit(limit);
+
+    res.status(200).json({
+      success: true,
+      data: orders,
+      pagination: {
+        page,
+        limit,
+        totalPages,
+        totalOrders,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // export const updateOrderStatus = (req, res) => {};

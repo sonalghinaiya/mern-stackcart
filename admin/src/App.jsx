@@ -5,6 +5,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import AdminLayout from "./components/layout/AdminLayout";
 import Dashboard from "./pages/Dashboard";
 import Users from "./pages/User";
+import Orders from "./pages/Order";
 import Products from "./pages/product/Product";
 import AddProduct from "./pages/product/AddProduct";
 import EditProduct from "./pages/product/EditProduct";
@@ -52,6 +53,7 @@ function App() {
         <Route path="products" element={<Products />} />
         <Route path="products/add" element={<AddProduct />} />
         <Route path="products/edit/:id" element={<EditProduct />} />
+        <Route path="orders" element={<Orders />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
