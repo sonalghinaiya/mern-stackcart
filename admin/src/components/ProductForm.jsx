@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, PlusIcon, Upload } from "lucide-react";
+import { ArrowLeft, Loader2, PlusIcon, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Label } from "@/components/ui/label";
 import api from "@/api/axios";
+import toast from "react-hot-toast";
 
 function ProductForm({ productId }) {
   const [name, setName] = useState("");
@@ -18,6 +19,9 @@ function ProductForm({ productId }) {
   const [isBestSeller, setIsBestSeller] = useState(false);
   const [image, setImage] = useState(null);
 
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+
   const navigate = useNavigate();
 
   const isEdit = Boolean(productId);
@@ -26,38 +30,61 @@ function ProductForm({ productId }) {
     if (!productId) return;
 
     const fetchProduct = async () => {
-      const res = await api.get(`/products/${productId}`);
-      const product = res.data.data;
+      try {
+        setLoading(true);
+        const res = await api.get(`/products/${productId}`);
+        const product = res.data.data;
 
-      setName(product.name);
-      setDescription(product.description);
-      setLongDescription(product.longDescription);
-      setPrice(product.price);
-      setRating(product.rating);
-      setBrand(product.brand);
-      setInStock(product.inStock);
-      setIsBestSeller(product.isBestSeller);
-      setImage(product.image);
+        setName(product.name);
+        setDescription(product.description);
+        setLongDescription(product.longDescription);
+        setPrice(product.price);
+        setRating(product.rating);
+        setBrand(product.brand);
+        setInStock(product.inStock);
+        setIsBestSeller(product.isBestSeller);
+        setImage(product.image);
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Failed to load product");
+      } finally {
+        setLoading(false);
+      }
     };
     fetchProduct();
   }, [productId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (saving) return;
+
     const formData = new FormData(e.target);
     formData.append("inStock", inStock);
     formData.append("isBestSeller", isBestSeller);
     try {
+      setSaving(true);
       if (isEdit) {
         await api.patch(`/products/${productId}`, formData);
+        toast.success("Product updated successfully");
       } else {
         await api.post("/products", formData);
+        toast.success("Product created  successfully");
       }
       navigate("/admin/products");
     } catch (error) {
-      console.log(error);
+      toast.error(error.response?.data?.message || "Something went wrong");
+    } finally {
+      setSaving(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 animate-spin" />
+        <span className="ml-3 text-gray-600">Loading product...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -243,7 +270,18 @@ function ProductForm({ productId }) {
               <p className="text-xs text-muted-foreground">Max 3MB</p>
             </div>
           </div>
-          <Button type="submit">{isEdit ? "Update" : "Save"} Product</Button>
+          <Button type="submit" disabled={saving} className="min-w-40">
+            {saving ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {isEdit ? "Updating..." : "Saving..."}
+              </>
+            ) : isEdit ? (
+              "Update Product"
+            ) : (
+              "Save Product"
+            )}
+          </Button>
         </div>
       </form>
     </div>

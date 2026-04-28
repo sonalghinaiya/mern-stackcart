@@ -43,6 +43,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import toast from "react-hot-toast";
 
 function Users() {
   const [users, setUsers] = useState([]);
@@ -83,12 +84,14 @@ function Users() {
   const deleteUser = async () => {
     await api.delete(`/users/${selectedUser}`);
     setOpenDelete(false);
+    toast.success("User deleted successfully");
     fetchUsers();
   };
 
   const changeUserRole = async (id, role) => {
     try {
       await api.patch(`/admin/users/${id}/role`, { role });
+      toast.success(`Role updated to ${role}`);
       fetchUsers();
     } catch (error) {
       console.log(error);

@@ -23,6 +23,7 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSidebar } from "./ui/sidebar";
+import toast from "react-hot-toast";
 
 export function NavUser({ variant = "navbar" }) {
   const navigate = useNavigate();
@@ -55,6 +56,7 @@ export function NavUser({ variant = "navbar" }) {
 
   const handleLogout = () => {
     localStorage.clear();
+    toast.success("Logout Successfully")
     navigate("/auth/login");
   };
 

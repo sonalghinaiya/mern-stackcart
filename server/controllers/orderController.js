@@ -155,7 +155,7 @@ export const getAllOrders = async (req, res, next) => {
 
     const orders = await Order.find(query)
       .populate("user", "firstName lastName email")
-      .sort({ createdAt: -1 })
+      .sort(sort)
       .skip(offset)
       .limit(limit);
 

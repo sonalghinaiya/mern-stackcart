@@ -40,6 +40,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -80,6 +81,7 @@ function Products() {
   const deleteProducts = async () => {
     await api.delete(`/products/${selectedProduct}`);
     setOpenDelete(false);
+    toast.success("Product deleted successfully");
     fetchProducts();
   };
 
