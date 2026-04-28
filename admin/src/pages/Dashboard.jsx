@@ -84,7 +84,7 @@ function Dashboard() {
         <div className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition">
           <div className="flex flex-col gap-4">
             <div className="p-3 rounded-xl bg-green-100 w-fit">
-              <Package className="h-6 w-6 text-green-600" />
+              <ShoppingCart className="h-6 w-6 text-green-600" />
             </div>
 
             <div>

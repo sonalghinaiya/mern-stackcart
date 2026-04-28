@@ -222,8 +222,8 @@ function Orders() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              placeholder="Search order..."
-              className="pl-9"
+              placeholder="Search..."
+              className="pl-9 bg-gray-50"
             />
           </div>
 
