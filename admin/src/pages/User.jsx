@@ -12,9 +12,6 @@ import {
 } from "@/components/ui/table";
 import {
   ArrowDown,
-  ArrowLeft,
-  ArrowRight,
-  ArrowRightIcon,
   ArrowUp,
   ArrowUpDown,
   ChevronLeft,
@@ -60,21 +57,29 @@ function Users() {
 
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [openRoleChange, setOpenRoleChange] = useState(false);
+  const [newRole, setNewRole] = useState("");
+
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
   const fetchUsers = async () => {
-    const res = await api.get("/admin/users", {
-      params: {
-        page,
-        limit,
-        firstName: search,
-        role: roleFilter,
-        sortBy,
-        order,
-      },
-    });
-    setUsers(res.data.data);
-    setTotalPages(res.data.pagination.totalPages);
-    setTotalItems(res.data.pagination.totalUsers);
+    try {
+      const res = await api.get("/admin/users", {
+        params: {
+          page,
+          limit,
+          firstName: search,
+          role: roleFilter,
+          sortBy,
+          order,
+        },
+      });
+      setUsers(res.data.data);
+      setTotalPages(res.data.pagination.totalPages);
+      setTotalItems(res.data.pagination.totalUsers);
+    } catch (error) {
+      toast.error("Failed to fetch users");
+    }
   };
 
   useEffect(() => {
@@ -82,20 +87,36 @@ function Users() {
   }, [page, limit, search, roleFilter, sortBy, order]);
 
   const deleteUser = async () => {
-    await api.delete(`/users/${selectedUser}`);
-    setOpenDelete(false);
-    toast.success("User deleted successfully");
-    fetchUsers();
-  };
-
-  const changeUserRole = async (id, role) => {
     try {
-      await api.patch(`/admin/users/${id}/role`, { role });
-      toast.success(`Role updated to ${role}`);
+      await api.delete(`/users/${selectedUser}`);
+      setOpenDelete(false);
+      toast.success("User deleted successfully");
       fetchUsers();
     } catch (error) {
-      console.log(error);
+      toast.error("Failed to delete user");
     }
+  };
+
+  const changeUserRole = async () => {
+    try {
+      await api.patch(`/admin/users/${selectedUser}/role`, { role: newRole });
+      toast.success(`Role updated to ${newRole}`);
+      setOpenRoleChange(false);
+      fetchUsers();
+    } catch (error) {
+      toast.error("Failed to update role");
+    }
+  };
+
+  const handleRoleChangeClick = (userId, currentRole, targetRole) => {
+    if (userId === currentUser._id) {
+      toast.error("You cannot change your own role!");
+      return;
+    }
+
+    setSelectedUser(userId);
+    setNewRole(targetRole);
+    setOpenRoleChange(true);
   };
 
   const handleSort = (field) => {
@@ -209,104 +230,131 @@ function Users() {
 
               <TableBody>
                 {users.length > 0 ? (
-                  users.map((user) => (
-                    <TableRow key={user._id} className="hover:bg-muted/40">
-                      <TableCell>
-                        {user.profileImage ? (
-                          <img
-                            src={user.profileImage}
-                            alt={user.firstName}
-                            className="h-10 w-10 rounded-full object-cover border"
-                          />
-                        ) : (
-                          <div className="h-12 w-12 flex items-center justify-center rounded-md bg-gray-100 border">
-                            <ImageOff className="h-5 w-5 text-gray-400" />
-                          </div>
-                        )}
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {user.firstName} {user.lastName}
-                      </TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>
-                        <span
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full capitalize ${
-                            user.role === "admin"
-                              ? "bg-blue-50 text-blue-600 border border-blue-200"
-                              : "bg-gray-50 text-gray-600 border border-gray-200"
-                          }`}
-                        >
-                          {user.role === "admin" && (
-                            <Shield className="h-3.5 w-3.5 text-blue-500" />
+                  users.map((user) => {
+                    const isCurrentUser = user._id === currentUser._id;
+                    return (
+                      <TableRow key={user._id} className="hover:bg-muted/40">
+                        <TableCell>
+                          {user.profileImage ? (
+                            <img
+                              src={user.profileImage}
+                              alt={user.firstName}
+                              className="h-10 w-10 rounded-full object-cover border"
+                            />
+                          ) : (
+                            <div className="h-12 w-12 flex items-center justify-center rounded-md bg-gray-100 border">
+                              <ImageOff className="h-5 w-5 text-gray-400" />
+                            </div>
                           )}
-
-                          {user.role}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md ${
-                            user.isDeleted
-                              ? "bg-red-50 text-red-600"
-                              : "bg-emerald-50 text-emerald-600"
-                          }`}
-                        >
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {user.firstName} {user.lastName}
+                          {isCurrentUser && (
+                            <span className="ml-2 text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">
+                              You
+                            </span>
+                          )}
+                        </TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>
                           <span
-                            className={`w-1.5 h-1.5 rounded-full ${
-                              user.isDeleted ? "bg-red-500" : "bg-emerald-500"
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full capitalize ${
+                              user.role === "admin"
+                                ? "bg-blue-50 text-blue-600 border border-blue-200"
+                                : "bg-gray-50 text-gray-600 border border-gray-200"
                             }`}
-                          ></span>
+                          >
+                            {user.role === "admin" && (
+                              <Shield className="h-3.5 w-3.5 text-blue-500" />
+                            )}
 
-                          {user.isDeleted ? "Deleted" : "Active"}
-                        </span>
-                      </TableCell>
+                            {user.role}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <span
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md ${
+                              user.isDeleted
+                                ? "bg-red-50 text-red-600"
+                                : "bg-emerald-50 text-emerald-600"
+                            }`}
+                          >
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full ${
+                                user.isDeleted ? "bg-red-500" : "bg-emerald-500"
+                              }`}
+                            ></span>
 
-                      <TableCell>
-                        {new Date(user.createdAt).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>
-                        {new Date(user.updatedAt).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell className="text-center border-s-2">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreVertical className="h-5 w-5" />
-                            </Button>
-                          </DropdownMenuTrigger>
+                            {user.isDeleted ? "Deleted" : "Active"}
+                          </span>
+                        </TableCell>
 
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              disabled={user.role === "admin"}
-                              onClick={() => changeUserRole(user._id, "admin")}
-                            >
-                              <Shield className="mr-2 h-4 w-4 text-blue-500" />
-                              Make Admin
-                            </DropdownMenuItem>
+                        <TableCell>
+                          {new Date(user.createdAt).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>
+                          {new Date(user.updatedAt).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell className="text-center border-s-2">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <MoreVertical className="h-5 w-5" />
+                              </Button>
+                            </DropdownMenuTrigger>
 
-                            <DropdownMenuItem
-                              disabled={user.role === "user"}
-                              onClick={() => changeUserRole(user._id, "user")}
-                            >
-                              <UserCheck className="mr-2 h-4 w-4" />
-                              Make User
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem
+                                disabled={
+                                  user.role === "admin" || isCurrentUser
+                                }
+                                onClick={() =>
+                                  handleRoleChangeClick(
+                                    user._id,
+                                    user.role,
+                                    "admin",
+                                  )
+                                }
+                              >
+                                <Shield className="mr-2 h-4 w-4 text-blue-500" />
+                                Make Admin
+                              </DropdownMenuItem>
 
-                            <DropdownMenuItem
-                              onClick={() => {
-                                setSelectedUser(user._id);
-                                setOpenDelete(true);
-                              }}
-                            >
-                              <Trash2 className="mr-2 h-4 w-4 text-red-500" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))
+                              <DropdownMenuItem
+                                disabled={user.role === "user" || isCurrentUser}
+                                onClick={() =>
+                                  handleRoleChangeClick(
+                                    user._id,
+                                    user.role,
+                                    "user",
+                                  )
+                                }
+                              >
+                                <UserCheck className="mr-2 h-4 w-4" />
+                                Make User
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+
+                              <DropdownMenuItem
+                                disabled={isCurrentUser}
+                                onClick={() => {
+                                  if (isCurrentUser) {
+                                    toast.error("You cannot delete yourself!");
+                                    return;
+                                  }
+                                  setSelectedUser(user._id);
+                                  setOpenDelete(true);
+                                }}
+                              >
+                                <Trash2 className="mr-2 h-4 w-4 text-red-500" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
                 ) : (
                   <TableRow>
                     <TableCell
@@ -407,6 +455,30 @@ function Users() {
             <Button variant="destructive" onClick={deleteUser}>
               Yes, Delete
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Change Role Dialog */}
+      <Dialog open={openRoleChange} onOpenChange={setOpenRoleChange}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Change User Role?</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to change this user's role to{" "}
+              <span className="font-semibold capitalize">{newRole}</span>?
+              {newRole === "admin" && (
+                <span className="block mt-2 text-amber-600">
+                  ⚠️ This will grant admin privileges to this user.
+                </span>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpenRoleChange(false)}>
+              Cancel
+            </Button>
+            <Button onClick={changeUserRole}>Yes, Change Role</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
