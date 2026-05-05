@@ -98,16 +98,69 @@ function Checkout() {
         total,
       };
       console.log("Order Data", orderData);
-      const res = await api.post("/orders", orderData);
-      toast.success(res.data.message || "Order placed successfully!");
-      clearCart();
-  
-      navigate("/order-success", {
-        state: {
-          orderNumber: res.data.data.orderNumber,
-          total: res.data.data.total,
-        },
+      if (paymentMethod === "cod") {
+        const res = await api.post("/orders", orderData);
+        toast.success(res.data.message || "Order placed successfully!");
+        clearCart();
+
+        navigate("/order-success", {
+          state: {
+            orderNumber: res.data.data.orderNumber,
+            total: res.data.data.total,
+          },
+        });
+        return;
+      }
+
+      const { data } = await api.post("/payments/create-order", {
+        amount: total,
       });
+      console.log("Data of razorpay data", data.data);
+      const razorpayOrder = data.data;
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: razorpayOrder.amount,
+        currency: "INR",
+        name: "StackCart",
+        description: "Order Payment",
+        order_id: razorpayOrder.id,
+        handler: async (response) => {
+          try {
+            const orderRes = await api.post("/orders", orderData);
+            const createdOrder = orderRes.data.data;
+
+            await api.post("/payments/verify", {
+              ...response,
+              orderId: createdOrder._id,
+            });
+
+            toast.success("Payment successful & Order placed");
+
+            clearCart();
+
+            navigate("/order-success", {
+              state: {
+                orderNumber: createdOrder.orderNumber,
+                total: createdOrder.total,
+              },
+            });
+          } catch (error) {
+            toast.error("Payment verification failed");
+          }
+        },
+        prefill: {
+          name: shippingInfo.fullName,
+          email: shippingInfo.email,
+          contact: shippingInfo.phone,
+        },
+
+        theme: {
+          color: "#4f46e5",
+        },
+      };
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to place order");
     } finally {
