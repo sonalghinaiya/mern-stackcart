@@ -119,7 +119,7 @@ function Checkout() {
           image: item.image,
         })),
         shippingAddress: shippingInfo,
-        paymentMethod: "cod",
+        paymentMethod: "online",
         subtotal,
         shipping,
         tax,
