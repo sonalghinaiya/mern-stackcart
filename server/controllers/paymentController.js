@@ -32,6 +32,13 @@ export const verifyPayment = async (req, res, next) => {
       orderId,
     } = req.body;
 
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !orderId) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required payment parameters",
+      });
+    }
+
     const generatedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
@@ -46,10 +53,19 @@ export const verifyPayment = async (req, res, next) => {
           message: "Order not found",
         });
       }
-      
+
+      if (order.paymentStatus === "paid") {
+        return res.status(200).json({
+          success: true,
+          message: "Payment already verified",
+          data: order,
+        });
+      }
+
       order.paymentStatus = "paid";
       order.razorpay_order_id = razorpay_order_id;
       order.razorpay_payment_id = razorpay_payment_id;
+      order.razorpay_signature = razorpay_signature;
       order.orderStatus = "processing";
       await order.save();
 

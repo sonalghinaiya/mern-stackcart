@@ -27,13 +27,6 @@ function Checkout() {
 
   const [paymentMethod, setPaymentMethod] = useState("cod");
 
-  const [cardDetails, setCardDetails] = useState({
-    cardNumber: "",
-    cardName: "",
-    expiryDate: "",
-    cvv: "",
-  });
-
   const subtotal = getTotalPrice();
   const shipping = subtotal > 500 ? 0 : 50;
   const tax = Math.round(subtotal * 0.18);
@@ -42,13 +35,6 @@ function Checkout() {
   const handleShippingChange = (e) => {
     setShippingInfo({
       ...shippingInfo,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleCardChange = (e) => {
-    setCardDetails({
-      ...cardDetails,
       [e.target.name]: e.target.value,
     });
   };
@@ -78,7 +64,7 @@ function Checkout() {
     }
   };
 
-  const handlePlaceOrder = async () => {
+  const handleCODOrder = async () => {
     setLoading(true);
 
     try {
@@ -91,60 +77,87 @@ function Checkout() {
           image: item.image,
         })),
         shippingAddress: shippingInfo,
-        paymentMethod,
+        paymentMethod: "cod",
         subtotal,
         shipping,
         tax,
         total,
       };
-      console.log("Order Data", orderData);
-      if (paymentMethod === "cod") {
-        const res = await api.post("/orders", orderData);
-        toast.success(res.data.message || "Order placed successfully!");
-        clearCart();
 
-        navigate("/order-success", {
-          state: {
-            orderNumber: res.data.data.orderNumber,
-            total: res.data.data.total,
-          },
-        });
-        return;
-      }
+      const res = await api.post("/orders", orderData);
+      toast.success(res.data.message || "Order placed successfully!");
+      clearCart();
 
-      const { data } = await api.post("/payments/create-order", {
+      navigate("/order-success", {
+        state: {
+          orderNumber: res.data.data.orderNumber,
+          total: res.data.data.total,
+        },
+      });
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to place order");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOnlinePayment = async () => {
+    setLoading(true);
+
+    try {
+      const res = await api.post("/payments/create-order", {
         amount: total,
       });
-      console.log("Data of razorpay data", data.data);
-      const razorpayOrder = data.data;
+      const razorpayOrder = res.data.data;
+
+      const orderData = {
+        items: cartItem.map((item) => ({
+          product: item._id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          image: item.image,
+        })),
+        shippingAddress: shippingInfo,
+        paymentMethod: "cod",
+        subtotal,
+        shipping,
+        tax,
+        total,
+      };
+
+      const resp = await api.post("/orders", orderData);
+      const createdOrder = resp.data.data;
+      setLoading(false);
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: razorpayOrder.amount,
-        currency: "INR",
+        currency: razorpayOrder.currency,
         name: "StackCart",
-        description: "Order Payment",
+        description: `Order ${createdOrder.orderNumber}`,
         order_id: razorpayOrder.id,
         handler: async (response) => {
           try {
-            const orderRes = await api.post("/orders", orderData);
-            const createdOrder = orderRes.data.data;
-
-            await api.post("/payments/verify", {
-              ...response,
+            const verifyRes = await api.post("/payments/verify", {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
               orderId: createdOrder._id,
             });
+            if (verifyRes.data.success) {
+              toast.success("Payment successful!");
+              clearCart();
 
-            toast.success("Payment successful & Order placed");
-
-            clearCart();
-
-            navigate("/order-success", {
-              state: {
-                orderNumber: createdOrder.orderNumber,
-                total: createdOrder.total,
-              },
-            });
+              navigate("/order-success", {
+                state: {
+                  orderNumber: createdOrder.orderNumber,
+                  total: createdOrder.total,
+                },
+              });
+            } else {
+              toast.error("Payment verification failed");
+            }
           } catch (error) {
             toast.error("Payment verification failed");
           }
@@ -158,13 +171,32 @@ function Checkout() {
         theme: {
           color: "#4f46e5",
         },
+        modal: {
+          ondismiss: function () {
+            toast.error("Payment cancelled");
+          },
+        },
       };
       const rzp = new window.Razorpay(options);
+      rzp.on("payment.failed", function (response) {
+        console.error("Payment failed:", response.error);
+        toast.error(`Payment failed: ${response.error.description}`);
+      });
       rzp.open();
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to place order");
-    } finally {
+      console.error("Payment initialization error:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to initialize payment",
+      );
       setLoading(false);
+    }
+  };
+
+  const handlePlaceOrder = () => {
+    if (paymentMethod === "cod") {
+      handleCODOrder();
+    } else {
+      handleOnlinePayment();
     }
   };
 
@@ -403,9 +435,9 @@ function Checkout() {
                 </div>
 
                 <div
-                  onClick={() => setPaymentMethod("upi")}
+                  onClick={() => setPaymentMethod("online")}
                   className={`border-2 rounded-lg p-4 cursor-pointer transition ${
-                    paymentMethod === "upi"
+                    paymentMethod === "online"
                       ? "border-indigo-600 bg-indigo-50"
                       : "border-gray-200 hover:border-gray-300"
                   }`}
@@ -413,86 +445,35 @@ function Checkout() {
                   <div className="flex items-center gap-3">
                     <input
                       type="radio"
-                      checked={paymentMethod === "upi"}
-                      onChange={() => setPaymentMethod("upi")}
+                      checked={paymentMethod === "online"}
+                      onChange={() => setPaymentMethod("online")}
                       className="w-4 h-4 text-indigo-600"
                     />
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900">UPI Payment</p>
+                      <p className="font-medium text-gray-900">Pay Online</p>
                       <p className="text-sm text-gray-500">
-                        Pay via Google Pay, PhonePe, Paytm
+                        UPI, Cards, Net Banking, Wallets
                       </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  onClick={() => setPaymentMethod("card")}
-                  className={`border-2 rounded-lg p-4 cursor-pointer transition ${
-                    paymentMethod === "card"
-                      ? "border-indigo-600 bg-indigo-50"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="radio"
-                      checked={paymentMethod === "card"}
-                      onChange={() => setPaymentMethod("card")}
-                      className="w-4 h-4 text-indigo-600"
-                    />
-                    <div className="flex-1">
-                      <p className="font-medium text-gray-900">
-                        Credit/Debit Card
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        Visa, Mastercard, Rupay
-                      </p>
-                    </div>
-                    <CreditCard className="w-5 h-5 text-gray-400" />
-                  </div>
-
-                  {paymentMethod === "card" && (
-                    <div className="mt-4 space-y-3 pl-7">
-                      <input
-                        type="text"
-                        name="cardNumber"
-                        value={cardDetails.cardNumber}
-                        onChange={handleCardChange}
-                        placeholder="Card Number"
-                        maxLength="16"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                      />
-                      <input
-                        type="text"
-                        name="cardName"
-                        value={cardDetails.cardName}
-                        onChange={handleCardChange}
-                        placeholder="Cardholder Name"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                      />
-                      <div className="grid grid-cols-2 gap-3">
-                        <input
-                          type="text"
-                          name="expiryDate"
-                          value={cardDetails.expiryDate}
-                          onChange={handleCardChange}
-                          placeholder="MM/YY"
-                          maxLength="5"
-                          className="px-4 py-2 border border-gray-300 rounded-lg"
+                      <div className="flex gap-2 mt-2">
+                        <img
+                          src="/payment-icons/upi.png"
+                          alt="UPI"
+                          className="h-6"
                         />
-                        <input
-                          type="text"
-                          name="cvv"
-                          value={cardDetails.cvv}
-                          onChange={handleCardChange}
-                          placeholder="CVV"
-                          maxLength="3"
-                          className="px-4 py-2 border border-gray-300 rounded-lg"
+                        <img
+                          src="/payment-icons/visa.png"
+                          alt="Visa"
+                          className="h-6"
+                        />
+                        <img
+                          src="/payment-icons/mastercard.png"
+                          alt="Mastercard"
+                          className="h-6"
                         />
                       </div>
                     </div>
-                  )}
+                    <CreditCard className="w-5 h-5 text-gray-400" />
+                  </div>
                 </div>
 
                 <div className="flex gap-3 pt-4">
@@ -552,9 +533,7 @@ function Checkout() {
                 <p className="text-gray-600">
                   {paymentMethod === "cod"
                     ? "Cash on Delivery"
-                    : paymentMethod === "upi"
-                      ? "UPI Payment"
-                      : "Credit/Debit Card"}
+                    : "Online Payment (UPI / Cards / Net Banking / Wallets)"}
                 </p>
               </div>
 
@@ -565,7 +544,9 @@ function Checkout() {
               >
                 {loading
                   ? "Processing..."
-                  : `Place Order - ₹${total.toLocaleString("en-IN")}`}
+                  : paymentMethod === "online"
+                    ? `Pay ₹${total.toLocaleString("en-IN")}`
+                    : `Place Order - ₹${total.toLocaleString("en-IN")}`}
               </button>
 
               <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
