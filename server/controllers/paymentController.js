@@ -128,7 +128,7 @@ export const razorpayWebhook = async (req, res, next) => {
       console.log('found Order:', order)
 
       if (order) {
-        ;(order.paymentStatus = 'paid'),
+        (order.paymentStatus = 'paid'),
           (order.orderStatus = 'processing'),
           (order.razorpay_payment_id = payment.id)
 
@@ -145,7 +145,8 @@ export const razorpayWebhook = async (req, res, next) => {
       })
 
       if (order) {
-        (order.paymentStatus = 'failed'), await order.save()
+        (order.paymentStatus = 'failed')
+         await order.save()
         console.log('Order marked failed')
       }
     }
