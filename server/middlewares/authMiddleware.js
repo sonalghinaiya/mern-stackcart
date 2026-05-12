@@ -8,7 +8,6 @@ export const isAuthenticated = (req, res, next) => {
     } else if (req.headers.token) {
       token = req.headers.token;
     }
-    console.log("Token", token);
 
     if (!token) {
       res.status(401);
@@ -16,7 +15,6 @@ export const isAuthenticated = (req, res, next) => {
     }
 
     const decoded = verifyToken(token);
-    console.log("decoded", decoded);
     req.user = decoded;
     next();
   } catch (error) {

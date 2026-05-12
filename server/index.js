@@ -1,66 +1,74 @@
-import express from "express";
-import { connectDB } from "./config/db.js";
-import { errorHandler } from "./middlewares/errorMiddleware.js";
-import cookieParser from "cookie-parser";
-import swaggerUi from "swagger-ui-express";
-import fs from "fs";
-import path from "path";
-import helmet from "helmet";
-import cors from "cors";
+import express from 'express'
+import { connectDB } from './config/db.js'
+import { errorHandler } from './middlewares/errorMiddleware.js'
+import cookieParser from 'cookie-parser'
+import swaggerUi from 'swagger-ui-express'
+import fs from 'fs'
+import path from 'path'
+import helmet from 'helmet'
+import cors from 'cors'
 
-import authRoutes from "./routes/authRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
-import productRoutes from "./routes/productRoutes.js";
-import orderRoutes from "./routes/orderRoutes.js";
-import paymentRoutes from "./routes/paymentRoutes.js";
-import chatRoutes from "./routes/chatRoutes.js";
-import adminRoutes from "./routes/adminRoutes.js";
+import authRoutes from './routes/authRoutes.js'
+import userRoutes from './routes/userRoutes.js'
+import productRoutes from './routes/productRoutes.js'
+import orderRoutes from './routes/orderRoutes.js'
+import paymentRoutes from './routes/paymentRoutes.js'
+import chatRoutes from './routes/chatRoutes.js'
+import adminRoutes from './routes/adminRoutes.js'
 
-const app = express();
-const PORT = process.env.PORT || 5000;
-const url = process.env.MONGODB_URI;
+const app = express()
+const PORT = process.env.PORT || 5000
+const url = process.env.MONGODB_URI
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(cookieParser())
 
-app.use(helmet());
+app.use(helmet())
 app.use(
   cors({
     origin: true,
-    credentials: true,
+    credentials: true
   })
-);
+)
 
 app.use((req, res, next) => {
-  res.setHeader("Cross-Origin-Resource-Policy", "Cross-Origin")
+  res.setHeader('Cross-Origin-Resource-Policy', 'Cross-Origin')
   next()
 })
 
-app.use(express.static("public"));
+app.use(express.static('public'))
 
 const swaggerDocument = JSON.parse(
-  fs.readFileSync(path.resolve("swagger/swagger.json"), "utf-8")
-);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  fs.readFileSync(path.resolve('swagger/swagger.json'), 'utf-8')
+)
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
-app.get("/", (req, res) => {
-  res.json({ success: true, message: "API Running" });
-});
+app.get('/', (req, res) => {
+  res.json({ success: true, message: 'API Running' })
+})
 
-connectDB(url).then(() => console.log("MongoDB Connected!"));
+connectDB(url).then(() => console.log('MongoDB Connected!'))
 
-app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/products", productRoutes);
-app.use("/api/v1/orders", orderRoutes);
-app.use("/api/v1/payments", paymentRoutes)
-app.use("/api/v1/chat", chatRoutes);
-app.use("/api/v1/admin", adminRoutes);
+app.use(
+  '/api/v1/payments/webhook',
+  express.raw({
+    type: 'application/json'
+  })
+)
 
-app.use(errorHandler);
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+app.use('/api/v1/auth', authRoutes)
+app.use('/api/v1/users', userRoutes)
+app.use('/api/v1/products', productRoutes)
+app.use('/api/v1/orders', orderRoutes)
+app.use('/api/v1/payments', paymentRoutes)
+app.use('/api/v1/chat', chatRoutes)
+app.use('/api/v1/admin', adminRoutes)
+
+app.use(errorHandler)
 
 app.listen(PORT, () => {
-  console.log(`Server running on port http://localhost:${PORT}`);
-  console.log(`API Docs available at http://localhost:${PORT}/api-docs`);
-});
+  console.log(`Server running on port http://localhost:${PORT}`)
+  console.log(`API Docs available at http://localhost:${PORT}/api-docs`)
+})
