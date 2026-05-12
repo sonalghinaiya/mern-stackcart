@@ -4,7 +4,7 @@ import { Order } from '../models/order.js'
 
 export const createRazorpayOrder = async (req, res, next) => {
   try {
-    const { amount } = req.body
+    const { amount, orderId } = req.body
 
     const options = {
       amount: amount * 100,
@@ -13,6 +13,10 @@ export const createRazorpayOrder = async (req, res, next) => {
     }
 
     const order = await razorpay.orders.create(options)
+
+    await Order.findByIdAndUpdate(orderId, {
+      razorpay_order_id: order.id
+    })
 
     res.status(200).json({
       success: true,
@@ -112,13 +116,16 @@ export const razorpayWebhook = async (req, res, next) => {
 
     const event = body.event
     const payload = body.payload
-    console.log('webhook event:', req.body.event)
+    console.log('webhook event:', body.event)
 
     if (event === 'payment.captured') {
       const payment = payload.payment.entity
       const order = await Order.findOne({
         razorpay_order_id: payment.order_id
       })
+
+      console.log('Searching Order ID:', payment.order_id)
+      console.log('found Order:', order)
 
       if (order) {
         ;(order.paymentStatus = 'paid'),
@@ -138,7 +145,7 @@ export const razorpayWebhook = async (req, res, next) => {
       })
 
       if (order) {
-        ;(order.paymentStatus = 'failed'), await order.save()
+        (order.paymentStatus = 'failed'), await order.save()
         console.log('Order marked failed')
       }
     }
